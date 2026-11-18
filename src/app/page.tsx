@@ -1,43 +1,25 @@
-import React from 'react';
-import { HeroSection } from '@/components/sections/home/HeroSection';
-import { MetricBar } from '@/components/sections/home/MetricBar';
-import { BuiltForPersonas } from '@/components/sections/home/BuiltForPersonas';
-import { GlobalNetworkMap } from '@/components/sections/home/GlobalNetworkMap';
-import { DualOfferings } from '@/components/sections/home/DualOfferings';
-import { ComparisonMatrix } from '@/components/sections/home/ComparisonMatrix';
-import { SocialProofTestimonials } from '@/components/sections/home/SocialProofTestimonials';
-import { FounderNote } from '@/components/sections/home/FounderNote';
-import { ProofAndFaq } from '@/components/sections/home/ProofAndFaq';
+import { DhakaOperationsDesk } from "@/components/sections/home/DhakaOperationsDesk";
+import { DualOfferings } from "@/components/sections/home/DualOfferings";
+import { FounderNote } from "@/components/sections/home/FounderNote";
+import { GlobalNetworkMap } from "@/components/sections/home/GlobalNetworkMap";
+import { HeroSection } from "@/components/sections/home/HeroSection";
+import { LiveDiagnosticsHook } from "@/components/sections/home/LiveDiagnosticsHook";
+import { MetricBar } from "@/components/sections/home/MetricBar";
+import { ProofAndFaq } from "@/components/sections/home/ProofAndFaq";
+import { TrustBadgesStrip } from "@/components/sections/home/TrustBadgesStrip";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col">
-      {/* 1. Home hero with product paths */}
+    <>
       <HeroSection />
-
-      {/* 2. Engineering Metric & SLA Bar */}
-      <MetricBar />
-
-      {/* 3. Purpose-Built Personas Strip (Surveyors, E-Commerce, Developers) */}
-      <BuiltForPersonas />
-
-      {/* 4. Global Network, Local Excellence (Interactive World Map with Radar Nodes) */}
-      <GlobalNetworkMap />
-
-      {/* 5. Core Infrastructure Offerings (Dedicated ISP Compute & Scalable Cloud) */}
+      <TrustBadgesStrip />
       <DualOfferings />
-
-      {/* 6. Why primevpsbd Comparison Matrix */}
-      <ComparisonMatrix />
-
-      {/* 7. Real Customer Success Stories & Outcomes */}
-      <SocialProofTestimonials />
-
-      {/* 8. Founder's Mission & Dhaka-Dallas Operations Desk */}
+      <DhakaOperationsDesk />
+      <LiveDiagnosticsHook />
+      <MetricBar />
+      <GlobalNetworkMap />
       <FounderNote />
-
-      {/* 9. Verified IPQS Proof & Engineering FAQ */}
       <ProofAndFaq />
-    </div>
+    </>
   );
 }

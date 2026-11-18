@@ -1,86 +1,94 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { ArrowRight, Lock, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Lock, Mail } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    window.location.href = '/survey-vps';
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    window.location.href = "/cloud-vps";
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 bg-[#F8FAFC]">
-      <div className="w-full max-w-md bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-sm space-y-6">
-        
-        <div className="space-y-2 text-center">
-          <Link href="/" className="inline-block font-display font-extrabold text-2xl text-[#0F172A] tracking-tight">
-            primevpsbd
-          </Link>
-          <h1 className="font-display font-bold text-xl text-[#0F172A]">
-            Welcome back
-          </h1>
-          <p className="text-xs text-[#64748B]">
-            Manage your servers, residential IPs, and billing securely.
-          </p>
-        </div>
+    <div className="flex min-h-[75vh] items-center justify-center bg-slate-50 px-4 py-16">
+      <div className="card w-full max-w-sm p-8">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+          Sign in
+        </h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Manage servers, IPs and invoices.
+        </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-[#0F172A]">Email Address</label>
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="email" className="label mb-1.5">
+              Email
+            </label>
             <div className="relative">
-              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Mail
+                size={16}
+                className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-slate-400"
+              />
               <input
+                id="email"
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[#2563EB]"
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@company.com"
+                className="field pl-10"
               />
             </div>
           </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center text-xs">
-              <label className="font-semibold text-[#0F172A]">Password</label>
-              <a href="#" className="text-[#2563EB] hover:underline font-medium">
-                Forgot password?
-              </a>
+          <div>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label htmlFor="password" className="label">
+                Password
+              </label>
+              <Link
+                href="/contact"
+                className="text-sm font-medium text-blue-700 hover:underline"
+              >
+                Forgot?
+              </Link>
             </div>
             <div className="relative">
-              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Lock
+                size={16}
+                className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-slate-400"
+              />
               <input
+                id="password"
                 type="password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[#2563EB]"
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="••••••••"
+                className="field pl-10"
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs sm:text-sm rounded-xl transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            <span>Continue to Dashboard</span>
+          <button type="submit" className="btn-primary w-full">
+            Sign in
             <ArrowRight size={15} />
           </button>
         </form>
 
-        <div className="pt-4 border-t border-slate-100 text-center text-xs text-[#64748B]">
-          Don&apos;t have an account yet?{' '}
-          <Link href="/register" className="font-semibold text-[#2563EB] hover:underline">
-            Create account
+        <p className="mt-6 border-t border-slate-100 pt-4 text-center text-sm text-slate-600">
+          New here?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-blue-700 hover:underline"
+          >
+            Create an account
           </Link>
-        </div>
-
+        </p>
       </div>
     </div>
   );

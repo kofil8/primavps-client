@@ -1,309 +1,326 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useCurrency } from '@/lib/currency';
-import { IspPlan } from '@/lib/data/plans';
-import { X, ShieldCheck, Check, Tag, ArrowRight, CreditCard, Lock, Sparkles } from 'lucide-react';
+import { useCurrency } from "@/lib/currency";
+import { IspPlan } from "@/lib/data/plans";
+import { ArrowRight, Check, Lock, X } from "lucide-react";
+import { useEffect, useState } from "react";
+
+export interface CheckoutPlan {
+  id?: string;
+  name: string;
+  tagline?: string;
+  priceBdt: number;
+  priceFreshBdt?: number;
+  specs: {
+    vcpu: number;
+    ram: number;
+    nvme: number;
+    bandwidth: string;
+  };
+  isCloud?: boolean;
+  osName?: string;
+  regionName?: string;
+}
 
 interface CheckoutDrawerProps {
-  plan: IspPlan | null;
-  carrier: string;
-  isFresh: boolean;
+  plan: CheckoutPlan | IspPlan | null;
+  carrier?: string;
+  isFresh?: boolean;
+  initialBillingCycle?: "monthly" | "quarterly" | "annual";
   onClose: () => void;
 }
 
-export function CheckoutDrawer({ plan, carrier, isFresh, onClose }: CheckoutDrawerProps) {
+const CYCLES = [
+  { id: "monthly", label: "1 month", months: 1, discount: 0 },
+  { id: "quarterly", label: "3 months", months: 3, discount: 0.05 },
+  { id: "annual", label: "12 months", months: 12, discount: 0.15 },
+] as const;
+
+export function CheckoutDrawer({
+  plan,
+  carrier = "AT&T",
+  isFresh = false,
+  initialBillingCycle = "monthly",
+  onClose,
+}: CheckoutDrawerProps) {
   const { formatPrice } = useCurrency();
-  const [selectedCarrier, setSelectedCarrier] = useState(carrier === 'All' ? 'AT&T' : carrier);
-  const [selectedLocation, setSelectedLocation] = useState('Dallas, TX (US-Central)');
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'quarterly' | 'annual'>('monthly');
-  const [couponCode, setCouponCode] = useState('');
+  const [selectedCarrier, setSelectedCarrier] = useState(
+    carrier === "All" ? "AT&T" : carrier,
+  );
+  const [location, setLocation] = useState(
+    plan && "regionName" in plan && plan.regionName
+      ? plan.regionName
+      : "Dallas, TX",
+  );
+  const [billingCycle, setBillingCycle] =
+    useState<(typeof CYCLES)[number]["id"]>(initialBillingCycle);
+  const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
-  const [couponError, setCouponError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [orderComplete, setOrderComplete] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [complete, setComplete] = useState(false);
+
+  useEffect(() => {
+    if (!plan) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [plan, onClose]);
 
   if (!plan) return null;
 
-  const basePrice = isFresh ? plan.priceFreshBdt : plan.priceBdt;
-  
-  // Calculate cycle multiplier and discounts
-  let totalBdt = basePrice;
-  if (billingCycle === 'quarterly') {
-    totalBdt = Math.round(basePrice * 3 * 0.95); // 5% discount
-  } else if (billingCycle === 'annual') {
-    totalBdt = Math.round(basePrice * 12 * 0.85); // 15% discount
-  }
+  const isCloud = "isCloud" in plan && plan.isCloud;
+  const basePrice =
+    !isCloud && isFresh && "priceFreshBdt" in plan && plan.priceFreshBdt
+      ? plan.priceFreshBdt
+      : plan.priceBdt;
 
-  // Apply coupon discount (e.g., LAUNCH10 = 10% off)
-  if (couponApplied) {
-    totalBdt = Math.round(totalBdt * 0.9);
-  }
+  const cycle = CYCLES.find((item) => item.id === billingCycle) ?? CYCLES[0];
+  let total = Math.round(basePrice * cycle.months * (1 - cycle.discount));
+  if (couponApplied) total = Math.round(total * 0.9);
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCouponError('');
-    if (couponCode.trim().toUpperCase() === 'LAUNCH10') {
+  const applyCoupon = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (coupon.trim().toUpperCase() === "LAUNCH10") {
       setCouponApplied(true);
+      setCouponError("");
     } else {
-      setCouponError('Invalid coupon code. Try "LAUNCH10"');
+      setCouponError("That code isn't valid.");
     }
   };
 
-  const handleProceedPayment = () => {
-    setIsSubmitting(true);
+  const proceed = () => {
+    setSubmitting(true);
     setTimeout(() => {
-      setIsSubmitting(false);
-      setOrderComplete(true);
-    }, 1200);
+      setSubmitting(false);
+      setComplete(true);
+    }, 900);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs transition-opacity duration-300">
-      
-      {/* Click outside backdrop */}
-      <div className="flex-1" onClick={onClose} />
+  const optionClass = (active: boolean) =>
+    `rounded-xl border px-3 py-2.5 text-left text-sm transition-colors ${
+      active
+        ? "border-blue-600 bg-blue-50 text-slate-900"
+        : "border-slate-200 text-slate-600 hover:border-slate-300"
+    }`;
 
-      {/* Drawer content (480px width) */}
-      <div className="w-full max-w-[480px] bg-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200 border-l border-[#E2E8F0]">
-        
-        {/* Header */}
+  return (
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkout-title"
+    >
+      <button
+        className="flex-1 cursor-default"
+        aria-label="Close checkout"
+        onClick={onClose}
+      />
+
+      <div className="flex h-full w-full max-w-md flex-col justify-between overflow-y-auto border-l border-slate-200 bg-white">
         <div>
-          <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+          <div className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">
-                Instant Checkout
-              </span>
-              <h3 className="font-display font-extrabold text-lg text-[#0F172A]">
-                Configure &amp; Deploy Server
-              </h3>
+              <p className="text-xs font-semibold text-blue-700 uppercase">
+                Checkout
+              </p>
+              <h2
+                id="checkout-title"
+                className="mt-0.5 font-display text-lg font-bold text-slate-900"
+              >
+                {plan.name}
+              </h2>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+              className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100"
+              aria-label="Close checkout"
             >
               <X size={18} />
             </button>
           </div>
 
-          {orderComplete ? (
-            /* Order Success State */
-            <div className="p-8 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border-2 border-emerald-200">
-                <Check size={32} />
-              </div>
-              <h4 className="font-display font-extrabold text-xl text-[#0F172A]">
-                Provisioning Initiated!
-              </h4>
-              <p className="text-xs sm:text-sm text-[#64748B]">
-                Your {plan.name} node with {selectedCarrier} residential IP is being bound to hypervisor in {selectedLocation}.
+          {complete ? (
+            <div className="px-6 py-12 text-center">
+              <span className="mx-auto grid size-14 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+                <Check size={28} />
+              </span>
+              <h3 className="mt-4 font-display text-xl font-bold text-slate-900">
+                Payment received
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Your server is being provisioned now. Login details will appear
+                in your client area within 90 seconds.
               </p>
-              <div className="p-4 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs text-left space-y-1">
-                <div className="text-emerald-400 font-bold">Status: [OK] Hypervisor Assigned</div>
-                <div>Node IP: Assigned on payment confirmation</div>
-                <div>OS: Windows 10 Pro (Hardened)</div>
-                <div>Estimated Handshake: 45 Seconds</div>
-              </div>
-              <div className="pt-4">
-                <button
-                  onClick={onClose}
-                  className="w-full py-3 bg-[#2563EB] text-white text-sm font-semibold rounded-xl"
-                >
-                  Return to Dashboard
-                </button>
-              </div>
+              <button onClick={onClose} className="btn-primary mt-6 w-full">
+                Done
+              </button>
             </div>
           ) : (
-            /* Regular Form Content */
-            <div className="p-6 space-y-6 text-xs sm:text-sm">
-              
-              {/* Selected Plan Summary Card */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-[#0F172A]">{plan.name}</span>
-                  <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100/70 text-[#2563EB]">
-                    {isFresh ? '100% Virgin IP' : 'Clean ISP IP'}
-                  </span>
-                </div>
-                <div className="text-xs text-[#64748B] flex flex-wrap gap-x-3 gap-y-1 font-mono pt-1">
-                  <span>{plan.specs.vcpu} vCPU</span>
-                  <span>•</span>
-                  <span>{plan.specs.ram} GB RAM</span>
-                  <span>•</span>
-                  <span>{plan.specs.nvme} GB NVMe</span>
-                  <span>•</span>
-                  <span>{plan.specs.bandwidth}</span>
-                </div>
+            <div className="space-y-6 px-6 py-5 text-sm">
+              <div className="rounded-xl bg-slate-50 p-4">
+                <p className="text-xs text-slate-500">
+                  {plan.specs.vcpu} vCPU · {plan.specs.ram} GB RAM ·{" "}
+                  {plan.specs.nvme} GB NVMe
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  {isCloud
+                    ? plan.osName
+                    : `${isFresh ? "Virgin" : "Clean"} ${selectedCarrier} IP`}
+                </p>
               </div>
 
-              {/* Step 1: Select Preferred Carrier */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider block">
-                  1. Select US Residential Carrier
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['AT&T', 'Comcast', 'Verizon'].map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => setSelectedCarrier(c)}
-                      className={`py-2 px-3 rounded-lg border text-xs font-semibold transition-all ${
-                        selectedCarrier === c
-                          ? 'border-[#2563EB] bg-blue-50 text-[#2563EB] shadow-2xs'
-                          : 'border-[#E2E8F0] bg-white text-[#64748B] hover:border-slate-300'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
+              {!isCloud && (
+                <div>
+                  <p className="mb-2 font-medium text-slate-900">Carrier</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {["AT&T", "Comcast", "Verizon"].map((item) => (
+                      <button
+                        key={item}
+                        onClick={() => setSelectedCarrier(item)}
+                        className={optionClass(selectedCarrier === item)}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Step 2: Datacenter Location */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider block">
-                  2. Select Datacenter Location
-                </label>
+              <div>
+                <p className="mb-2 font-medium text-slate-900">Location</p>
                 <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { label: 'Dallas, TX', sub: 'US-Central (Fastest)' },
-                    { label: 'Ashburn, VA', sub: 'US-East (Low Latency)' },
-                  ].map((loc) => (
+                  {["Dallas, TX", "Ashburn, VA"].map((item) => (
                     <button
-                      key={loc.label}
-                      type="button"
-                      onClick={() => setSelectedLocation(`${loc.label} (${loc.sub})`)}
-                      className={`p-2.5 rounded-lg border text-left transition-all ${
-                        selectedLocation.includes(loc.label)
-                          ? 'border-[#2563EB] bg-blue-50 text-[#2563EB]'
-                          : 'border-[#E2E8F0] bg-white text-[#64748B] hover:border-slate-300'
-                      }`}
+                      key={item}
+                      onClick={() => setLocation(item)}
+                      className={optionClass(location.includes(item))}
                     >
-                      <div className="font-semibold text-xs text-[#0F172A]">{loc.label}</div>
-                      <div className="text-[10px] text-[#64748B]">{loc.sub}</div>
+                      {item}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Step 3: Billing Cycle */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider block">
-                  3. Billing Cycle &amp; Discounts
-                </label>
+              <div>
+                <p className="mb-2 font-medium text-slate-900">Billing</p>
                 <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'monthly', label: '1 Month', tag: 'Standard' },
-                    { id: 'quarterly', label: '3 Months', tag: 'Save 5%' },
-                    { id: 'annual', label: '12 Months', tag: 'Save 15%' },
-                  ].map((cycle) => (
+                  {CYCLES.map((item) => (
                     <button
-                      key={cycle.id}
-                      type="button"
-                      onClick={() => setBillingCycle(cycle.id as any)}
-                      className={`p-2 rounded-lg border text-center transition-all ${
-                        billingCycle === cycle.id
-                          ? 'border-[#2563EB] bg-blue-50 text-[#2563EB]'
-                          : 'border-[#E2E8F0] bg-white text-[#64748B] hover:border-slate-300'
-                      }`}
+                      key={item.id}
+                      onClick={() => setBillingCycle(item.id)}
+                      className={optionClass(billingCycle === item.id)}
                     >
-                      <div className="font-semibold text-xs text-[#0F172A]">{cycle.label}</div>
-                      <div className="text-[10px] text-emerald-600 font-medium">{cycle.tag}</div>
+                      <span className="block">{item.label}</span>
+                      <span className="block text-xs text-emerald-700">
+                        {item.discount === 0
+                          ? "Standard"
+                          : `Save ${item.discount * 100}%`}
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Coupon Code Section */}
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                <label className="text-xs font-semibold text-[#0F172A] block">
-                  Promo / Coupon Code
+              <form onSubmit={applyCoupon}>
+                <label htmlFor="coupon" className="mb-2 block font-medium text-slate-900">
+                  Promo code
                 </label>
-                <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                <div className="flex gap-2">
                   <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Try LAUNCH10"
+                    id="coupon"
+                    value={coupon}
+                    onChange={(event) => setCoupon(event.target.value)}
                     disabled={couponApplied}
-                    className="flex-1 px-3 py-2 border border-[#E2E8F0] rounded-lg text-xs uppercase font-mono focus:outline-none focus:border-[#2563EB]"
+                    placeholder="LAUNCH10"
+                    className="field font-mono uppercase"
                   />
                   <button
                     type="submit"
-                    disabled={couponApplied || !couponCode.trim()}
-                    className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold disabled:opacity-50"
+                    disabled={couponApplied || !coupon.trim()}
+                    className="btn-outline px-4"
                   >
-                    {couponApplied ? 'Applied' : 'Apply'}
+                    {couponApplied ? "Applied" : "Apply"}
                   </button>
-                </form>
+                </div>
                 {couponApplied && (
-                  <p className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                    <Check size={12} />
-                    <span>LAUNCH10 coupon applied: 10% off</span>
+                  <p className="mt-2 text-xs text-emerald-700">
+                    LAUNCH10 applied — 10% off.
                   </p>
                 )}
                 {couponError && (
-                  <p className="text-xs text-red-500 font-medium">
-                    {couponError}
-                  </p>
+                  <p className="mt-2 text-xs text-red-600">{couponError}</p>
                 )}
-              </div>
+              </form>
 
-              {/* Price Calculation Summary */}
-              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
-                <div className="flex justify-between text-xs text-[#64748B]">
-                  <span>Base Rate:</span>
-                  <span className="font-mono">{formatPrice(basePrice)}/mo</span>
+              <div className="rounded-xl border border-slate-200 p-4">
+                <div className="flex justify-between text-slate-600">
+                  <span>
+                    {formatPrice(basePrice)} × {cycle.months}
+                  </span>
+                  <span className="font-mono">
+                    {formatPrice(basePrice * cycle.months)}
+                  </span>
                 </div>
-                {billingCycle !== 'monthly' && (
-                  <div className="flex justify-between text-xs text-emerald-600 font-medium">
-                    <span>Cycle Discount:</span>
-                    <span>{billingCycle === 'quarterly' ? '-5%' : '-15%'}</span>
+                {(cycle.discount > 0 || couponApplied) && (
+                  <div className="mt-1.5 flex justify-between text-emerald-700">
+                    <span>Discount</span>
+                    <span className="font-mono">
+                      −
+                      {formatPrice(
+                        Math.round(basePrice * cycle.months * cycle.discount) +
+                          (couponApplied
+                            ? Math.round(
+                                basePrice *
+                                  cycle.months *
+                                  (1 - cycle.discount) *
+                                  0.1,
+                              )
+                            : 0),
+                      )}
+                    </span>
                   </div>
                 )}
-                {couponApplied && (
-                  <div className="flex justify-between text-xs text-emerald-600 font-medium">
-                    <span>Coupon (LAUNCH10):</span>
-                    <span>-10%</span>
-                  </div>
-                )}
-                <div className="pt-2 border-t border-[#E2E8F0] flex justify-between items-baseline">
-                  <span className="font-bold text-sm text-[#0F172A]">Due Today:</span>
-                  <span className="font-display font-extrabold text-2xl text-[#2563EB] tracking-tight">
-                    {formatPrice(totalBdt)}
+                <div className="mt-3 flex items-baseline justify-between border-t border-slate-200 pt-3">
+                  <span className="font-medium text-slate-900">
+                    Due today
+                  </span>
+                  <span className="font-display text-2xl font-extrabold text-slate-900">
+                    {formatPrice(total)}
                   </span>
                 </div>
               </div>
-
             </div>
           )}
         </div>
 
-        {/* Footer Checkout CTA */}
-        {!orderComplete && (
-          <div className="p-6 border-t border-[#E2E8F0] bg-white space-y-3">
+        {!complete && (
+          <div className="space-y-2 border-t border-slate-200 px-6 py-4">
             <button
-              onClick={handleProceedPayment}
-              disabled={isSubmitting}
-              className="w-full py-3.5 px-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-75"
+              onClick={proceed}
+              disabled={submitting}
+              className="btn-primary w-full"
             >
-              {isSubmitting ? (
-                <span>Routing to Gateway...</span>
-              ) : (
-                <>
-                  <Lock size={15} />
-                  <span>Proceed to bKash / Card Payment</span>
-                  <ArrowRight size={16} />
-                </>
-              )}
+              <Lock size={15} />
+              {submitting
+                ? "Connecting to gateway…"
+                : "Pay with bKash / card"}
+              {!submitting && <ArrowRight size={16} />}
             </button>
-            <div className="flex items-center justify-center gap-2 text-[11px] text-[#64748B]">
-              <ShieldCheck size={14} className="text-emerald-600" />
-              <span>Instant Automated Provisioning in &lt; 90 Seconds</span>
-            </div>
+            <p className="text-center text-xs text-slate-500">
+              Live in 90 seconds · cancel anytime
+            </p>
           </div>
         )}
-
       </div>
     </div>
   );

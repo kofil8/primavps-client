@@ -65,10 +65,10 @@ export default function WebRtcTestPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[#0F172A] tracking-tight">
-              WebRTC Leak Test
+              WebRTC leak test
             </h1>
-            <p className="text-sm sm:text-base text-[#64748B] mt-2 leading-relaxed">
-              Browser-side diagnostic with clear privacy messaging. Determines if your actual ISP IP or local network interface is exposed past your proxy or tunnel.
+            <p className="mt-2 max-w-xl text-sm text-slate-600 sm:text-base">
+              See whether your real IP leaks past your proxy or VPN.
             </p>
           </div>
         </div>

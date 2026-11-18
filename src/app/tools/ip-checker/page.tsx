@@ -14,25 +14,19 @@ import {
   ExternalLink,
   Wifi,
   Clock,
-  Globe,
   AlertTriangle,
 } from 'lucide-react';
 
 export default function IpCheckerPage() {
   const [inputIp, setInputIp] = useState('');
   const [report, setReport] = useState<IpReport | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [scanStep, setScanStep] = useState<'idle' | 'locating' | 'screening' | 'webrtc' | 'done'>('idle');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [webrtcDetectedIp, setWebrtcDetectedIp] = useState<string | null>(null);
   const [webrtcStatus, setWebrtcStatus] = useState<'Checking...' | 'No Leak (Secure)' | 'Leaked'>('Checking...');
   const [timezoneMatch, setTimezoneMatch] = useState<boolean | null>(null);
-
-  // Auto-scan on mount
-  useEffect(() => {
-    fetchIpData('');
-    detectWebRtc();
-  }, []);
 
   const detectWebRtc = () => {
     if (typeof window === 'undefined') return;
@@ -67,6 +61,7 @@ export default function IpCheckerPage() {
 
   const fetchIpData = async (targetIp: string) => {
     setLoading(true);
+    setErrorMsg(null);
     setScanStep('locating');
 
     setTimeout(() => setScanStep('screening'), 300);
@@ -74,23 +69,42 @@ export default function IpCheckerPage() {
 
     try {
       const res = await fetch(`/api/ip-check${targetIp ? `?ip=${encodeURIComponent(targetIp)}` : ''}`);
-      const data: IpReport = await res.json();
-      setReport(data);
-
-      // Verify browser timezone against report timezone
-      try {
-        const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        setTimezoneMatch(browserTz === data.timezone);
-      } catch {
-        setTimezoneMatch(true);
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Failed to inspect IP address.');
+        setReport(null);
+      } else {
+        setReport(data);
+        // Verify browser timezone against report timezone
+        try {
+          const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          setTimezoneMatch(browserTz === data.timezone);
+        } catch {
+          setTimezoneMatch(true);
+        }
       }
     } catch (err) {
-      console.error(err);
+      setErrorMsg(
+        err instanceof Error
+          ? err.message
+          : 'Network error querying IP inspection API.',
+      );
+      setReport(null);
     } finally {
       setScanStep('done');
       setLoading(false);
     }
   };
+
+  // Run the diagnostic once after the first paint.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchIpData('');
+      detectWebRtc();
+    }, 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,10 +132,10 @@ export default function IpCheckerPage() {
               <span>Free Network Diagnostic Suite</span>
             </div>
             <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[#0F172A] tracking-tight">
-              IP Fraud &amp; WebRTC Leak Checker
+              IP fraud checker
             </h1>
-            <p className="text-sm sm:text-base text-[#64748B] mt-2 leading-relaxed">
-              Inspect IPQualityScore risk ratings, ASN carrier ownership, WebRTC candidate leaks, and hosting detection flags in real time.
+            <p className="mt-2 max-w-xl text-sm text-slate-600 sm:text-base">
+              Check any IP for fraud score, carrier and hosting flags.
             </p>
           </div>
 
@@ -165,6 +179,13 @@ export default function IpCheckerPage() {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
+          {errorMsg && (
+            <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm flex items-center gap-3">
+              <AlertTriangle size={18} className="flex-shrink-0 text-rose-600" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
           {report && (
             <div className="rounded-2xl bg-white border border-[#E2E8F0] shadow-sm overflow-hidden">
               
@@ -183,6 +204,11 @@ export default function IpCheckerPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  {report.isDemoSample && (
+                    <span className="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-mono font-semibold">
+                      Demo Sample Host
+                    </span>
+                  )}
                   <button
                     onClick={() => handleCopy(report.ip, 'main-ip')}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 transition-colors"

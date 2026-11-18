@@ -30,13 +30,13 @@ export default function BlogIndexPage() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#2563EB] text-xs font-semibold mb-3">
               <BookOpen size={14} />
-              <span>Engineering Knowledge Base</span>
+              <span>Guides</span>
             </div>
             <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[#0F172A] tracking-tight">
-              primevpsbd Engineering Blog
+Guides &amp; how-tos
             </h1>
             <p className="text-sm sm:text-base text-[#64748B] mt-2 leading-relaxed">
-              Practical guides for VPS sizing, residential IP security, WebRTC leakage prevention, and cloud infrastructure.
+              Short, practical guides to servers, IPs and infrastructure.
             </p>
           </div>
 

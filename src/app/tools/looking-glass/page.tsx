@@ -50,8 +50,8 @@ export default function LookingGlassPage() {
             <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[#0F172A] tracking-tight">
               Looking Glass
             </h1>
-            <p className="text-sm sm:text-base text-[#64748B] mt-2 leading-relaxed">
-              Network diagnostics for route, peering, and latency verification directly from our US core edge routers.
+            <p className="mt-2 max-w-xl text-sm text-slate-600 sm:text-base">
+              Test routes and latency from our US edge routers.
             </p>
           </div>
         </div>

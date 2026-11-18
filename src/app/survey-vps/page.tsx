@@ -1,261 +1,241 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useCurrency } from '@/lib/currency';
-import { ISP_PLANS, CARRIERS, IspPlan } from '@/lib/data/plans';
-import { CheckoutDrawer } from '@/components/sections/isp/CheckoutDrawer';
-import {
-  ShieldCheck,
-  Zap,
-  Cpu,
-  HardDrive,
-  Wifi,
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  Users,
-} from 'lucide-react';
+import { CheckoutDrawer } from "@/components/sections/isp/CheckoutDrawer";
+import { useCurrency } from "@/lib/currency";
+import { CARRIERS, ISP_PLANS, IspPlan } from "@/lib/data/plans";
+import { ArrowRight, Check, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+
+const CYCLES = [
+  { id: "monthly", label: "Monthly", months: 1, discount: 0 },
+  { id: "quarterly", label: "3 months", months: 3, discount: 0.05 },
+  { id: "annual", label: "12 months", months: 12, discount: 0.15 },
+] as const;
+
+type BillingCycle = (typeof CYCLES)[number]["id"];
 
 export default function SurveyVpsPage() {
   const { formatPrice } = useCurrency();
-  const [selectedCarrier, setSelectedCarrier] = useState('All');
+  const [selectedCarrier, setSelectedCarrier] = useState("All");
   const [isFresh, setIsFresh] = useState(false);
-  const [activePlanForCheckout, setActivePlanForCheckout] = useState<IspPlan | null>(null);
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const [activePlan, setActivePlan] = useState<IspPlan | null>(null);
 
-  // Filter plans based on carrier
-  const filteredPlans = ISP_PLANS.filter((plan) => {
-    if (selectedCarrier === 'All') return true;
-    return plan.carriers.includes(selectedCarrier);
-  });
+  const cycle = CYCLES.find((item) => item.id === billingCycle) ?? CYCLES[0];
+
+  const plans = ISP_PLANS.filter(
+    (plan) => selectedCarrier === "All" || plan.carriers.includes(selectedCarrier),
+  );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      
-      {/* Page Header */}
-      <section className="bg-white border-b border-[#E2E8F0] pt-12 pb-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#2563EB] text-xs font-semibold mb-3">
-              <ShieldCheck size={14} />
-              <span>Dedicated Static Residential ASN</span>
-            </div>
-            <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[#0F172A] tracking-tight">
-              Dedicated Static Residential ISP VPS
-            </h1>
-            <p className="text-sm sm:text-base text-[#64748B] mt-2 leading-relaxed">
-              Clean AT&amp;T, Comcast, and Verizon IPs bound directly to KVM hypervisors. Zero WebRTC exposure, zero DNS leakage, and native residential TCP window sizes.
-            </p>
-          </div>
+    <div className="bg-slate-50">
+      <section className="relative isolate overflow-hidden bg-slate-950">
+        <Image
+          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=75"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/30" />
+
+        <div className="shell relative z-10 py-14 sm:py-16">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-white">
+            <ShieldCheck size={14} />
+            Static residential ISP
+          </span>
+          <h1 className="mt-4 max-w-2xl font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            Clean US residential IPs
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
+            AT&amp;T, Comcast and Verizon addresses on a hardened Windows
+            desktop. Online in 90 seconds.
+          </p>
         </div>
       </section>
 
-      {/* Sticky Interactive Filter Bar */}
-      <section className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          
-          {/* Carrier Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-            <span className="text-xs font-bold text-[#64748B] mr-2 uppercase tracking-wider hidden sm:inline">
-              Carrier:
+      <section className="border-b border-slate-200 bg-white">
+        <div className="shell flex flex-col gap-4 py-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+            <span className="mr-1 hidden text-xs font-semibold text-slate-500 sm:inline">
+              Carrier
             </span>
             {CARRIERS.map((carrier) => (
               <button
                 key={carrier}
                 onClick={() => setSelectedCarrier(carrier)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
                   selectedCarrier === carrier
-                    ? 'bg-[#2563EB] text-white shadow-xs'
-                    : 'bg-slate-100 text-[#64748B] hover:text-[#0F172A] hover:bg-slate-200/70'
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                {carrier === 'All' ? 'All Carriers' : carrier}
+                {carrier === "All" ? "All" : carrier}
               </button>
             ))}
           </div>
 
-          {/* IP Type Switcher (Used vs Fresh) */}
-          <div className="flex items-center gap-3 self-end md:self-auto">
-            <div className="inline-flex items-center p-1 bg-slate-100 border border-[#E2E8F0] rounded-xl text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => setIsFresh(false)}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
-                  !isFresh
-                    ? 'bg-white text-[#0F172A] shadow-xs font-bold'
-                    : 'text-[#64748B] hover:text-[#0F172A]'
-                }`}
-              >
-                Clean Screened ISP IP
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsFresh(true)}
-                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
-                  isFresh
-                    ? 'bg-[#2563EB] text-white shadow-xs font-bold'
-                    : 'text-[#64748B] hover:text-[#0F172A]'
-                }`}
-              >
-                <Sparkles size={12} className={isFresh ? 'text-amber-300' : ''} />
-                <span>100% Virgin Fresh IP</span>
-              </button>
-            </div>
+          <div className="inline-flex self-start rounded-xl bg-slate-100 p-1 text-sm font-medium md:self-auto">
+            <button
+              onClick={() => setIsFresh(false)}
+              className={`rounded-lg px-3 py-1.5 transition-colors ${
+                !isFresh ? "bg-white text-slate-900 shadow-sm" : "text-slate-600"
+              }`}
+            >
+              Clean screened IP
+            </button>
+            <button
+              onClick={() => setIsFresh(true)}
+              className={`rounded-lg px-3 py-1.5 transition-colors ${
+                isFresh ? "bg-white text-slate-900 shadow-sm" : "text-slate-600"
+              }`}
+            >
+              Virgin IP
+            </button>
           </div>
-
         </div>
       </section>
 
-      {/* 3-Tier Pricing Grid */}
-      <section className="py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {filteredPlans.map((plan) => {
-              const currentPrice = isFresh ? plan.priceFreshBdt : plan.priceBdt;
-              const isPro = plan.tier === 'pro';
+      <section className="section">
+        <div className="shell">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="font-display text-xl font-bold text-slate-900">
+                Choose a plan
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                All plans include full administrator access and a dedicated
+                IPv4 address.
+              </p>
+            </div>
 
-              return (
-                <div
-                  key={plan.id}
-                  className={`rounded-2xl bg-white p-7 sm:p-8 flex flex-col justify-between transition-all duration-200 relative ${
-                    isPro
-                      ? 'border-2 border-[#2563EB] shadow-xl md:-translate-y-2'
-                      : 'border border-[#E2E8F0] shadow-sm hover:shadow-md'
+            <div className="inline-flex self-start rounded-xl bg-slate-200/70 p-1 text-sm font-medium">
+              {CYCLES.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setBillingCycle(item.id)}
+                  className={`rounded-lg px-3 py-1.5 transition-colors ${
+                    billingCycle === item.id
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  {/* Top Badge */}
-                  {plan.badge && (
-                    <div className="absolute -top-3.5 right-6 px-3 py-1 rounded-full bg-[#2563EB] text-white text-[11px] font-bold uppercase tracking-wider shadow-xs">
-                      {plan.badge}
-                    </div>
+                  {item.label}
+                  {item.discount > 0 && (
+                    <span className="ml-1.5 text-xs text-emerald-700">
+                      −{item.discount * 100}%
+                    </span>
                   )}
+                </button>
+              ))}
+            </div>
+          </div>
 
-                  <div className="space-y-6">
-                    {/* Title & Tagline */}
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-display font-extrabold text-xl text-[#0F172A]">
-                          {plan.name}
-                        </h3>
-                        {/* Live Stock Badge */}
-                        <div className="flex items-center gap-1 text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-dot" />
-                          <span>{plan.stockCount} in stock</span>
-                        </div>
-                      </div>
-                      <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed">
-                        {plan.tagline}
-                      </p>
-                    </div>
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            {plans.map((plan) => {
+              const listPrice = isFresh ? plan.priceFreshBdt : plan.priceBdt;
+              const monthly = Math.round(listPrice * (1 - cycle.discount));
+              const total = monthly * cycle.months;
+              const featured = plan.tier === "pro";
 
-                    {/* Pricing */}
-                    <div className="py-2 border-y border-slate-100 flex items-baseline gap-2">
-                      <span className="font-display font-extrabold text-3xl sm:text-4xl text-[#0F172A] tracking-tight">
-                        {formatPrice(currentPrice)}
+              return (
+                <article
+                  key={plan.id}
+                  className={`flex flex-col rounded-2xl border bg-white p-6 ${
+                    featured
+                      ? "border-blue-600 shadow-lg shadow-blue-600/5"
+                      : "border-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-display text-lg font-bold text-slate-900">
+                      {plan.name}
+                    </h3>
+                    <span className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                      <span className="size-1.5 rounded-full bg-emerald-500" />
+                      {plan.stockCount} in stock
+                    </span>
+                  </div>
+
+                  <p className="mt-1 text-sm text-slate-600">{plan.tagline}</p>
+
+                  <div className="mt-5 border-y border-slate-100 py-4">
+                    <p className="font-display text-3xl font-extrabold tracking-tight text-slate-900">
+                      {formatPrice(monthly)}
+                      <span className="text-sm font-normal text-slate-500">
+                        {" "}
+                        /mo
                       </span>
-                      <span className="text-xs text-[#64748B]">/ month</span>
-                    </div>
-
-                    {/* Spec Chips (4-Box Grid) */}
-                    <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[#64748B] text-[10px] block uppercase">vCPU Cores</span>
-                        <span className="font-semibold text-[#0F172A]">{plan.specs.vcpu} vCPU Dedicated</span>
-                      </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[#64748B] text-[10px] block uppercase">ECC Memory</span>
-                        <span className="font-semibold text-[#0F172A]">{plan.specs.ram} GB DDR4/DDR5</span>
-                      </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[#64748B] text-[10px] block uppercase">NVMe Storage</span>
-                        <span className="font-semibold text-[#0F172A]">{plan.specs.nvme} GB Fast Disk</span>
-                      </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[#64748B] text-[10px] block uppercase">Bandwidth</span>
-                        <span className="font-semibold text-[#0F172A]">{plan.specs.bandwidth} Port</span>
-                      </div>
-                    </div>
-
-                    {/* Key Technical Highlights */}
-                    <ul className="space-y-2 text-xs text-[#0F172A] pt-2">
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 size={15} className="text-emerald-600 flex-shrink-0" />
-                        <span>Pre-hardened {plan.os} with Zero Leak</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 size={15} className="text-emerald-600 flex-shrink-0" />
-                        <span>Dedicated Static ISP IP ({selectedCarrier === 'All' ? 'AT&T / Comcast' : selectedCarrier})</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 size={15} className="text-emerald-600 flex-shrink-0" />
-                        <span>Automated &lt; 90s Provisioning Guarantee</span>
-                      </li>
-                      {plan.tier === 'vip' && (
-                        <li className="flex items-center gap-2 font-semibold text-[#2563EB]">
-                          <Sparkles size={15} className="flex-shrink-0" />
-                          <span>1 Free IP Replacement within 7 Days</span>
-                        </li>
-                      )}
-                    </ul>
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {cycle.months === 1
+                        ? "Billed monthly, cancel anytime"
+                        : `Billed ${formatPrice(total)} every ${cycle.months} months`}
+                    </p>
                   </div>
 
-                  {/* Deploy Button */}
-                  <div className="pt-8">
-                    <button
-                      onClick={() => setActivePlanForCheckout(plan)}
-                      className={`w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-sm ${
-                        isPro
-                          ? 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-md hover:shadow-lg'
-                          : 'bg-slate-900 hover:bg-slate-800 text-white'
-                      }`}
-                    >
-                      <span>Deploy {plan.name}</span>
-                      <ArrowRight size={16} />
-                    </button>
-                  </div>
-                </div>
+                  <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                    {[
+                      ["CPU", `${plan.specs.vcpu} vCPU`],
+                      ["RAM", `${plan.specs.ram} GB`],
+                      ["NVMe", `${plan.specs.nvme} GB`],
+                      ["Port", plan.specs.bandwidth],
+                    ].map(([label, value]) => (
+                      <div key={label}>
+                        <dt className="text-xs text-slate-500">{label}</dt>
+                        <dd className="font-medium text-slate-900">{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+
+                  <ul className="mt-4 space-y-2 text-sm text-slate-700">
+                    <li className="flex items-center gap-2">
+                      <Check size={15} className="text-emerald-600" />
+                      Pre-hardened {plan.os}
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check size={15} className="text-emerald-600" />
+                      Static {selectedCarrier === "All" ? "ISP" : selectedCarrier} IP
+                    </li>
+                  </ul>
+
+                  <button
+                    onClick={() => setActivePlan(plan)}
+                    className={`mt-6 w-full ${
+                      featured ? "btn-primary" : "btn-outline"
+                    }`}
+                  >
+                    Deploy this plan
+                    <ArrowRight size={15} />
+                  </button>
+                </article>
               );
             })}
           </div>
 
-        </div>
-      </section>
-
-      {/* Reseller Banner */}
-      <section className="pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl bg-gradient-to-r from-slate-900 to-[#0F172A] p-8 sm:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-slate-800">
-            <div className="space-y-2 max-w-2xl">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold">
-                <Users size={13} />
-                <span>Agency &amp; Team Program</span>
-              </div>
-              <h3 className="font-display font-bold text-xl sm:text-2xl">
-                Ordering 10+ VPS for your survey team or agency?
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300">
-                Get up to 20% recurring volume discount, dedicated account manager, and private carrier subnet allocation.
-              </p>
-            </div>
+          <p className="mt-8 text-sm text-slate-600">
+            Need 10 or more servers?{" "}
             <Link
               href="/resellers"
-              className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-[#0F172A] font-semibold text-sm transition-all whitespace-nowrap shadow-md"
+              className="font-semibold text-blue-700 hover:underline"
             >
-              Explore Reseller Program →
+              See volume pricing
             </Link>
-          </div>
+            .
+          </p>
         </div>
       </section>
 
-      {/* Slide-over Checkout Drawer */}
       <CheckoutDrawer
-        plan={activePlanForCheckout}
+        plan={activePlan}
         carrier={selectedCarrier}
         isFresh={isFresh}
-        onClose={() => setActivePlanForCheckout(null)}
+        initialBillingCycle={billingCycle}
+        onClose={() => setActivePlan(null)}
       />
-
     </div>
   );
 }

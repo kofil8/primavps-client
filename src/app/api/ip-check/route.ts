@@ -17,6 +17,7 @@ export interface IpReport {
   torDetected: boolean;
   timezone: string;
   checkedAt: string;
+  isDemoSample?: boolean;
 }
 
 export async function GET(request: NextRequest) {
@@ -33,9 +34,16 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Handle local dev or empty IP
-  if (!queryIp || queryIp === '::1' || queryIp === '127.0.0.1' || queryIp.startsWith('192.168.') || queryIp.startsWith('10.')) {
-    // Return sample AT&T node inspection so UI is beautiful during testing
+  // Handle local development or private loopback IP by providing a labeled demo sample
+  const isLocalOrPrivate =
+    !queryIp ||
+    queryIp === '::1' ||
+    queryIp === '127.0.0.1' ||
+    queryIp.startsWith('192.168.') ||
+    queryIp.startsWith('10.') ||
+    queryIp.startsWith('172.');
+
+  if (isLocalOrPrivate) {
     return NextResponse.json<IpReport>({
       ip: queryIp || '108.204.142.88',
       city: 'Dallas',
@@ -53,23 +61,31 @@ export async function GET(request: NextRequest) {
       torDetected: false,
       timezone: 'America/Chicago',
       checkedAt: new Date().toISOString(),
+      isDemoSample: true,
     });
   }
 
   try {
     // Query ip-api.com
-    const res = await fetch(`http://ip-api.com/json/${queryIp}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query`, {
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `http://ip-api.com/json/${encodeURIComponent(queryIp)}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query`,
+      { cache: 'no-store' }
+    );
 
     if (!res.ok) {
-      throw new Error('Failed to query IP provider');
+      return NextResponse.json(
+        { error: 'Upstream threat intelligence service unavailable. Please try again later.' },
+        { status: 502 }
+      );
     }
 
     const data = await res.json();
 
     if (data.status !== 'success') {
-      return NextResponse.json({ error: data.message || 'Invalid IP' }, { status: 400 });
+      return NextResponse.json(
+        { error: data.message || `Invalid or unresolvable IP address: ${queryIp}` },
+        { status: 400 }
+      );
     }
 
     // Classify hosting vs residential
@@ -87,6 +103,7 @@ export async function GET(request: NextRequest) {
       orgLower.includes('hetzner') ||
       orgLower.includes('vultr') ||
       orgLower.includes('cloudflare') ||
+      asLower.includes('hosting') ||
       ispLower.includes('hosting') ||
       ispLower.includes('datacenter');
 
@@ -111,30 +128,15 @@ export async function GET(request: NextRequest) {
       torDetected: false,
       timezone: data.timezone || 'UTC',
       checkedAt: new Date().toISOString(),
+      isDemoSample: false,
     };
 
     return NextResponse.json(report);
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      {
-        ip: queryIp,
-        city: 'Dallas',
-        region: 'Texas',
-        country: 'United States',
-        countryCode: 'US',
-        asn: 'AS7018',
-        org: 'AT&T Services, Inc.',
-        isp: 'AT&T Broadband',
-        usageType: 'ISP / Residential',
-        fraudScore: 0,
-        riskBand: 'low',
-        proxyDetected: false,
-        vpnDetected: false,
-        torDetected: false,
-        timezone: 'America/Chicago',
-        checkedAt: new Date().toISOString(),
-      },
-      { status: 200 }
+      { error: 'Failed to inspect IP address due to an upstream network timeout.', details: message },
+      { status: 502 }
     );
   }
 }

@@ -1,6 +1,8 @@
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
+import { StickySocialBar } from "@/components/ui/StickySocialBar";
 import { CurrencyProvider } from "@/lib/currency";
 import { bodyFont, displayFont, monoFont } from "@/lib/fonts";
 import type { Metadata } from "next";
@@ -47,12 +49,14 @@ export default function RootLayout({
       lang="en"
       className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-white text-[#0F172A] antialiased selection:bg-blue-100 selection:text-blue-900">
+      <body className="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
         <CurrencyProvider>
           <AnnouncementBar />
           <Navbar />
-          <div className="flex-1">{children}</div>
+          <main className="flex-1">{children}</main>
           <Footer />
+          <StickySocialBar />
+          <FloatingWhatsApp />
         </CurrencyProvider>
       </body>
     </html>

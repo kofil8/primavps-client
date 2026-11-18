@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useSyncExternalStore, ReactNode } from 'react';
 
 export type Currency = 'BDT' | 'USD';
 export const BDT_TO_USD = 0.0082; // 1 BDT ≈ $0.0082 (or ~$1 = 122 BDT)
@@ -14,19 +14,38 @@ interface CurrencyContextType {
 
 const CurrencyContext = createContext<CurrencyContextType | null>(null);
 
-export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrencyState] = useState<Currency>('BDT');
+const CURRENCY_STORAGE_KEY = 'primevps_currency';
+const CURRENCY_CHANGE_EVENT = 'pv-currency-changed';
 
-  useEffect(() => {
-    const saved = localStorage.getItem('primevps_currency') as Currency;
-    if (saved === 'BDT' || saved === 'USD') {
-      setCurrencyState(saved);
-    }
-  }, []);
+function subscribeToCurrency(callback: () => void) {
+  window.addEventListener('storage', callback);
+  window.addEventListener(CURRENCY_CHANGE_EVENT, callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener(CURRENCY_CHANGE_EVENT, callback);
+  };
+}
+
+function getCurrencySnapshot(): Currency {
+  const saved = localStorage.getItem(CURRENCY_STORAGE_KEY);
+  if (saved === 'USD' || saved === 'BDT') return saved;
+  return 'BDT';
+}
+
+function getServerCurrencySnapshot(): Currency {
+  return 'BDT';
+}
+
+export function CurrencyProvider({ children }: { children: ReactNode }) {
+  const currency = useSyncExternalStore(
+    subscribeToCurrency,
+    getCurrencySnapshot,
+    getServerCurrencySnapshot
+  );
 
   const setCurrency = (c: Currency) => {
-    setCurrencyState(c);
-    localStorage.setItem('primevps_currency', c);
+    localStorage.setItem(CURRENCY_STORAGE_KEY, c);
+    window.dispatchEvent(new Event(CURRENCY_CHANGE_EVENT));
   };
 
   const formatPrice = (bdt: number): string => {

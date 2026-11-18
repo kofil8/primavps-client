@@ -1,173 +1,188 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Mail, MessageSquare, Clock, ShieldCheck, Check } from 'lucide-react';
+import { Check, Mail, MessageCircle, Phone } from "lucide-react";
+import { useState } from "react";
+
+const CHANNELS = [
+  {
+    icon: MessageCircle,
+    title: "WhatsApp",
+    value: "+880 9606-PRIME",
+    note: "Fastest — about 3 minutes",
+  },
+  {
+    icon: Mail,
+    title: "Email",
+    value: "support@primevpsbd.com",
+    note: "Replies within 15 minutes",
+  },
+  {
+    icon: Phone,
+    title: "Phone",
+    value: "+880 9606-PRIME",
+    note: "24/7 Dhaka operations desk",
+  },
+];
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', subject: 'Technical Support', message: '' });
+  const [ticketId, setTicketId] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "Technical support",
+    message: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    setTicketId(`PV-${Math.floor(1000 + Math.random() * 9000)}`);
     setSubmitted(true);
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      
-      {/* Header */}
-      <section className="bg-white border-b border-[#E2E8F0] pt-12 pb-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[#0F172A] tracking-tight">
-              Contact Engineering &amp; Operations
-            </h1>
-            <p className="text-sm sm:text-base text-[#64748B] mt-2 leading-relaxed">
-              Direct access to our infrastructure engineers. We respond to technical inquiries and provisioning support 24/7.
-            </p>
-          </div>
+    <div className="bg-slate-50">
+      <section className="border-b border-slate-200 bg-white">
+        <div className="shell py-12 sm:py-14">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            Talk to our team
+          </h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+            Engineers in Dhaka, 24/7. Pick whichever channel suits you.
+          </p>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-12">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            
-            {/* Contact Information (5 cols) */}
-            <div className="md:col-span-5 space-y-6">
-              <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
-                <h3 className="font-display font-bold text-base text-[#0F172A]">
-                  Direct Support Channels
-                </h3>
-
-                <div className="space-y-4 text-xs sm:text-sm text-[#0F172A]">
-                  <div className="flex items-start gap-3">
-                    <Mail size={18} className="text-[#2563EB] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <span className="font-semibold block">Email Support</span>
-                      <span className="text-[#64748B]">support@primevpsbd.com</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <MessageSquare size={18} className="text-[#2563EB] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <span className="font-semibold block">Instant Telegram Support</span>
-                      <span className="text-[#64748B]">@primevpsbd_ops</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Clock size={18} className="text-[#2563EB] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <span className="font-semibold block">SLA Response Window</span>
-                      <span className="text-[#64748B]">&lt; 15 minutes for critical tickets</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-slate-900 text-white shadow-xs space-y-2">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                  <ShieldCheck size={16} />
-                  <span>Automated Operations</span>
-                </div>
-                <h4 className="font-display font-bold text-sm text-white">
-                  Server Already Active?
-                </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  You can perform hard reboots, OS reinstallations, and inspect IP routing health directly inside your Client Dashboard without opening a ticket.
-                </p>
-              </div>
-            </div>
-
-            {/* Contact Form (7 cols) */}
-            <div className="md:col-span-7 bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs">
-              {submitted ? (
-                <div className="py-12 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-                    <Check size={24} />
-                  </div>
-                  <h3 className="font-display font-bold text-xl text-[#0F172A]">
-                    Message Dispatched
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[#64748B] max-w-sm mx-auto">
-                    Your inquiry has been assigned ticket ID #PV-{Math.floor(1000 + Math.random() * 9000)}. An engineer will reply shortly.
+      <section className="section">
+        <div className="shell grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="space-y-3">
+            {CHANNELS.map((channel) => (
+              <div
+                key={channel.title}
+                className="card flex items-start gap-3 p-4"
+              >
+                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-600">
+                  <channel.icon size={17} />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {channel.title}
+                  </p>
+                  <p className="text-sm text-slate-700">{channel.value}</p>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    {channel.note}
                   </p>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <h3 className="font-display font-bold text-lg text-[#0F172A]">
-                    Submit a Ticket
-                  </h3>
+              </div>
+            ))}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[#0F172A]">Your Name</label>
-                      <input
-                        type="text"
-                        required
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        placeholder="e.g. Asif Mahmud"
-                        className="w-full px-3 py-2.5 border border-[#E2E8F0] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[#2563EB]"
-                      />
-                    </div>
+            <div className="rounded-2xl bg-slate-900 p-5 text-sm text-slate-300">
+              <p className="font-semibold text-white">Already a customer?</p>
+              <p className="mt-1 leading-6">
+                Reboot, reinstall and check IP health from the client area — no
+                ticket needed.
+              </p>
+            </div>
+          </div>
 
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[#0F172A]">Email Address</label>
-                      <input
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        placeholder="asif@domain.com"
-                        className="w-full px-3 py-2.5 border border-[#E2E8F0] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[#2563EB]"
-                      />
-                    </div>
-                  </div>
+          <div className="card p-6 sm:p-8">
+            {submitted ? (
+              <div className="py-12 text-center">
+                <span className="mx-auto grid size-12 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+                  <Check size={24} />
+                </span>
+                <h2 className="mt-4 font-display text-xl font-bold text-slate-900">
+                  Message sent
+                </h2>
+                <p className="mt-2 text-sm text-slate-600">
+                  Ticket #{ticketId} is with our team. We reply by email.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <h2 className="font-display text-lg font-bold text-slate-900">
+                  Send a message
+                </h2>
 
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-[#0F172A]">Department</label>
-                    <select
-                      value={form.subject}
-                      onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      className="w-full px-3 py-2.5 border border-[#E2E8F0] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[#2563EB] bg-white"
-                    >
-                      <option value="Technical Support">Technical &amp; RDP Support</option>
-                      <option value="Billing & Payments">Billing &amp; bKash/Nagad Payment Verification</option>
-                      <option value="IP Screening & Verification">IP Screening &amp; Replacement Inquiry</option>
-                      <option value="Custom Infrastructure">Enterprise &amp; Custom Subnet Request</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-[#0F172A]">Message Details</label>
-                    <textarea
-                      rows={4}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="name" className="label mb-1.5">
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
                       required
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      placeholder="Please include your VPS IP or Order ID if relevant..."
-                      className="w-full px-3 py-2.5 border border-[#E2E8F0] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[#2563EB]"
+                      value={form.name}
+                      onChange={(event) =>
+                        setForm({ ...form, name: event.target.value })
+                      }
+                      placeholder="Asif Mahmud"
+                      className="field"
                     />
                   </div>
+                  <div>
+                    <label htmlFor="email" className="label mb-1.5">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      value={form.email}
+                      onChange={(event) =>
+                        setForm({ ...form, email: event.target.value })
+                      }
+                      placeholder="you@company.com"
+                      className="field"
+                    />
+                  </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs sm:text-sm rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                <div>
+                  <label htmlFor="subject" className="label mb-1.5">
+                    Topic
+                  </label>
+                  <select
+                    id="subject"
+                    value={form.subject}
+                    onChange={(event) =>
+                      setForm({ ...form, subject: event.target.value })
+                    }
+                    className="field"
                   >
-                    Send Message to Engineering
-                  </button>
-                </form>
-              )}
-            </div>
+                    <option>Technical support</option>
+                    <option>Billing &amp; payments</option>
+                    <option>IP replacement</option>
+                    <option>Custom infrastructure</option>
+                  </select>
+                </div>
 
+                <div>
+                  <label htmlFor="message" className="label mb-1.5">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    rows={5}
+                    required
+                    value={form.message}
+                    onChange={(event) =>
+                      setForm({ ...form, message: event.target.value })
+                    }
+                    placeholder="Include your server IP or order number if relevant."
+                    className="field"
+                  />
+                </div>
+
+                <button type="submit" className="btn-primary w-full">
+                  Send message
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </section>
-
     </div>
   );
 }
