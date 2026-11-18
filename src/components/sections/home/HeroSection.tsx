@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { BkashLogo, NagadLogo } from "@/components/ui/PaymentLogos";
+import { BkashLogo, NagadLogo, VisaLogo, UsdtLogo } from "@/components/ui/PaymentLogos";
 import {
   FaFacebookF,
   FaLinkedinIn,
@@ -217,24 +217,10 @@ export function HeroSection() {
             <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
               পেমেন্ট করুন:
             </span>
-            {/* bKash */}
-            <div className="flex items-center gap-1.5 rounded-xl border border-pink-100 bg-pink-50 px-3 py-1.5 shadow-xs">
-              <BkashLogo className="h-4 w-4" />
-              <span className="text-[11px] font-bold text-pink-700">bKash</span>
-            </div>
-            {/* Nagad */}
-            <div className="flex items-center gap-1.5 rounded-xl border border-orange-100 bg-orange-50 px-3 py-1.5 shadow-xs">
-              <NagadLogo className="h-4 w-4" />
-              <span className="text-[11px] font-bold text-orange-600">
-                Nagad
-              </span>
-            </div>
-            <span className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 shadow-xs">
-              Visa / Mastercard
-            </span>
-            <span className="rounded-xl border border-teal-100 bg-teal-50 px-3 py-1.5 text-[11px] font-bold text-teal-700 shadow-xs">
-              USDT
-            </span>
+            <BkashLogo className="h-8 w-auto" />
+            <NagadLogo className="h-8 w-auto" />
+            <VisaLogo className="h-7 w-auto" />
+            <UsdtLogo className="h-8 w-auto" />
           </motion.div>
 
           {/* ── PROMISE CHECKLIST ── */}

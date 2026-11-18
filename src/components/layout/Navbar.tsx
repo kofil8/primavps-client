@@ -6,6 +6,7 @@ import {
   ArrowRight,
   ChevronDown,
   Cpu,
+  Flame,
   Menu,
   Search,
   Server,
@@ -45,6 +46,7 @@ const TOOL_LINKS = [
 ];
 
 const MOBILE_LINKS = [
+  { href: "/hot-deals", label: "🔥 Hot Deals", hot: true },
   { href: "/cloud-vps", label: "Cloud VPS" },
   { href: "/survey-vps", label: "Residential ISP" },
   { href: "/resellers", label: "Resellers" },
@@ -189,6 +191,17 @@ export function Navbar() {
             )}
           </div>
 
+          <Link
+            href="/hot-deals"
+            className="group relative flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50"
+          >
+            <Flame size={15} className="text-rose-500 transition-transform group-hover:scale-110" />
+            <span>Hot Deals</span>
+            <span className="rounded-full bg-rose-600 px-1.5 py-0.2 text-[10px] font-extrabold tracking-wide text-white shadow-xs animate-pulse">
+              HOT
+            </span>
+          </Link>
+
           <Link href="/status" className={navLink}>
             Network
           </Link>
@@ -260,7 +273,11 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={closeAll}
-                className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  item.hot
+                    ? "bg-rose-50 font-semibold text-rose-700 hover:bg-rose-100"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`}
               >
                 {item.label}
               </Link>

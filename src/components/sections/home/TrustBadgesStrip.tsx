@@ -1,12 +1,11 @@
 import { Reveal } from "@/components/ui/reveal";
 import { Lock, RefreshCw, ShieldCheck, Zap } from "lucide-react";
-import {
-  BkashLogo,
-  NagadLogo,
-  VisaLogo,
-  MastercardLogo,
-  UsdtLogo,
-} from "@/components/ui/PaymentLogos";
+// import {
+//   BkashLogo,
+//   NagadLogo,
+//   VisaLogo,
+//   UsdtLogo,
+// } from "@/components/ui/PaymentLogos";
 
 export function TrustBadgesStrip() {
   return (
@@ -36,25 +35,15 @@ export function TrustBadgesStrip() {
         </div>
 
         {/* Payment Badges */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mr-1">
             পেমেন্ট:
           </span>
-          <div className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 shadow-xs hover:border-pink-300 transition-colors">
-            <BkashLogo className="h-3.5 w-3.5" />
-          </div>
-          <div className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 shadow-xs hover:border-orange-300 transition-colors">
-            <NagadLogo className="h-3.5 w-3.5" />
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 shadow-xs">
-            <VisaLogo className="h-3 w-auto" />
-            <span className="h-3 w-px bg-slate-200" />
-            <MastercardLogo className="h-3.5 w-auto" />
-          </div>
-          <div className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 shadow-xs">
-            <UsdtLogo className="h-3.5 w-3.5" />
-          </div>
-        </div>
+          <BkashLogo className="h-8 w-auto" />
+          <NagadLogo className="h-8 w-auto" />
+          <VisaLogo className="h-7 w-auto" />
+          <UsdtLogo className="h-8 w-auto" />
+        </div> */}
       </Reveal>
     </section>
   );

@@ -5,6 +5,7 @@ const COLUMNS = [
   {
     title: "Servers",
     links: [
+      { href: "/hot-deals", label: "🔥 Hot Deals" },
       { href: "/cloud-vps", label: "Cloud VPS" },
       { href: "/survey-vps", label: "Residential ISP" },
       { href: "/resellers", label: "Reseller program" },
@@ -35,7 +36,6 @@ import {
   BkashLogo,
   NagadLogo,
   VisaLogo,
-  MastercardLogo,
   UsdtLogo,
 } from "@/components/ui/PaymentLogos";
 
@@ -93,20 +93,18 @@ export function Footer() {
             <span className="text-xs font-semibold text-slate-400">
               We accept:
             </span>
-            <div className="inline-flex items-center rounded-lg border border-slate-700 bg-white px-2.5 py-1">
-              <BkashLogo className="h-3.5 w-3.5" />
-            </div>
-            <div className="inline-flex items-center rounded-lg border border-slate-700 bg-white px-2.5 py-1">
-              <NagadLogo className="h-3.5 w-3.5" />
-            </div>
-            <div className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-white px-2.5 py-1">
-              <VisaLogo className="h-2.5 w-auto" />
-              <span className="h-3 w-px bg-slate-200" />
-              <MastercardLogo className="h-3 w-auto" />
-            </div>
-            <div className="inline-flex items-center rounded-lg border border-slate-700 bg-white px-2.5 py-1">
-              <UsdtLogo className="h-3 w-3" />
-            </div>
+            <span className="inline-flex items-center rounded-lg bg-gray-700 px-2 py-1">
+              <BkashLogo className="h-8 w-auto" />
+            </span>
+            <span className="inline-flex items-center rounded-lg bg-gray-700 px-2 py-1">
+              <NagadLogo className="h-8 w-auto" />
+            </span>
+            <span className="inline-flex items-center rounded-lg bg-gray-700 px-2 py-1">
+              <VisaLogo className="h-7 w-auto" />
+            </span>
+            <span className="inline-flex items-center rounded-lg bg-gray-700 px-2 py-1">
+              <UsdtLogo className="h-8 w-auto" />
+            </span>
           </div>
           <p className="flex items-center gap-2 text-xs text-slate-500">
             <ShieldCheck size={14} className="text-emerald-500" />
