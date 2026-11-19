@@ -5,7 +5,7 @@ import { SurveyFaq } from "@/components/sections/home/SurveyFaq";
 import { SurveyRdpPlans } from "@/components/sections/home/SurveyRdpPlans";
 import { TrustBadgesStrip } from "@/components/sections/home/TrustBadgesStrip";
 import { WhyTrustUs } from "@/components/sections/home/WhyTrustUs";
-import { StickyConversionBar } from "@/components/ui/StickyConversionBar";
+import { CookieConsentNotice } from "@/components/ui/CookieConsentNotice";
 
 export default function HomePage() {
   return (
@@ -31,8 +31,8 @@ export default function HomePage() {
       {/* 7. FAQ — 4 survey & residential RDP objection-handling questions */}
       <SurveyFaq />
 
-      {/* 8. Sticky conversion bar — appears on scroll */}
-      <StickyConversionBar />
+      {/* 8. Cookie consent notice — auto-hides after ~3s or on dismiss */}
+      <CookieConsentNotice />
     </>
   );
 }

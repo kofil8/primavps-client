@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { MapPin, Phone, ShieldCheck } from "lucide-react";
+import {
+  FaFacebookF,
+  FaLinkedinIn,
+  FaTwitter,
+  FaYoutube,
+} from "react-icons/fa";
 
 const COLUMNS = [
   {
@@ -112,10 +118,50 @@ export function Footer() {
           </p>
         </div>
 
-        <p className="mt-6 text-xs text-slate-500">
-          © {new Date().getFullYear()} primevpsbd.com · Banani, Dhaka · Dallas,
-          TX
-        </p>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-800/80 pt-6">
+          <p className="text-xs text-slate-500">
+            © {new Date().getFullYear()} primevpsbd.com · Banani, Dhaka · Dallas, TX
+          </p>
+
+          <div className="flex items-center gap-4 text-slate-400">
+            <a
+              href="https://facebook.com/primevpsbd"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="transition-colors hover:text-blue-400"
+            >
+              <FaFacebookF size={14} />
+            </a>
+            <a
+              href="https://youtube.com/@primevpsbd"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="transition-colors hover:text-red-500"
+            >
+              <FaYoutube size={15} />
+            </a>
+            <a
+              href="https://linkedin.com/company/primevpsbd"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="transition-colors hover:text-blue-500"
+            >
+              <FaLinkedinIn size={14} />
+            </a>
+            <a
+              href="https://twitter.com/primevpsbd"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter"
+              className="transition-colors hover:text-sky-400"
+            >
+              <FaTwitter size={14} />
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );

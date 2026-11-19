@@ -18,16 +18,11 @@ interface Message {
 // ─── Quick-reply chips ────────────────────────────────────────────────────────
 
 const QUICK_REPLIES = [
-  "VPS pricing koto?",
-  "Server location kothay?",
-  "Payment method ki ki?",
-  "Deploy time koto?",
-  "Support kothay pabo?",
   "Survey RDP pricing koto?",
-  "IP ki dedicated?",
-  "bKash/Nagad e pay korte pari?",
-  "IP flag hole ki hobe?",
-  "🟢 WhatsApp-এ Engineer-এর সাথে কথা বলুন",
+  "IP ki 100% dedicated?",
+  "bKash/Nagad e kivabe pay korbo?",
+  "IP flag hole free swap pabo?",
+  "🚨 জরুরি টেকনিক্যাল সাপোর্ট (WhatsApp)",
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -133,6 +128,13 @@ export function ChatWidget() {
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
+  // Listen for open-chat event dispatched from any button across the page
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("open-chat", handleOpen);
+    return () => window.removeEventListener("open-chat", handleOpen);
+  }, []);
+
   // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -150,8 +152,8 @@ export function ChatWidget() {
     const trimmed = text.trim();
     if (!trimmed || loading || streaming) return;
 
-    // WhatsApp chip — open in new tab instead of sending to AI
-    if (trimmed.includes("WhatsApp") && trimmed.startsWith("🟢")) {
+    // Emergency WhatsApp chip — open in new tab instead of sending to AI
+    if (trimmed.includes("WhatsApp") || trimmed.includes("জরুরি")) {
       window.open(WA_LINK, "_blank", "noopener,noreferrer");
       return;
     }

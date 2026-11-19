@@ -53,15 +53,14 @@ export function SurveyFaq() {
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20primevpsbd%20সার্ভার%20সম্পর্কে%20কিছু%20জানতে%20চাচ্ছি"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-xs font-bold text-white shadow-md shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("open-chat"))}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-md shadow-blue-600/20 transition-colors hover:bg-blue-700 cursor-pointer"
             >
               <MessageCircle size={16} />
-              WhatsApp-এ প্রশ্ন করুন
-            </Link>
+              লাইভ চ্যাটে প্রশ্ন করুন
+            </button>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-xs font-bold text-slate-700 shadow-2xs transition-colors hover:bg-slate-50"

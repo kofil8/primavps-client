@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Handle local development or private loopback IP by providing a labeled demo sample
+  // Handle local development or private loopback IP by providing a labeled realistic visitor connection
   const isLocalOrPrivate =
     !queryIp ||
     queryIp === '::1' ||
@@ -44,22 +44,23 @@ export async function GET(request: NextRequest) {
     queryIp.startsWith('172.');
 
   if (isLocalOrPrivate) {
+    // If no specific IP queried or query is localhost loopback, return realistic visitor ISP report
     return NextResponse.json<IpReport>({
-      ip: queryIp || '108.204.142.88',
-      city: 'Dallas',
-      region: 'Texas',
-      country: 'United States',
-      countryCode: 'US',
-      asn: 'AS7018',
-      org: 'AT&T Services, Inc.',
-      isp: 'AT&T U-verse Broadband',
+      ip: '103.114.98.42',
+      city: 'Dhaka',
+      region: 'Dhaka Division',
+      country: 'Bangladesh',
+      countryCode: 'BD',
+      asn: 'AS132062',
+      org: 'Bangladesh Fiber Broadband',
+      isp: 'Local Broadband ISP',
       usageType: 'ISP / Residential',
-      fraudScore: 0,
-      riskBand: 'low',
+      fraudScore: 82,
+      riskBand: 'high',
       proxyDetected: false,
       vpnDetected: false,
       torDetected: false,
-      timezone: 'America/Chicago',
+      timezone: 'Asia/Dhaka',
       checkedAt: new Date().toISOString(),
       isDemoSample: true,
     });

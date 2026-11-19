@@ -12,7 +12,6 @@ import {
   Globe,
   MapPin,
   MessageCircle,
-  RefreshCw,
   ShieldAlert,
   ShieldCheck,
   Zap,
@@ -32,8 +31,26 @@ const ISP_BULLETS = [
   "IPQS Fraud Score: 0/100 গ্যারান্টিযুক্ত ক্লিন IP",
   "৭ দিনের আনকন্ডিশনাল ফ্রি IP রিপ্লেসমেন্ট",
   "100% ডেডিকেটেড স্ট্যাটিক হোম ব্রডব্যান্ড (কোনো শেয়ারিং নেই)",
-  "ঢাকা ইঞ্জিনিয়ারিং ডেস্ক — WhatsApp-এ গড় ৩ মিনিটে সাপোর্ট",
+  "২৪/৭ লাইভ এআই চ্যাট ও ঢাকা বনানী টেকনিক্যাল সাপোর্ট",
 ];
+
+// Helper to sanitize IP display
+const getDisplayIp = (ip?: string) => {
+  if (!ip || ip === "::1" || ip === "127.0.0.1" || ip.startsWith("192.168.") || ip.startsWith("10.") || ip.startsWith("172.")) {
+    return "103.114.98.42";
+  }
+  return ip;
+};
+
+// Helper to get country flag dynamically
+const getCountryFlag = (code?: string) => {
+  if (!code || code === "BD") return "🇧🇩";
+  if (code === "US") return "🇺🇸";
+  if (code === "GB" || code === "UK") return "🇬🇧";
+  if (code === "DE") return "🇩🇪";
+  if (code === "FR") return "🇫🇷";
+  return "🌐";
+};
 
 export function HeroSection() {
   const { formatPrice } = useCurrency();
@@ -50,6 +67,10 @@ export function HeroSection() {
     navigator.clipboard.writeText("LAUNCH10");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleOpenChat = () => {
+    window.dispatchEvent(new CustomEvent("open-chat"));
   };
 
   // Auto-detect visitor's live IP connection on mount
@@ -106,13 +127,13 @@ export function HeroSection() {
       />
 
       {/* Top clean promo bar */}
-      {/* <div className="relative z-20 border-b border-slate-100 bg-slate-50/90 px-4 py-2 backdrop-blur-sm">
+      <div className="relative z-20 border-b border-slate-100 bg-slate-50/90 px-4 py-2 backdrop-blur-sm">
         <div className="shell flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs text-slate-600">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <button
               onClick={copyCode}
               type="button"
-              className="inline-flex items-center gap-1.5 font-bold text-blue-700 hover:text-blue-800 transition-colors"
+              className="inline-flex items-center gap-1.5 font-bold text-blue-700 hover:text-blue-800 transition-colors cursor-pointer"
             >
               <Zap size={13} className="text-amber-500" />
               কোড{" "}
@@ -123,21 +144,20 @@ export function HeroSection() {
             </button>
             <span className="hidden sm:inline-block h-3 w-px bg-slate-300" />
             <span className="inline-flex items-center gap-1.5 font-medium text-slate-700">
-              🇧🇩 বনানী, ঢাকা অফিস · ২৪/৭ লাইভ সাপোর্ট
+              🇧🇩 বনানী, ঢাকা অফিস · ২৪/৭ সাপোর্ট ডেস্ক
             </span>
           </div>
 
-          <Link
-            href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20কেনার%20আগে%20কিছু%20তথ্য%20জানতে%20চাচ্ছি"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
+          <button
+            type="button"
+            onClick={handleOpenChat}
+            className="hidden sm:inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-800 transition-colors cursor-pointer"
           >
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            WhatsApp হেল্পডেস্ক (গড় রিপ্লাই ৩ মিনিট)
-          </Link>
+            <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
+            লাইভ এআই হেল্পডেস্ক (তাৎক্ষণিক রিপ্লাই)
+          </button>
         </div>
-      </div> */}
+      </div>
 
       {/* Main hero grid */}
       <div className="shell relative z-10 grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-12 lg:gap-14 lg:py-20">
@@ -206,7 +226,7 @@ export function HeroSection() {
                     setSelectedCountry(country);
                     setCardTab("clean");
                   }}
-                  className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                     active
                       ? "border border-blue-600 bg-blue-600 text-white shadow-sm"
                       : "border border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
@@ -239,15 +259,14 @@ export function HeroSection() {
               <ArrowRight size={16} />
             </Link>
 
-            <Link
-              href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20কেনার%20আগে%20কিছু%20তথ্য%20জানতে%20চাচ্ছি"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl border border-emerald-300 bg-emerald-50 px-5 py-3.5 text-sm font-bold text-emerald-800 transition-all hover:bg-emerald-100"
+            <button
+              type="button"
+              onClick={handleOpenChat}
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-bold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-400 cursor-pointer"
             >
-              <MessageCircle size={16} className="text-emerald-600" />
-              <span>WhatsApp-এ কথা বলুন</span>
-            </Link>
+              <MessageCircle size={16} className="text-indigo-600" />
+              <span>লাইভ চ্যাটে প্রশ্ন করুন</span>
+            </button>
           </div>
 
           {/* Payment Partners */}
@@ -276,7 +295,7 @@ export function HeroSection() {
                 <button
                   type="button"
                   onClick={() => setCardTab("user")}
-                  className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
+                  className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all cursor-pointer ${
                     cardTab === "user"
                       ? "bg-white text-rose-700 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -292,7 +311,7 @@ export function HeroSection() {
                 <button
                   type="button"
                   onClick={() => setCardTab("clean")}
-                  className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
+                  className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all cursor-pointer ${
                     cardTab === "clean"
                       ? "bg-white text-emerald-800 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -307,7 +326,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* TAB CONTENT 1: User's Real Connection Hook (Shows Why They Get Banned) */}
+            {/* TAB CONTENT 1: User's Real Connection Hook */}
             {cardTab === "user" ? (
               <div className="p-6">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -319,7 +338,7 @@ export function HeroSection() {
                       <MapPin size={13} className="text-rose-600" />
                       {scanning
                         ? "কানেকশন স্ক্যান হচ্ছে..."
-                        : `${userReport?.ip || "103.xxx.xxx.xxx"}`}
+                        : getDisplayIp(userReport?.ip)}
                     </p>
                   </div>
                   <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 border border-rose-200">
@@ -333,21 +352,21 @@ export function HeroSection() {
                   <div className="flex items-center justify-between py-2.5">
                     <span className="text-slate-500">আপনার ডিটেক্টেড লোকেশন:</span>
                     <span className="font-bold text-slate-800">
-                      {userReport?.city || "Dhaka"}, {userReport?.country || "Bangladesh"} 🇧🇩
+                      {userReport?.city || "Dhaka"}, {userReport?.country || "Bangladesh"} {getCountryFlag(userReport?.countryCode)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
                     <span className="text-slate-500">ইন্টারনেট প্রোভাইডার (ISP):</span>
                     <span className="font-bold text-slate-800 max-w-[190px] truncate">
-                      {userReport?.isp || "Local ISP / Mobile"}
+                      {userReport?.isp || "Local Broadband ISP"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
                     <span className="text-slate-500">WebRTC / DNS লিক:</span>
                     <span className="font-bold text-rose-600">
-                      ⚠️ লোকাল বিডি আইপি লিক করে
+                      ⚠️ লোকাল আইপি লিক ডিটেক্টেড
                     </span>
                   </div>
 
@@ -361,7 +380,7 @@ export function HeroSection() {
                   <div className="flex items-center justify-between py-2.5">
                     <span className="text-slate-500">IPQS ফ্রড রিস্ক স্কোর:</span>
                     <span className="font-mono font-extrabold text-rose-600">
-                      {userReport?.fraudScore ? `${userReport.fraudScore} / 100` : "75–85 / 100 (Unsafe)"}
+                      {userReport?.fraudScore ? `${userReport.fraudScore} / 100` : "82 / 100 (High Risk)"}
                     </span>
                   </div>
                 </div>
@@ -371,7 +390,7 @@ export function HeroSection() {
                   <p className="flex items-start gap-1.5">
                     <AlertTriangle size={15} className="text-rose-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong>কেন ব্যান হয়?</strong> লোকাল বাংলাদেশি আইপি বা ফ্রি VPN দিয়ে Swagbucks, Prolific ও PayPal-এ ঢুকলে অবস্থান ও WebRTC লিকের কারণে অ্যাকাউন্ট স্থায়ীভাবে সাসপেন্ড হয়ে যায়।
+                      <strong>কেন ব্যান হয়?</strong> লোকাল আইপি বা সাধারণ VPN দিয়ে Swagbucks, Prolific ও PayPal-এ ঢুকলে ভৌগোলিক অবস্থান ও WebRTC লিকের কারণে অ্যাকাউন্ট সাথে সাথে স্থায়ীভাবে ব্যান হয়ে যায়।
                     </span>
                   </p>
                 </div>
@@ -381,7 +400,7 @@ export function HeroSection() {
                   <button
                     type="button"
                     onClick={() => setCardTab("clean")}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-blue-600/25 transition-all hover:brightness-110 active:scale-95"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-blue-600/25 transition-all hover:brightness-110 active:scale-95 cursor-pointer"
                   >
                     <span>আমাদের ০/১০০ ক্লিন আইপি নোড দেখুন</span>
                     <ChevronRight size={15} />
@@ -460,7 +479,7 @@ export function HeroSection() {
                   <p className="flex items-start gap-1.5">
                     <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong>৭ দিনের আনকন্ডিশনাল রিপ্লেসমেন্ট:</strong> কোনো কারণে আইপিতে সমস্যা হলে আমাদের বনানী সাপোর্ট ডেস্ক বিনামূল্যে সাথে সাথে ফ্রেশ আইপি সোয়াপ করে দেবে।
+                      <strong>৭ দিনের আনকন্ডিশনাল রিপ্লেসমেন্ট:</strong> কোনো কারণে আইপিতে সমস্যা হলে আমাদের সাপোর্ট ডেস্ক বিনামূল্যে সাথে সাথে ফ্রেশ আইপি সোয়াপ করে দেবে।
                     </span>
                   </p>
                 </div>

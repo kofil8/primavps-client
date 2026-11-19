@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/ui/reveal";
 import {
-  ArrowLeft,
   ArrowRight,
   CheckCircle2,
   ChevronLeft,
@@ -16,6 +15,7 @@ import Link from "next/link";
 
 interface Review {
   id: string;
+  category: "us" | "uk" | "eu";
   name: string;
   role: string;
   location: string;
@@ -30,12 +30,13 @@ interface Review {
 const REVIEWS: Review[] = [
   {
     id: "rev-1",
+    category: "us",
     name: "তানভীর আহমেদ",
     role: "Paid Survey & Research",
     location: "আগ্রাবাদ, চট্টগ্রাম",
     country: "US (AT&T)",
     countryFlag: "🇺🇸",
-    plan: "Popular Pro ISP",
+    plan: "Popular Pro US ISP",
     verifiedMethod: "Verified bKash Order",
     headline: "৪ মাসেও Swagbucks বা Qmee-তে কোনো অ্যাকাউন্ট ব্যান হয়নি",
     comment:
@@ -43,6 +44,7 @@ const REVIEWS: Review[] = [
   },
   {
     id: "rev-2",
+    category: "uk",
     name: "ফারহান চৌধুরী",
     role: "Prolific & UK Survey Specialist",
     location: "জিন্দাবাজার, সিলেট",
@@ -56,12 +58,13 @@ const REVIEWS: Review[] = [
   },
   {
     id: "rev-3",
+    category: "us",
     name: "মাহমুদুল হাসান",
     role: "Freelance Agency & PayPal Ops",
     location: "মিরপুর-১০, ঢাকা",
     country: "US (Comcast)",
     countryFlag: "🇺🇸",
-    plan: "VIP Fresh RDP",
+    plan: "VIP Fresh US RDP",
     verifiedMethod: "Verified bKash Order",
     headline: "রাত ২টায় বিকাশ পেমেন্ট করে ৯০ সেকেন্ডে অটো-ডেলিভারি পেয়েছি",
     comment:
@@ -69,19 +72,21 @@ const REVIEWS: Review[] = [
   },
   {
     id: "rev-4",
+    category: "eu",
     name: "সাকিবুর রহমান",
     role: "Remote Software Developer",
     location: "ধানমন্ডি, ঢাকা",
     country: "DE (Telekom)",
     countryFlag: "🇩🇪",
-    plan: "Popular Pro DE",
+    plan: "Popular Pro DE ISP",
     verifiedMethod: "Verified bKash Order",
     headline: "Deutsche Telekom আইপি দিয়ে জার্মানির রিমোট ওয়ার্ক নির্বিঘ্নে চলছে",
     comment:
-      "জার্মান ক্লায়েন্টের কমপ্লায়েন্সের জন্য ক্লিন ইউরোপিয়ান আইপি লাগত। লাইভ পিং ১৪৪ মিলিসেকেন্ড এবং বাফার ছাড়াই রিমোট ডেস্কটপ চলে। সাপোর্ট টিমের বনানী ইঞ্জিনিয়াররা হোয়াটসঅ্যাপে খুব ফ্রেন্ডলি।",
+      "জার্মান ক্লায়েন্টের কমপ্লায়েন্সের জন্য ক্লিন ইউরোপিয়ান আইপি লাগত। লাইভ পিং ১৪৪ মিলিসেকেন্ড এবং বাফার ছাড়াই রিমোট ডেস্কটপ চলে। সাপোর্ট টিমের সাথে কোনো কনফিউশন নেই।",
   },
   {
     id: "rev-5",
+    category: "eu",
     name: "কামরুল ইসলাম",
     role: "Multi-Account Manager",
     location: "বোয়ালিয়া, রাজশাহী",
@@ -91,26 +96,40 @@ const REVIEWS: Review[] = [
     verifiedMethod: "Verified Nagad Order",
     headline: "৭ দিনের ফ্রি IP Swap পলিসি আমার অ্যাকাউন্ট বাঁচিয়েছে",
     comment:
-      "একবার সাইটের নিজস্ব সার্ভার ডাউন ইস্যু হয়েছিল, সাথে সাথে বনানী হেল্পডেস্কে নক দিতেই ৩ মিনিটের মধ্যে একটা ফ্রেশ ফ্রেন্স আইপি রিপ্লেস করে দেয়। কাস্টমার সার্ভিস আসলেই রিয়েল মানুষ চালায়।",
+      "একবার সাইটের নিজস্ব সার্ভার ডাউন ইস্যু হয়েছিল, সাথে সাথে লাইভ হেল্পডেস্কে নক দিতেই ৩ মিনিটের মধ্যে একটা ফ্রেশ ফ্রেন্স আইপি রিপ্লেস করে দেয়। কাস্টমার সার্ভিস আসলেই রিয়েল মানুষ চালায়।",
   },
   {
     id: "rev-6",
+    category: "us",
     name: "রায়হান কবির",
     role: "Upwork & Survey Operator",
     location: "খালিশপুর, খুলনা",
     country: "US (AT&T)",
     countryFlag: "🇺🇸",
-    plan: "Popular Pro ISP",
+    plan: "Popular Pro US ISP",
     verifiedMethod: "Verified bKash Order",
-    headline: "ঢাকা বনানী টিমের ৩ মিনিটের হোয়াটসঅ্যাপ সাপোর্ট সবচেয়ে বড় ভরসা",
+    headline: "লাইভ চ্যাট অ্যাসিস্ট্যান্ট ও ঢাকা টিমের সাপোর্ট সবচেয়ে বড় ভরসা",
     comment:
-      "বিদেশি হোস্টিংয়ে টিকিট কেটে ২৪ ঘণ্টা অপেক্ষা করতে হতো। এখানে যেকোনো সেটিং বা RDP কানেকশন ইস্যুতে হোয়াটসঅ্যাপেই সরাসরি ইঞ্জিনিয়াররা গাইড করে সমাধান দেয়। ফুল টাকা উসুল।",
+      "বিদেশি হোস্টিংয়ে টিকিট কেটে ২৪ ঘণ্টা অপেক্ষা করতে হতো। এখানে লাইভ চ্যাটেই সব প্রশ্নের উত্তর পাওয়া যায়, জরুরি সেটআপেও দ্রুত সমাধান মেলে। ফুল টাকা উসুল।",
   },
 ];
+
+const FILTER_TABS = [
+  { id: "all", label: "সব রিভিউ (৬)" },
+  { id: "us", label: "🇺🇸 United States (৩)" },
+  { id: "uk", label: "🇬🇧 United Kingdom (১)" },
+  { id: "eu", label: "🇪🇺 Germany & France (২)" },
+] as const;
 
 export function CustomerReviewsCarousel() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<"all" | "us" | "uk" | "eu">("all");
+
+  const filteredReviews =
+    activeFilter === "all"
+      ? REVIEWS
+      : REVIEWS.filter((r) => r.category === activeFilter);
 
   // Auto-scroll loop
   useEffect(() => {
@@ -118,11 +137,10 @@ export function CustomerReviewsCarousel() {
     if (!container) return;
 
     let animationFrameId: number;
-    const scrollStep = 0.75; // subtle smooth drift speed
+    const scrollStep = 0.75; // smooth drift speed
 
     const autoScroll = () => {
       if (!isPaused && container) {
-        // If reached end, loop back smoothly
         if (
           container.scrollLeft + container.clientWidth >=
           container.scrollWidth - 2
@@ -146,6 +164,10 @@ export function CustomerReviewsCarousel() {
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
+  };
+
+  const handleOpenChat = () => {
+    window.dispatchEvent(new CustomEvent("open-chat"));
   };
 
   return (
@@ -199,6 +221,29 @@ export function CustomerReviewsCarousel() {
           </div>
         </Reveal>
 
+        {/* Country / Use-case Filter Pills */}
+        <Reveal className="mt-7 flex flex-wrap items-center gap-2" delay={0.05}>
+          {FILTER_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => {
+                setActiveFilter(tab.id);
+                if (scrollContainerRef.current) {
+                  scrollContainerRef.current.scrollLeft = 0;
+                }
+              }}
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+                activeFilter === tab.id
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </Reveal>
+
         {/* Horizontal Carousel Track */}
         <div
           ref={scrollContainerRef}
@@ -206,10 +251,10 @@ export function CustomerReviewsCarousel() {
           onMouseLeave={() => setIsPaused(false)}
           onTouchStart={() => setIsPaused(true)}
           onTouchEnd={() => setIsPaused(false)}
-          className="mt-10 flex gap-6 overflow-x-auto pb-4 pt-1 scrollbar-none"
+          className="mt-8 flex gap-6 overflow-x-auto pb-4 pt-1 scrollbar-none"
           style={{ scrollBehavior: "auto" }}
         >
-          {REVIEWS.map((review) => (
+          {filteredReviews.map((review) => (
             <div
               key={review.id}
               className="flex w-[320px] sm:w-[380px] shrink-0 flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50/60 p-6 shadow-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md"
@@ -245,7 +290,7 @@ export function CustomerReviewsCarousel() {
                 </p>
               </div>
 
-              {/* Bottom Author Row */}
+              {/* Bottom Author Row: Exactly matching Plan Badge */}
               <div className="mt-6 border-t border-slate-200/80 pt-4 flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm font-bold text-slate-900">
@@ -284,15 +329,15 @@ export function CustomerReviewsCarousel() {
               <span>ISP Plans দেখুন</span>
               <ArrowRight size={13} />
             </Link>
-            <Link
-              href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20কেনার%20আগে%20কিছু%20পরামর্শ%20নিতে%20চাচ্ছি"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition-colors"
+
+            <button
+              type="button"
+              onClick={handleOpenChat}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-white px-4 py-2 text-xs font-bold text-blue-700 shadow-2xs hover:bg-blue-50 transition-colors cursor-pointer"
             >
-              <MessageCircle size={14} className="text-emerald-600" />
-              <span>WhatsApp হেল্পলাইন</span>
-            </Link>
+              <MessageCircle size={14} className="text-blue-600" />
+              <span>লাইভ চ্যাটে প্রশ্ন করুন</span>
+            </button>
           </div>
         </Reveal>
       </div>

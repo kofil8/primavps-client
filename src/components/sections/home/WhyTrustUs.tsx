@@ -1,3 +1,5 @@
+"use client";
+
 import { Reveal } from "@/components/ui/reveal";
 import {
   MessageCircle,
@@ -81,7 +83,7 @@ export function WhyTrustUs() {
           ))}
         </Reveal>
 
-        {/* Compact stat strip + WhatsApp CTA */}
+        {/* Compact stat strip + Live Chat CTA */}
         <Reveal
           className="mt-10 flex flex-col items-center justify-between gap-6 rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm sm:flex-row sm:px-8"
           delay={0.15}
@@ -98,15 +100,16 @@ export function WhyTrustUs() {
             ))}
           </div>
 
-          <Link
-            href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20/%20KVM%20VPS%20কেনার%20আগে%20কিছু%20তথ্য%20জানতে%20চাচ্ছি"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-600/20 transition-all hover:bg-emerald-700 hover:-translate-y-0.5"
-          >
-            <MessageCircle size={16} />
-            WhatsApp-এ Engineer-এর সাথে কথা বলুন
-          </Link>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("open-chat"))}
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 transition-all hover:bg-blue-700 hover:-translate-y-0.5 cursor-pointer"
+            >
+              <MessageCircle size={16} />
+              লাইভ চ্যাট হেল্পডেস্ক
+            </button>
+          </div>
         </Reveal>
       </div>
     </section>
