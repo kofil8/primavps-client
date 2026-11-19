@@ -23,6 +23,11 @@ const QUICK_REPLIES = [
   "Payment method ki ki?",
   "Deploy time koto?",
   "Support kothay pabo?",
+  "Survey RDP pricing koto?",
+  "IP ki dedicated?",
+  "bKash/Nagad e pay korte pari?",
+  "IP flag hole ki hobe?",
+  "🟢 WhatsApp-এ Engineer-এর সাথে কথা বলুন",
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -116,7 +121,7 @@ export function ChatWidget() {
       id: uid(),
       role: "assistant",
       content:
-        "Assalamu Alaikum! 👋 Ami primevpsbd-er AI support assistant. Apnake ki vabe help korte pari?",
+        "Assalamu Alaikum! 👋 Ami primevpsbd-er AI assistant — সাধারণ প্রশ্নে এখনই সাহায্য করব। জটিল বিষয়ে নিচের 🟢 বাটনে বনানী টিমের সাথে সরাসরি কথা বলুন।",
     },
   ]);
   const [input, setInput] = useState("");
@@ -138,9 +143,18 @@ export function ChatWidget() {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 100);
   }, [isOpen]);
 
+  const WA_LINK =
+    "https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20/%20KVM%20VPS%20কেনার%20আগে%20কিছু%20তথ্য%20জানতে%20চাচ্ছি";
+
   const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || loading || streaming) return;
+
+    // WhatsApp chip — open in new tab instead of sending to AI
+    if (trimmed.includes("WhatsApp") && trimmed.startsWith("🟢")) {
+      window.open(WA_LINK, "_blank", "noopener,noreferrer");
+      return;
+    }
 
     setShowChips(false);
     setInput("");
