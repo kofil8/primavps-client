@@ -6,7 +6,7 @@ export function FloatingWhatsApp() {
   return (
     <aside
       aria-label="Direct support on WhatsApp"
-      className="fixed bottom-6 right-6 z-50 flex items-center group"
+      className="fixed bottom-6 left-4 z-50 flex items-center group lg:hidden"
     >
       <a
         href="https://wa.me/8801960677463?text=Hello%20primevpsbd,%20I%20need%20more%20information%20about%20your%20VPS%20plans"

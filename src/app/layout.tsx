@@ -1,6 +1,7 @@
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { ChatWidget } from "@/components/ChatWidget";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { StickySocialBar } from "@/components/ui/StickySocialBar";
 import { CurrencyProvider } from "@/lib/currency";
@@ -57,6 +58,7 @@ export default function RootLayout({
           <Footer />
           <StickySocialBar />
           <FloatingWhatsApp />
+          <ChatWidget />
         </CurrencyProvider>
       </body>
     </html>

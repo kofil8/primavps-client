@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Reveal } from "@/components/ui/reveal";
-import { Activity, ArrowRight, CheckCircle2, Globe, MapPin, Zap } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,29 +10,32 @@ const LOCATIONS = [
   {
     id: "usa",
     city: "USA (Dallas & Ashburn)",
+    badge: "সার্ভার লোকেশন",
     count: 2,
-    role: "Residential ISP & Cloud Node",
-    detail: "Infomart Dallas (AS7018 AT&T, Comcast) & Equinix Ashburn (NVMe RAID-1)",
+    role: "Residential ISP & Cloud Compute Hub",
+    detail: "Infomart Dallas (AT&T, Comcast ISP) এবং Equinix Ashburn (Gen4 NVMe KVM ক্লাউড)",
     latency: "178 ms avg",
-    status: "Active · 100% SLA",
-  },
-  {
-    id: "dhaka",
-    city: "Bangladesh (Dhaka)",
-    count: 1,
-    role: "Operations & Support Desk",
-    detail: "Road 11, Banani · Direct BDIX Peering · 24/7 Human Engineering Team",
-    latency: "< 5 ms local",
-    status: "Active · 3 min reply",
+    status: "Active · 99.98% SLA",
   },
   {
     id: "netherlands",
     city: "Netherlands (Amsterdam)",
+    badge: "সার্ভার লোকেশন",
     count: 1,
     role: "European Transit Hub",
-    detail: "AMS-IX Interconnect · Low-latency routing across EU & Middle East",
+    detail: "AMS-IX Interconnect · ইউরোপ ও মিডল-ইস্ট কম-লেটেন্সি অপ্টিমাইজড রাউটিং",
     latency: "142 ms edge",
-    status: "Active · 99.99%",
+    status: "Active · 99.99% SLA",
+  },
+  {
+    id: "dhaka",
+    city: "Bangladesh (Dhaka)",
+    badge: "অপারেশনস ও সাপোর্ট ডেস্ক",
+    count: 1,
+    role: "BDIX Peering & Support Gateway Desk",
+    detail: "রোড ১১, বনানী · ডিরেক্ট BDIX লিংক ও ২৪/৭ অন-সাইট বাংলাদেশি ইঞ্জিনিয়ারিং টিম",
+    latency: "< 5 ms BDIX",
+    status: "Active · ৩ মিনিটে রিপ্লাই",
   },
 ];
 
@@ -52,9 +55,9 @@ export function GlobalNetworkMap() {
 
       <div className="shell relative z-10">
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
-          {/* ── LEFT COLUMN: Text, Stats, and Doodle Button ── */}
+          {/* ── LEFT COLUMN: Text, Stats, and Action Button ── */}
           <div className="relative lg:col-span-5">
-            {/* Decorative Dotted Matrix (as in reference image) */}
+            {/* Decorative Dotted Matrix */}
             <div
               aria-hidden
               className="absolute -top-7 -left-5 grid grid-cols-5 gap-2 opacity-35 pointer-events-none select-none"
@@ -70,15 +73,15 @@ export function GlobalNetworkMap() {
             <Reveal className="relative z-10">
               {/* Eyebrow */}
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
-                Network
+                গ্লোবাল ইনফ্রাস্ট্রাকচার · GLOBAL NETWORK
               </p>
 
               {/* Main Heading with Wavy Purple Underline */}
               <h2 className="mt-3.5 font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.65rem] leading-[1.12]">
-                Three Fast Data
+                বিশ্বমানের টিয়ার-১
                 <br />
                 <span className="relative inline-block text-slate-900">
-                  <span className="text-slate-900">Center Worldwide</span>
+                  <span className="text-slate-900">গ্লোবাল নেটওয়ার্ক</span>
                   {/* Purple/Indigo Hand-Drawn Wavy Underline */}
                   <svg
                     aria-hidden
@@ -96,90 +99,69 @@ export function GlobalNetworkMap() {
                 </span>
               </h2>
 
-              {/* Secondary user title context */}
-              <p className="mt-2 text-xs font-bold tracking-wider text-slate-400 uppercase">
-                US Network. Dhaka Desk.
+              {/* Secondary title context */}
+              <p className="mt-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
+                US Cloud Nodes · Dhaka Operations &amp; BDIX Gateway Desk
               </p>
 
               {/* Description Paragraph */}
               <p className="mt-5 text-sm sm:text-base leading-relaxed text-slate-600">
-                Experience high-speed performance and global reliability with
-                our strategically located data centers designed to support your
-                business around the clock..
+                আমেরিকার ডালাস ও অ্যাশবার্নের শীর্ষ টিয়ার-১ ডাটা সেন্টার থেকে সর্বোচ্চ
+                কম্পিউটিং পারফরম্যান্স, যার সম্পূর্ণ সাপোর্ট ও ট্রাফিক অপ্টিমাইজেশন
+                সরাসরি পরিচালিত হয় বনানী, ঢাকার ইঞ্জিনিয়ারিং ডেস্ক থেকে।
               </p>
               <p className="mt-2 text-xs text-slate-500 leading-relaxed">
-                আমেরিকান টিয়ার-১ ডাটা সেন্টারের আল্ট্রা-লো লেটেন্সি এবং বনানী ঢাকা
-                টিমের ২৪/৭ রিয়েল-টাইম সাপোর্ট।
+                কোনো মিথ্যা বা কাল্পনিক ক্লেইম নেই—৯৯.৯৮% বাস্তব আপটাইম SLA এবং সরাসরি
+                BDIX ক্যাবল সংযোগ।
               </p>
 
-              {/* Hub Count Badges (matches "India (1) Netherlands (1) USA (1)" in reference image) */}
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-medium text-slate-700">
+              {/* Hub Count Badges */}
+              <div className="mt-6 flex flex-wrap items-center gap-2 text-sm font-medium text-slate-700">
                 <button
                   type="button"
                   onClick={() => setActiveLocation("usa")}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs transition-colors ${
+                  className={`inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs transition-colors ${
                     activeLocation === "usa"
-                      ? "bg-blue-100 font-bold text-blue-800"
+                      ? "bg-blue-100 font-bold text-blue-900"
                       : "hover:bg-slate-100 text-slate-600"
                   }`}
                 >
-                  USA{" "}
-                  <strong className="font-bold text-blue-600">(2)</strong>
+                  USA নোড <strong className="font-bold text-blue-600">(২টি)</strong>
                 </button>
                 <span className="text-slate-300">·</span>
                 <button
                   type="button"
                   onClick={() => setActiveLocation("netherlands")}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs transition-colors ${
+                  className={`inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs transition-colors ${
                     activeLocation === "netherlands"
-                      ? "bg-blue-100 font-bold text-blue-800"
+                      ? "bg-blue-100 font-bold text-blue-900"
                       : "hover:bg-slate-100 text-slate-600"
                   }`}
                 >
-                  Netherlands{" "}
-                  <strong className="font-bold text-blue-600">(1)</strong>
+                  Netherlands <strong className="font-bold text-blue-600">(১টি)</strong>
                 </button>
                 <span className="text-slate-300">·</span>
                 <button
                   type="button"
                   onClick={() => setActiveLocation("dhaka")}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs transition-colors ${
+                  className={`inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs transition-colors ${
                     activeLocation === "dhaka"
-                      ? "bg-blue-100 font-bold text-blue-800"
+                      ? "bg-emerald-100 font-bold text-emerald-900"
                       : "hover:bg-slate-100 text-slate-600"
                   }`}
                 >
-                  Bangladesh (Dhaka){" "}
-                  <strong className="font-bold text-blue-600">(1)</strong>
+                  Dhaka Desk <strong className="font-bold text-emerald-600">(BDIX)</strong>
                 </button>
               </div>
 
-              {/* Action Button with Hand-drawn Looped Wire Doodle */}
-              <div className="relative mt-8 inline-block pb-10">
+              {/* Action Button */}
+              <div className="relative mt-8 inline-block pb-8">
                 <Link
                   href="/status"
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 py-3.5 text-sm font-bold text-white shadow-md shadow-blue-600/20 transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 active:scale-[0.98]"
                 >
-                  All Data Center
+                  লাইভ নেটওয়ার্ক স্ট্যাটাস দেখুন <ArrowRight size={15} />
                 </Link>
-
-                {/* Hand-drawn Loop-de-loop doodle hanging from button (exact match to reference image) */}
-                <svg
-                  aria-hidden
-                  width="110"
-                  height="100"
-                  viewBox="0 0 110 100"
-                  fill="none"
-                  className="pointer-events-none absolute -bottom-16 left-3 text-indigo-500 overflow-visible"
-                >
-                  <path
-                    d="M 18 0 C 16 20, -2 36, 12 50 C 26 64, 82 58, 76 34 C 70 12, 26 18, 16 46 C 6 74, 40 88, 34 100"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </div>
             </Reveal>
           </div>
@@ -188,12 +170,12 @@ export function GlobalNetworkMap() {
           <div className="relative lg:col-span-7 flex flex-col items-center justify-center">
             <Reveal
               delay={0.15}
-              className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white p-2"
+              className="relative w-full max-w-2xl overflow-hidden rounded-3xl bg-white p-2"
             >
               <div className="relative aspect-[16/10] w-full">
                 <Image
                   src="/world-map.webp"
-                  alt="Three Fast Data Center Worldwide — US Network & Dhaka Desk"
+                  alt="বিশ্বমানের টিয়ার-১ গ্লোবাল নেটওয়ার্ক — US Nodes & Dhaka Desk"
                   fill
                   sizes="(min-width: 1024px) 60vw, 100vw"
                   unoptimized
@@ -201,7 +183,6 @@ export function GlobalNetworkMap() {
                   className="object-contain"
                 />
 
-                {/* Interactive ping pulsing rings over key nodes */}
                 {/* USA (Dallas/Ashburn) beacon */}
                 <div
                   className="absolute left-[18%] top-[34%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
@@ -212,7 +193,7 @@ export function GlobalNetworkMap() {
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-blue-600 ring-2 ring-white" />
                   </span>
                   <div className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 mt-1 hidden group-hover:block whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-[10px] font-bold text-white shadow-md z-20">
-                    Dallas & Ashburn (178ms)
+                    Dallas &amp; Ashburn (178ms)
                   </div>
                 </div>
 
@@ -240,7 +221,7 @@ export function GlobalNetworkMap() {
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-600 ring-2 ring-white" />
                   </span>
                   <div className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 mt-1 hidden group-hover:block whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-[10px] font-bold text-white shadow-md z-20">
-                    Dhaka Desk (&lt;5ms)
+                    Dhaka Operations Desk (&lt;5ms BDIX)
                   </div>
                 </div>
               </div>
@@ -248,7 +229,7 @@ export function GlobalNetworkMap() {
           </div>
         </div>
 
-        {/* ── THREE LOCATION CARDS (Clean Light Modern Theme) ── */}
+        {/* ── THREE LOCATION CARDS ── */}
         <Reveal
           className="mt-14 grid gap-5 sm:grid-cols-3"
           delay={0.2}
@@ -259,7 +240,7 @@ export function GlobalNetworkMap() {
               <div
                 key={loc.id}
                 onClick={() => setActiveLocation(loc.id)}
-                className={`cursor-pointer rounded-2xl border p-5 transition-all duration-200 ${
+                className={`cursor-pointer rounded-3xl border p-5 transition-all duration-200 ${
                   isSelected
                     ? "border-blue-500 bg-blue-50/40 shadow-md ring-2 ring-blue-500/10"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
@@ -284,19 +265,27 @@ export function GlobalNetworkMap() {
                   </span>
                 </div>
 
-                <p className="mt-3 text-xs font-bold text-blue-700">
-                  {loc.role}
-                </p>
+                <div className="mt-3 flex items-center justify-between">
+                  <p className="text-xs font-bold text-blue-700">
+                    {loc.role}
+                  </p>
+                  <span className="text-[10px] font-medium text-slate-400">
+                    {loc.badge}
+                  </span>
+                </div>
+
                 <p className="mt-1 text-xs leading-relaxed text-slate-600">
                   {loc.detail}
                 </p>
 
-                <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
                   <span className="inline-flex items-center gap-1 text-emerald-600 font-semibold">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     {loc.status}
                   </span>
-                  <span className="text-slate-400 font-mono">Tier-1 Network</span>
+                  <span className="text-slate-400 font-mono text-[10px]">
+                    {loc.id === "dhaka" ? "Support Gateway" : "Tier-1 Network"}
+                  </span>
                 </div>
               </div>
             );

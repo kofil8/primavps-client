@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { MessageCircle } from "lucide-react";
 import {
   FaFacebookF,
   FaLinkedinIn,
@@ -11,10 +12,10 @@ import {
 export function StickySocialBar() {
   return (
     <motion.aside
-      initial={{ opacity: 0, x: -35 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ x: -35 }}
+      animate={{ x: 0 }}
       transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
-      className="fixed left-3 xl:left-5 2xl:left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center pointer-events-auto"
+      className="fixed left-3 xl:left-5 2xl:left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-3 pointer-events-auto opacity-50 transition-opacity duration-300 hover:opacity-100 focus-within:opacity-100"
       aria-label="Follow us on social media"
     >
       <motion.div
@@ -84,6 +85,28 @@ export function StickySocialBar() {
           </span>
         </div>
       </motion.div>
+
+      {/* WhatsApp support — sits directly below the Follow Us rail */}
+      <motion.a
+        href="https://wa.me/8801960677463?text=Hello%20primevpsbd,%20I%20need%20more%20information%20about%20your%20VPS%20plans"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Direct support on WhatsApp"
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.95 }}
+        className="group relative flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-2xl shadow-emerald-900/30 ring-4 ring-emerald-500/20 transition-colors hover:bg-emerald-500"
+      >
+        <span className="absolute right-0 top-0 flex h-3 w-3">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+          <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
+        </span>
+
+        <MessageCircle size={20} className="fill-white/20" />
+
+        <span className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-lg border border-white/10 bg-[#080e26] px-3 py-1.5 text-[11px] font-semibold text-white opacity-0 shadow-xl transition-opacity duration-200 group-hover:opacity-100">
+          WhatsApp · Reply in 3 min
+        </span>
+      </motion.a>
     </motion.aside>
   );
 }

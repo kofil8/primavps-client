@@ -1,25 +1,34 @@
-import { DhakaOperationsDesk } from "@/components/sections/home/DhakaOperationsDesk";
-import { DualOfferings } from "@/components/sections/home/DualOfferings";
-import { FounderNote } from "@/components/sections/home/FounderNote";
-import { GlobalNetworkMap } from "@/components/sections/home/GlobalNetworkMap";
-import { HeroSection } from "@/components/sections/home/HeroSection";
+import { HeroSection }         from "@/components/sections/home/HeroSection";
+import { TrustBadgesStrip }    from "@/components/sections/home/TrustBadgesStrip";
 import { LiveDiagnosticsHook } from "@/components/sections/home/LiveDiagnosticsHook";
-import { MetricBar } from "@/components/sections/home/MetricBar";
-import { ProofAndFaq } from "@/components/sections/home/ProofAndFaq";
-import { TrustBadgesStrip } from "@/components/sections/home/TrustBadgesStrip";
+import { SurveyRdpPlans }      from "@/components/sections/home/SurveyRdpPlans";
+import { WhyTrustUs }          from "@/components/sections/home/WhyTrustUs";
+import { SurveyFaq }           from "@/components/sections/home/SurveyFaq";
+import { StickyConversionBar } from "@/components/ui/StickyConversionBar";
 
 export default function HomePage() {
   return (
     <>
+      {/* 1. Hero — headline, ISP proof card, CTAs, payment logos */}
       <HeroSection />
+
+      {/* 2. Trust strip — 0/100 · 7-Day Swap · <90s · Secure Payment */}
       <TrustBadgesStrip />
-      <DualOfferings />
-      <DhakaOperationsDesk />
+
+      {/* 3. Live Proof — IP fraud scanner, latency, reviews */}
       <LiveDiagnosticsHook />
-      <MetricBar />
-      <GlobalNetworkMap />
-      <FounderNote />
-      <ProofAndFaq />
+
+      {/* 4. Survey RDP Plans — 3 clean tiers */}
+      <SurveyRdpPlans />
+
+      {/* 5. Why Trust Us — 4 trust points + stat strip + WhatsApp CTA */}
+      <WhyTrustUs />
+
+      {/* 6. FAQ — 4 survey-focused questions */}
+      <SurveyFaq />
+
+      {/* 7. Sticky bar — appears on scroll */}
+      <StickyConversionBar />
     </>
   );
 }
