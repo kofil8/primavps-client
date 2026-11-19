@@ -1,21 +1,45 @@
 "use client";
 
+import { useState } from "react";
 import { useCurrency } from "@/lib/currency";
 import { Reveal } from "@/components/ui/reveal";
 import {
   ArrowRight,
   Check,
+  ChevronDown,
+  Globe,
   RefreshCw,
   ShieldCheck,
   Sparkles,
-  Star,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
 
+// ─── Countries ───────────────────────────────────────────────────────────────
+
+const COUNTRIES = [
+  { code: "us", flag: "🇺🇸", name: "United States", isp: "AT&T / Comcast" },
+  { code: "uk", flag: "🇬🇧", name: "United Kingdom", isp: "BT / Virgin Media" },
+  { code: "de", flag: "🇩🇪", name: "Germany", isp: "Deutsche Telekom" },
+  { code: "fr", flag: "🇫🇷", name: "France", isp: "Orange / Free" },
+];
+
 // ─── Plan Tiers ──────────────────────────────────────────────────────────────
 
-const TIERS = [
+interface PlanTier {
+  id: string;
+  name: string;
+  badge: string | null;
+  highlight: boolean;
+  vcpu: string;
+  ram: string;
+  storage: string;
+  monthlyPrice: number;
+  planSlug: string;
+  features: string[];
+}
+
+const TIERS: PlanTier[] = [
   {
     id: "starter",
     name: "Starter",
@@ -24,14 +48,13 @@ const TIERS = [
     vcpu: "2 vCPU",
     ram: "4 GB RAM",
     storage: "45 GB NVMe",
-    isp: "AT&T / Comcast",
     monthlyPrice: 2999,
     planSlug: "starter",
-    perks: [
-      "Dedicated Static Residential IP",
-      "Windows 11 RDP (Full Access)",
-      "Zero WebRTC & DNS Leak",
-      "7-Day Free IP Swap",
+    features: [
+      "100% Dedicated Static Residential IP",
+      "Windows 11 RDP (Full Administrator)",
+      "Zero WebRTC & DNS Leaks",
+      "৭ দিনের ফ্রি IP রিপ্লেসমেন্ট গ্যারান্টি",
     ],
   },
   {
@@ -42,42 +65,32 @@ const TIERS = [
     vcpu: "4 vCPU",
     ram: "6 GB RAM",
     storage: "60 GB NVMe",
-    isp: "AT&T / Comcast",
     monthlyPrice: 3799,
     planSlug: "pro",
-    perks: [
-      "Dedicated Static Residential IP",
-      "Windows 11 RDP (Full Access)",
-      "Zero WebRTC & DNS Leak",
-      "7-Day Free IP Swap",
+    features: [
+      "100% Dedicated Static Residential IP",
+      "Windows 11 RDP (Full Administrator)",
+      "Zero WebRTC & DNS Leaks",
+      "৭ দিনের ফ্রি IP রিপ্লেসমেন্ট গ্যারান্টি",
     ],
   },
   {
     id: "vip",
     name: "VIP Fresh",
-    badge: "Virgin ASN · সর্বোচ্চ ক্লিন",
+    badge: "Virgin ASN · সর্বোচ্চ ফ্রেশ",
     highlight: false,
     vcpu: "4 vCPU",
     ram: "8 GB RAM",
     storage: "80 GB NVMe",
-    isp: "AT&T Virgin ASN",
     monthlyPrice: 4999,
     planSlug: "vip",
-    perks: [
-      "Virgin ASN — একদম নতুন IP রেঞ্জ",
-      "Windows 11 RDP (Full Access)",
-      "Zero WebRTC & DNS Leak",
-      "7-Day Free IP Swap",
+    features: [
+      "Virgin ASN — আনটাস্কড ফ্রেশ IP রেঞ্জ",
+      "Windows 11 RDP (Full Administrator)",
+      "Zero WebRTC & DNS Leaks",
+      "৭ দিনের ফ্রি IP রিপ্লেসমেন্ট গ্যারান্টি",
     ],
   },
-] as const;
-
-// ─── Shared guarantee strip ───────────────────────────────────────────────────
-
-const GUARANTEES = [
-  { icon: ShieldCheck, color: "text-emerald-600 bg-emerald-50", label: "0/100 IPQS Score" },
-  { icon: RefreshCw,   color: "text-blue-600 bg-blue-50",       label: "7-Day IP Swap SLA" },
-  { icon: Zap,         color: "text-amber-600 bg-amber-50",     label: "<90s অটো-ডেলিভারি" },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -85,177 +98,241 @@ const GUARANTEES = [
 export function SurveyRdpPlans() {
   const { formatPrice } = useCurrency();
 
+  // Selected country per plan card
+  const [selectedCountries, setSelectedCountries] = useState<Record<string, string>>({
+    starter: "us",
+    pro: "us",
+    vip: "us",
+  });
+
+  const handleCountryChange = (planId: string, countryCode: string) => {
+    setSelectedCountries((prev) => ({
+      ...prev,
+      [planId]: countryCode,
+    }));
+  };
+
   return (
-    <section
-      id="pricing"
-      className="border-b border-slate-200 bg-white py-20 sm:py-28"
-    >
+    <section id="pricing" className="border-b border-slate-200 bg-white py-20 sm:py-28">
       <div className="shell">
-        {/* Section header */}
+        {/* Section Header */}
         <Reveal className="max-w-2xl">
           <p className="eyebrow inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-blue-600">
             <Sparkles size={14} />
-            Survey &amp; Residential RDP Plans
+            Residential ISP RDP Plans
           </p>
           <h2 className="section-title mt-2.5 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            আপনার কাজের জন্য সঠিক প্ল্যানটি বেছে নিন
+            আপনার কাজের জন্য সঠিক সার্ভার বেছে নিন
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
-            সব প্ল্যানে ডেডিকেটেড স্ট্যাটিক রেসিডেন্সিয়াল আইপি, বিকাশ/নগদ পেমেন্ট এবং
-            ৯০ সেকেন্ডে অটো-ডেলিভারি অন্তর্ভুক্ত।
+            ইউএস, ইউকে, জার্মানি ও ফ্রান্সের ডেডিকেটেড স্ট্যাটিক আইপি। বিকাশ বা নগদে
+            পেমেন্টের ৯০ সেকেন্ডের মধ্যে ডেলিভারি।
           </p>
         </Reveal>
 
-        {/* Guarantee strip */}
-        <Reveal className="mt-8 flex flex-wrap gap-3" delay={0.05}>
-          {GUARANTEES.map(({ icon: Icon, color, label }) => (
-            <span
-              key={label}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${color} border border-current/10`}
-            >
-              <Icon size={13} />
-              {label}
-            </span>
-          ))}
+        {/* Top Feature Strip */}
+        <Reveal className="mt-7 flex flex-wrap gap-3" delay={0.05}>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200/60">
+            <ShieldCheck size={14} /> 0/100 IPQS Clean IP
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-200/60">
+            <RefreshCw size={14} /> 7-Day Free IP Swap
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 border border-amber-200/60">
+            <Zap size={14} /> &lt;৯০ সেকেন্ডে অটো-অ্যাক্টিভেশন
+          </span>
         </Reveal>
 
-        {/* Plan cards */}
-        <Reveal className="mt-10 grid gap-6 sm:grid-cols-3" delay={0.1}>
-          {TIERS.map((tier) => (
-            <div
-              key={tier.id}
-              className={`relative flex flex-col rounded-3xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                tier.highlight
-                  ? "border-blue-500 bg-blue-600 text-white shadow-xl shadow-blue-600/20"
-                  : "border-slate-200 bg-white shadow-sm"
-              }`}
-            >
-              {/* Badge */}
-              {tier.badge && (
-                <div
-                  className={`mb-4 inline-flex items-center gap-1.5 self-start rounded-full px-3 py-1 text-[11px] font-bold ${
-                    tier.highlight
-                      ? "bg-white/20 text-white"
-                      : "bg-amber-100 text-amber-800"
+        {/* Plan Cards Grid */}
+        <Reveal className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" delay={0.1}>
+          {TIERS.map((tier) => {
+            const currentCountryCode = selectedCountries[tier.id] || "us";
+            const currentCountry =
+              COUNTRIES.find((c) => c.code === currentCountryCode) || COUNTRIES[0];
+
+            return (
+              <div
+                key={tier.id}
+                className={`relative flex flex-col rounded-3xl border p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                  tier.highlight
+                    ? "border-blue-500 bg-blue-600 text-white shadow-xl shadow-blue-600/20"
+                    : "border-slate-200 bg-white shadow-sm"
+                }`}
+              >
+                {/* Badge if present */}
+                {tier.badge && (
+                  <div
+                    className={`mb-4 inline-flex items-center gap-1.5 self-start rounded-full px-3 py-1 text-[11px] font-bold ${
+                      tier.highlight
+                        ? "bg-white/20 text-white backdrop-blur-xs"
+                        : "bg-amber-100 text-amber-900 border border-amber-200"
+                    }`}
+                  >
+                    {tier.badge}
+                  </div>
+                )}
+
+                {/* Plan Name & Tagline */}
+                <h3
+                  className={`font-display text-2xl font-extrabold ${
+                    tier.highlight ? "text-white" : "text-slate-900"
                   }`}
                 >
-                  {tier.badge}
+                  {tier.name}
+                </h3>
+
+                {/* Country Selector Dropdown inside card */}
+                <div className="mt-4">
+                  <label
+                    htmlFor={`country-select-${tier.id}`}
+                    className={`block text-[11px] font-semibold uppercase tracking-wider mb-1.5 ${
+                      tier.highlight ? "text-blue-100" : "text-slate-500"
+                    }`}
+                  >
+                    সার্ভার লোকেশন ও ISP:
+                  </label>
+                  <div className="relative">
+                    <select
+                      id={`country-select-${tier.id}`}
+                      value={currentCountryCode}
+                      onChange={(e) => handleCountryChange(tier.id, e.target.value)}
+                      className={`w-full appearance-none rounded-xl px-3.5 py-2.5 pr-8 text-xs font-bold transition-all outline-none cursor-pointer ${
+                        tier.highlight
+                          ? "bg-white/15 text-white border border-white/30 focus:border-white focus:ring-1 focus:ring-white/40"
+                          : "bg-slate-50 text-slate-800 border border-slate-200 focus:border-blue-600 focus:bg-white focus:ring-1 focus:ring-blue-600/20"
+                      }`}
+                    >
+                      {COUNTRIES.map((c) => (
+                        <option
+                          key={c.code}
+                          value={c.code}
+                          className="bg-white text-slate-900 py-1"
+                        >
+                          {c.flag} {c.name} — {c.isp}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      size={15}
+                      className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${
+                        tier.highlight ? "text-blue-100" : "text-slate-400"
+                      }`}
+                    />
+                  </div>
+
+                  {/* Active ISP Info indicator */}
+                  <div
+                    className={`mt-2 flex items-center gap-1.5 text-xs font-semibold ${
+                      tier.highlight ? "text-blue-200" : "text-blue-600"
+                    }`}
+                  >
+                    <Globe size={13} className="shrink-0" />
+                    <span>
+                      {currentCountry.flag} {currentCountry.isp} Residential IP
+                    </span>
+                  </div>
                 </div>
-              )}
 
-              {/* Plan name & ISP */}
-              <h3
-                className={`font-display text-xl font-extrabold ${
-                  tier.highlight ? "text-white" : "text-slate-900"
-                }`}
-              >
-                {tier.name}
-              </h3>
-              <p
-                className={`mt-0.5 text-xs font-semibold ${
-                  tier.highlight ? "text-blue-200" : "text-blue-600"
-                }`}
-              >
-                {tier.isp} Residential IP
-              </p>
+                {/* Hardware Specs Grid */}
+                <div
+                  className={`mt-5 grid grid-cols-3 gap-2 rounded-2xl p-3 text-center text-xs ${
+                    tier.highlight ? "bg-white/10" : "bg-slate-50"
+                  }`}
+                >
+                  {[
+                    { label: "CPU", value: tier.vcpu },
+                    { label: "RAM", value: tier.ram },
+                    { label: "NVMe", value: tier.storage },
+                  ].map(({ label, value }) => (
+                    <div key={label}>
+                      <p
+                        className={`font-extrabold ${
+                          tier.highlight ? "text-white" : "text-slate-900"
+                        }`}
+                      >
+                        {value}
+                      </p>
+                      <p
+                        className={`mt-0.5 text-[10px] ${
+                          tier.highlight ? "text-blue-200" : "text-slate-400"
+                        }`}
+                      >
+                        {label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
-              {/* Specs row */}
-              <div
-                className={`mt-5 grid grid-cols-3 gap-2 rounded-2xl p-3 text-center text-xs ${
-                  tier.highlight ? "bg-white/10" : "bg-slate-50"
-                }`}
-              >
-                {[
-                  { label: "CPU", value: tier.vcpu },
-                  { label: "RAM", value: tier.ram },
-                  { label: "Storage", value: tier.storage },
-                ].map(({ label, value }) => (
-                  <div key={label}>
-                    <p
-                      className={`font-bold ${
+                {/* Feature Bullet Points */}
+                <ul className="mt-5 flex-1 space-y-2.5">
+                  {tier.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2.5 text-xs">
+                      <Check
+                        size={15}
+                        className={`mt-0.5 shrink-0 ${
+                          tier.highlight ? "text-blue-200" : "text-emerald-600"
+                        }`}
+                      />
+                      <span
+                        className={
+                          tier.highlight ? "text-blue-50" : "text-slate-600"
+                        }
+                      >
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Price and Action Button */}
+                <div className="mt-7 border-t pt-5 border-current/10">
+                  <div className="flex items-baseline gap-1">
+                    <span
+                      className={`font-display text-3xl font-black ${
                         tier.highlight ? "text-white" : "text-slate-900"
                       }`}
                     >
-                      {value}
-                    </p>
-                    <p
-                      className={`mt-0.5 text-[10px] ${
+                      {formatPrice(tier.monthlyPrice)}
+                    </span>
+                    <span
+                      className={`text-sm ${
                         tier.highlight ? "text-blue-200" : "text-slate-400"
                       }`}
                     >
-                      {label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Perks */}
-              <ul className="mt-5 flex-1 space-y-2.5">
-                {tier.perks.map((p) => (
-                  <li key={p} className="flex items-start gap-2 text-xs">
-                    <Check
-                      size={14}
-                      className={`mt-0.5 shrink-0 ${
-                        tier.highlight ? "text-blue-200" : "text-emerald-600"
-                      }`}
-                    />
-                    <span
-                      className={
-                        tier.highlight ? "text-blue-100" : "text-slate-600"
-                      }
-                    >
-                      {p}
+                      /মাস
                     </span>
-                  </li>
-                ))}
-              </ul>
+                  </div>
 
-              {/* Price + CTA */}
-              <div className="mt-7 border-t pt-5 border-current/10">
-                <div className="flex items-baseline gap-1">
-                  <span
-                    className={`font-display text-3xl font-black ${
-                      tier.highlight ? "text-white" : "text-slate-900"
+                  <Link
+                    href={`/survey-vps?plan=${tier.planSlug}&country=${currentCountryCode}`}
+                    className={`mt-4 flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-all hover:-translate-y-0.5 ${
+                      tier.highlight
+                        ? "bg-white text-blue-700 shadow-lg hover:bg-blue-50"
+                        : "bg-blue-600 text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
                     }`}
                   >
-                    {formatPrice(tier.monthlyPrice)}
-                  </span>
-                  <span
-                    className={`text-sm ${
-                      tier.highlight ? "text-blue-200" : "text-slate-400"
-                    }`}
-                  >
-                    /মাস
-                  </span>
+                    <span>এখনই নিন ({currentCountry.code.toUpperCase()})</span>
+                    <ArrowRight size={15} />
+                  </Link>
                 </div>
-                <Link
-                  href={`/survey-vps?plan=${tier.planSlug}`}
-                  className={`mt-4 flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-all hover:-translate-y-0.5 ${
-                    tier.highlight
-                      ? "bg-white text-blue-700 shadow-lg hover:bg-blue-50"
-                      : "bg-blue-600 text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
-                  }`}
-                >
-                  এখনই নিন <ArrowRight size={15} />
-                </Link>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </Reveal>
 
-        {/* Bottom note */}
-        <Reveal className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-500" delay={0.15}>
-          <span className="flex items-center gap-1.5">
-            <Star size={13} className="fill-amber-400 text-amber-400" />
-            বিকাশ · নগদ · রকেট · VISA · USDT
-          </span>
+        {/* Footer info note */}
+        <Reveal
+          className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-500"
+          delay={0.15}
+        >
+          <span>পেমেন্ট: বিকাশ · নগদ · রকেট · কার্ড · USDT</span>
           <span className="hidden sm:inline-block h-3 w-px bg-slate-300" />
-          <span>Cloud VPS (KVM/NVMe) দরকার?</span>
+          <span>ডেভেলপার / KVM ক্লাউড দরকার?</span>
           <Link
             href="/cloud-vps"
             className="font-semibold text-blue-600 hover:underline inline-flex items-center gap-1"
           >
-            Cloud Plans দেখুন <ArrowRight size={12} />
+            Cloud NVMe Plans দেখুন <ArrowRight size={12} />
           </Link>
         </Reveal>
       </div>

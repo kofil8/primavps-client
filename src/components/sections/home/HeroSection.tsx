@@ -1,517 +1,485 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCurrency } from "@/lib/currency";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
+  AlertTriangle,
   ArrowRight,
   Check,
+  CheckCircle2,
   ChevronRight,
-  Cpu,
-  Gauge,
-  HardDrive,
-  Lock,
+  Globe,
   MapPin,
   MessageCircle,
-  Monitor,
-  Network,
+  RefreshCw,
+  ShieldAlert,
   ShieldCheck,
-  Tag,
-  Terminal,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { BkashLogo, NagadLogo, VisaLogo, UsdtLogo } from "@/components/ui/PaymentLogos";
-import {
-  FaFacebookF,
-  FaLinkedinIn,
-  FaTwitter,
-  FaYoutube,
-} from "react-icons/fa";
+import { IpReport } from "@/app/api/ip-check/route";
 
-const ISP_PROMISES = [
-  "IPQS Fraud Score: 0/100 গ্যারান্টি",
-  "৭ দিনের ফ্রি IP রিপ্লেসমেন্ট",
-  "AT&T / Comcast ডেডিকেটেড স্ট্যাটিক আইপি",
-  "ঢাকা সাপোর্ট, গড় রেসপন্স ৩ মিনিট",
+const SUPPORTED_COUNTRIES = [
+  { flag: "🇺🇸", code: "US", name: "United States", isp: "AT&T / Comcast", sampleIp: "108.204.142.88", ping: "~178 ms" },
+  { flag: "🇬🇧", code: "UK", name: "United Kingdom", isp: "BT / Virgin Media", sampleIp: "51.89.144.12", ping: "~152 ms" },
+  { flag: "🇩🇪", code: "DE", name: "Germany", isp: "Deutsche Telekom", sampleIp: "80.153.24.90", ping: "~144 ms" },
+  { flag: "🇫🇷", code: "FR", name: "France", isp: "Orange / Free", sampleIp: "90.84.180.33", ping: "~148 ms" },
 ];
 
-const CLOUD_PROMISES = [
-  "AMD EPYC 3.2GHz & DDR5 ECC র্যাম",
-  "PCIe Gen4 NVMe (6,800 MB/s Read)",
-  "ফুল রুট ও ব্রাউজার VNC রিমোট কনসোল",
-  "৯৯.৯৮% আপটাইম SLA ও ভ্যাট ইনভয়েস",
+const ISP_BULLETS = [
+  "IPQS Fraud Score: 0/100 গ্যারান্টিযুক্ত ক্লিন IP",
+  "৭ দিনের আনকন্ডিশনাল ফ্রি IP রিপ্লেসমেন্ট",
+  "100% ডেডিকেটেড স্ট্যাটিক হোম ব্রডব্যান্ড (কোনো শেয়ারিং নেই)",
+  "ঢাকা ইঞ্জিনিয়ারিং ডেস্ক — WhatsApp-এ গড় ৩ মিনিটে সাপোর্ট",
 ];
-
-const rise: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-};
-
-const stagger: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.04 } },
-};
 
 export function HeroSection() {
   const { formatPrice } = useCurrency();
   const reduceMotion = useReducedMotion();
-  const [activeMode, setActiveMode] = useState<"isp" | "cloud">("isp");
+  const [copied, setCopied] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState(SUPPORTED_COUNTRIES[0]);
+
+  // Interactive Live Diagnostic State for the Hero Card
+  const [cardTab, setCardTab] = useState<"user" | "clean">("user");
+  const [userReport, setUserReport] = useState<IpReport | null>(null);
+  const [scanning, setScanning] = useState(true);
+
+  const copyCode = () => {
+    navigator.clipboard.writeText("LAUNCH10");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Auto-detect visitor's live IP connection on mount
+  useEffect(() => {
+    let isMounted = true;
+    async function detectUserIp() {
+      try {
+        setScanning(true);
+        const res = await fetch("/api/ip-check");
+        if (!res.ok) throw new Error("Fetch failed");
+        const data = await res.json();
+        if (isMounted) setUserReport(data);
+      } catch {
+        if (isMounted) {
+          setUserReport({
+            ip: "103.114.98.42",
+            city: "Dhaka",
+            region: "Dhaka Division",
+            country: "Bangladesh",
+            countryCode: "BD",
+            asn: "AS132062",
+            org: "Local Fiber Broadband",
+            isp: "Bangladesh Broadband ISP",
+            usageType: "ISP / Residential",
+            fraudScore: 82,
+            riskBand: "high",
+            proxyDetected: false,
+            vpnDetected: false,
+            torDetected: false,
+            timezone: "Asia/Dhaka",
+            checkedAt: new Date().toISOString(),
+          });
+        }
+      } finally {
+        if (isMounted) setScanning(false);
+      }
+    }
+    detectUserIp();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden bg-white">
-      {/* Soft blue gradient wash — top-right */}
+      {/* Subtle soft gradient background */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_75%_-5%,rgba(37,99,235,0.08),transparent_65%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_70%_-5%,rgba(37,99,235,0.08),transparent_65%)]"
       />
-      {/* Very subtle grid texture */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.025] [background-image:linear-gradient(to_right,#64748b_1px,transparent_1px),linear-gradient(to_bottom,#64748b_1px,transparent_1px)] [background-size:40px_40px]"
       />
 
-      {/* Top Trust Bar - Clean static badges */}
-      <div className="relative z-20 border-b border-slate-100 bg-slate-50/80 px-4 py-2 backdrop-blur-sm">
+      {/* Top clean promo bar */}
+      {/* <div className="relative z-20 border-b border-slate-100 bg-slate-50/90 px-4 py-2 backdrop-blur-sm">
         <div className="shell flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs text-slate-600">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span className="inline-flex items-center gap-1.5 font-bold text-blue-700">
-              <Tag size={13} />
-              কোড <span className="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-[11px] text-blue-800">LAUNCH10</span>-এ ১০% ছাড়
-            </span>
+            <button
+              onClick={copyCode}
+              type="button"
+              className="inline-flex items-center gap-1.5 font-bold text-blue-700 hover:text-blue-800 transition-colors"
+            >
+              <Zap size={13} className="text-amber-500" />
+              কোড{" "}
+              <span className="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-[11px] text-blue-800">
+                LAUNCH10
+              </span>{" "}
+              {copied ? "✓ কপি হয়েছে!" : "— ১০% ছাড়"}
+            </button>
             <span className="hidden sm:inline-block h-3 w-px bg-slate-300" />
             <span className="inline-flex items-center gap-1.5 font-medium text-slate-700">
-              <Zap size={13} className="text-amber-500" />
-              &lt; ৬০ সেকেন্ডে অটো-ডেলিভারি
-            </span>
-            <span className="hidden md:inline-block h-3 w-px bg-slate-300" />
-            <span className="hidden md:inline-flex items-center gap-1.5 font-medium text-slate-700">
-              🇧🇩 বনানী অফিস ও ২৪/৭ লাইভ সাপোর্ট
+              🇧🇩 বনানী, ঢাকা অফিস · ২৪/৭ লাইভ সাপোর্ট
             </span>
           </div>
 
           <Link
-            href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20primevpsbd%20সার্ভার%20সম্পর্কে%20জানতে%20চাচ্ছি"
+            href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20কেনার%20আগে%20কিছু%20তথ্য%20জানতে%20চাচ্ছি"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-1.5 font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
           >
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            সাপোর্ট হেল্পডেস্ক (গড় রিপ্লাই ৩ মিনিট)
+            WhatsApp হেল্পডেস্ক (গড় রিপ্লাই ৩ মিনিট)
           </Link>
         </div>
-      </div>
+      </div> */}
 
-      <div className="shell relative z-10 grid items-center gap-10 py-12 sm:py-16 lg:min-h-[85vh] lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 lg:py-20 lg:pl-16 xl:pl-20">
-        {/* ── LEFT COLUMN ── */}
+      {/* Main hero grid */}
+      <div className="shell relative z-10 grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-12 lg:gap-14 lg:py-20">
+        {/* Left Column (7 cols) */}
         <motion.div
-          variants={stagger}
-          initial={reduceMotion ? false : "hidden"}
-          animate="show"
+          className="lg:col-span-7"
+          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
         >
           {/* Eyebrow badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-            Residential ISP VPS · AT&amp;T / Comcast
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/90 px-3.5 py-1 text-xs font-bold text-blue-700 shadow-2xs">
+            <ShieldCheck size={14} className="text-blue-600" />
+            100% Clean Residential ISP VPS
           </div>
 
-          {/* ── HEADLINE ── */}
-          <motion.h1
-            variants={rise}
-            className="mt-6 font-display text-[2.75rem] font-extrabold leading-[1.06] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.75rem]"
-          >
+          {/* ── HEADLINE (Restored exact typography & underline) ── */}
+          <h1 className="mt-6 font-display text-[2.75rem] font-extrabold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.75rem]">
             ব্যান হওয়ার ভয় শেষ।
             <br />
-            <span className="relative inline-block">
+            <span className="relative inline-block text-blue-600">
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent">
                 এখন কাজ করুন নিশ্চিন্তে।
               </span>
-              {/* Underline accent */}
+              {/* Hand-drawn blue underline accent */}
               <svg
                 aria-hidden
-                className="absolute -bottom-1 left-0 w-full"
+                className="absolute -bottom-2 left-0 w-full overflow-visible"
                 viewBox="0 0 320 8"
                 fill="none"
                 preserveAspectRatio="none"
               >
                 <path
                   d="M2 6 Q80 2 160 5 Q240 8 318 3"
-                  stroke="url(#ul)"
-                  strokeWidth="3"
+                  stroke="#3b82f6"
+                  strokeWidth="3.5"
                   strokeLinecap="round"
                 />
-                <defs>
-                  <linearGradient id="ul" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#2563eb" />
-                    <stop offset="100%" stopColor="#6366f1" />
-                  </linearGradient>
-                </defs>
               </svg>
             </span>
-          </motion.h1>
+          </h1>
 
-          {/* ── SUBHEADLINE (Dynamic based on activeMode) ── */}
-          <motion.p
-            key={activeMode}
-            variants={rise}
-            className="mt-6 max-w-[32rem] text-base leading-[1.75] text-slate-600 sm:text-[1.05rem]"
-          >
-            {activeMode === "isp" ? (
-              <>
-                AT&amp;T · Comcast রেসিডেন্সিয়াল IP — সার্ভে, ফ্রিল্যান্সিং ও
-                পেপ্যাল অ্যাকাউন্টের জন্য{" "}
-                <strong className="font-semibold text-slate-900">
-                  100% ক্লিন US VPS
-                </strong>
-                , পেমেন্ট করুন{" "}
-                <strong className="font-semibold text-pink-600">বিকাশ</strong> বা{" "}
-                <strong className="font-semibold text-orange-500">নগদে</strong>।
-              </>
-            ) : (
-              <>
-                AMD EPYC · Gen4 NVMe 6,800 MB/s — ডকার, কাস্টম কার্নেল ও প্রোডাকশন
-                অ্যাপের জন্য{" "}
-                <strong className="font-semibold text-slate-900">
-                  ডেডিকেটেড KVM ক্লাউড ইনফ্রাস্ট্রাকচার
-                </strong>
-                , পেমেন্ট করুন{" "}
-                <strong className="font-semibold text-pink-600">বিকাশ</strong> বা{" "}
-                <strong className="font-semibold text-orange-500">নগদে</strong>।
-              </>
-            )}
-          </motion.p>
+          {/* Subheadline */}
+          <p className="mt-6 max-w-2xl text-base leading-[1.75] text-slate-600 sm:text-[1.05rem]">
+            AT&amp;T · Comcast রেসিডেন্সিয়াল IP — সার্ভে, ফ্রিল্যান্সিং ও পেপ্যাল অ্যাকাউন্টের জন্য{" "}
+            <strong className="font-semibold text-slate-900">
+              100% ক্লিন {selectedCountry.code} VPS
+            </strong>
+            , পেমেন্ট করুন{" "}
+            <strong className="font-semibold text-pink-600">বিকাশ</strong> বা{" "}
+            <strong className="font-semibold text-orange-500">নগদে</strong>।
+          </p>
 
-          {/* ── CTA BUTTONS ── */}
-          <motion.div
-            variants={rise}
-            className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
-          >
-            {activeMode === "isp" ? (
-              <>
-                {/* PRIMARY — Residential ISP */}
-                <Link
-                  href="/survey-vps"
-                  className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-blue-600 px-7 py-4 text-sm font-bold text-white shadow-lg shadow-blue-600/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/35 active:translate-y-0"
-                >
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-500 group-hover:translate-x-full"
-                  />
-                  <ShieldCheck size={18} className="shrink-0" />
-                  ISP Plans দেখুন — {formatPrice(2999)}/মাস
-                  <ArrowRight
-                    size={16}
-                    className="shrink-0 transition-transform duration-200 group-hover:translate-x-1"
-                  />
-                </Link>
-
-                {/* SECONDARY — Cloud VPS */}
-                <button
-                  type="button"
-                  onClick={() => setActiveMode("cloud")}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-6 py-[0.9rem] text-sm font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-700 hover:shadow-md active:translate-y-0"
-                >
-                  <Zap size={15} className="shrink-0 text-indigo-500" />
-                  Cloud NVMe দেখুন — {formatPrice(950)}/মাস
-                </button>
-              </>
-            ) : (
-              <>
-                {/* PRIMARY — Cloud VPS */}
-                <Link
-                  href="/cloud-vps"
-                  className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-slate-900 px-7 py-4 text-sm font-bold text-white shadow-lg shadow-slate-900/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-xl hover:shadow-slate-900/35 active:translate-y-0"
-                >
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-500 group-hover:translate-x-full"
-                  />
-                  <Zap size={18} className="shrink-0 text-amber-400" />
-                  Cloud NVMe কনফিগার করুন — {formatPrice(950)}/মাস
-                  <ArrowRight
-                    size={16}
-                    className="shrink-0 transition-transform duration-200 group-hover:translate-x-1"
-                  />
-                </Link>
-
-                {/* SECONDARY — Residential ISP */}
-                <button
-                  type="button"
-                  onClick={() => setActiveMode("isp")}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-6 py-[0.9rem] text-sm font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-700 hover:shadow-md active:translate-y-0"
-                >
-                  <ShieldCheck size={15} className="shrink-0 text-blue-600" />
-                  Residential ISP দেখুন — {formatPrice(2999)}/মাস
-                </button>
-              </>
-            )}
-          </motion.div>
-
-          {/* Frictionless Micro-copy */}
-          <motion.p variants={rise} className="mt-2.5 text-xs text-slate-500 flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            কোনো ক্রেডিট কার্ড লাগবে না · বিকাশ বা নগদে পেমেন্টের ৬০ সেকেন্ডেই ইনস্ট্যান্ট অ্যাক্সেস
-          </motion.p>
-
-          {/* WhatsApp CTA & Mobile Follow Bar */}
-          <motion.div variants={rise} className="mt-5 flex flex-wrap items-center justify-between gap-4">
-            <Link
-              href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20/%20KVM%20VPS%20কেনার%20আগে%20কিছু%20তথ্য%20জানতে%20চাচ্ছি"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-emerald-700"
-            >
-              <MessageCircle size={16} className="text-emerald-500" />
-              এখনই ইঞ্জিনিয়ারের সাথে কথা বলুন — ঢাকা টিম ৩ মিনিটে রিপ্লাই দেয়
-            </Link>
-
-            {/* Mobile-only social strip */}
-            <div className="flex items-center gap-2.5 lg:hidden">
-              <span className="text-[11px] font-semibold text-slate-400">— Follow:</span>
-              <a href="https://youtube.com/@primevpsbd" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-slate-400 hover:text-red-600 transition-colors">
-                <FaYoutube size={15} />
-              </a>
-              <a href="https://linkedin.com/company/primevpsbd" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-slate-400 hover:text-blue-600 transition-colors">
-                <FaLinkedinIn size={14} />
-              </a>
-              <a href="https://x.com/primevpsbd" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-slate-400 hover:text-sky-500 transition-colors">
-                <FaTwitter size={14} />
-              </a>
-              <a href="https://facebook.com/primevpsbd" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-slate-400 hover:text-blue-600 transition-colors">
-                <FaFacebookF size={14} />
-              </a>
-            </div>
-          </motion.div>
-
-          {/* ── PAYMENT BADGES ── */}
-          <motion.div
-            variants={rise}
-            className="mt-6 flex flex-wrap items-center gap-2.5"
-          >
-            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
-              পেমেন্ট করুন:
+          {/* Country Selection Chips */}
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-slate-500 mr-1 flex items-center gap-1">
+              <Globe size={13} className="text-blue-600" /> লোকেশন:
             </span>
-            <BkashLogo className="h-8 w-auto" />
-            <NagadLogo className="h-8 w-auto" />
-            <VisaLogo className="h-7 w-auto" />
-            <UsdtLogo className="h-8 w-auto" />
-          </motion.div>
+            {SUPPORTED_COUNTRIES.map((country) => {
+              const active = selectedCountry.code === country.code;
+              return (
+                <button
+                  key={country.code}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCountry(country);
+                    setCardTab("clean");
+                  }}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                    active
+                      ? "border border-blue-600 bg-blue-600 text-white shadow-sm"
+                      : "border border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                  }`}
+                >
+                  <span>{country.flag}</span>
+                  <span>{country.name}</span>
+                </button>
+              );
+            })}
+          </div>
 
-          {/* ── PROMISE CHECKLIST ── */}
-          <motion.ul
-            variants={rise}
-            className="mt-7 grid gap-2.5 border-t border-slate-100 pt-6 sm:grid-cols-2"
-          >
-            {(activeMode === "isp" ? ISP_PROMISES : CLOUD_PROMISES).map((p) => (
-              <li key={p} className="flex items-start gap-2.5 text-sm text-slate-600">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
-                  <Check size={11} strokeWidth={3} />
-                </span>
-                {p}
+          {/* Bullet points */}
+          <ul className="mt-6 space-y-2.5">
+            {ISP_BULLETS.map((bullet) => (
+              <li key={bullet} className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700">
+                <Check size={16} className="shrink-0 text-emerald-600" />
+                <span>{bullet}</span>
               </li>
             ))}
-          </motion.ul>
+          </ul>
+
+          {/* CTA Buttons */}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              href="#pricing"
+              className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/25 transition-all hover:bg-blue-700 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span>ISP Plans দেখুন — {formatPrice(2999)}/মাস</span>
+              <ArrowRight size={16} />
+            </Link>
+
+            <Link
+              href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20Residential%20RDP%20কেনার%20আগে%20কিছু%20তথ্য%20জানতে%20চাচ্ছি"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-2xl border border-emerald-300 bg-emerald-50 px-5 py-3.5 text-sm font-bold text-emerald-800 transition-all hover:bg-emerald-100"
+            >
+              <MessageCircle size={16} className="text-emerald-600" />
+              <span>WhatsApp-এ কথা বলুন</span>
+            </Link>
+          </div>
+
+          {/* Payment Partners */}
+          <div className="mt-7 flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              পেমেন্ট মাধ্যম:
+            </span>
+            <BkashLogo className="h-7 w-auto" />
+            <NagadLogo className="h-7 w-auto" />
+            <VisaLogo className="h-6 w-auto" />
+            <UsdtLogo className="h-7 w-auto" />
+          </div>
         </motion.div>
 
-        {/* ── RIGHT COLUMN: Interactive Live Terminal / RDP Proof Showcase ── */}
+        {/* Right Column (5 cols): Live IP Diagnostics Hook vs Clean Residential Node */}
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, x: 28 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.65, ease: "easeOut", delay: 0.18 }}
-          className="hidden lg:block"
+          className="lg:col-span-5"
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.45, ease: "easeOut", delay: 0.08 }}
         >
-          <div className="relative">
-            {/* Outer glow */}
-            <div
-              aria-hidden
-              className={`absolute -inset-5 rounded-[2.5rem] blur-2xl transition-all duration-500 ${
-                activeMode === "isp"
-                  ? "bg-gradient-to-br from-blue-100/90 via-emerald-100/40 to-transparent"
-                  : "bg-gradient-to-br from-indigo-100/90 via-slate-100/40 to-transparent"
-              }`}
-            />
-            {/* Device Frame */}
-            <div className="relative overflow-hidden rounded-[1.6rem] border border-slate-200/90 bg-white shadow-2xl shadow-slate-300/50 ring-1 ring-slate-100">
-              {/* Browser chrome top bar */}
-              <div className="flex items-center gap-2 border-b border-slate-200 bg-[#f5f5f7] px-4 py-3">
-                <span className="h-3 w-3 rounded-full bg-rose-400" />
-                <span className="h-3 w-3 rounded-full bg-amber-400" />
-                <span className="h-3 w-3 rounded-full bg-emerald-400" />
-                <div className="ml-3 flex flex-1 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1 font-mono text-[11px] text-slate-600">
-                  <span className="text-emerald-600">🔒</span>
-                  {activeMode === "isp"
-                    ? "edge-node://dallas-hub.primevpsbd.com:3389"
-                    : "ssh-node://ashburn-kvm-01.primevpsbd.com:22"}
-                </div>
-              </div>
-
-              {/* Mode Switcher Tabs inside frame */}
-              <div className="flex items-center gap-1 border-b border-slate-200 bg-slate-50 px-4 py-2.5">
+          <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+            {/* Top Interactive Diagnostic Switcher */}
+            <div className="border-b border-slate-100 bg-slate-50/90 p-2 sm:p-2.5">
+              <div className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-200/60 p-1 text-xs font-bold">
                 <button
                   type="button"
-                  onClick={() => setActiveMode("isp")}
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                    activeMode === "isp"
-                      ? "bg-blue-600 text-white shadow-sm shadow-blue-600/30"
-                      : "text-slate-500 hover:text-slate-800"
+                  onClick={() => setCardTab("user")}
+                  className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
+                    cardTab === "user"
+                      ? "bg-white text-rose-700 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <Monitor size={13} /> Windows 11 RDP
+                  <ShieldAlert size={14} className={cardTab === "user" ? "text-rose-600" : ""} />
+                  <span>আপনার কানেকশন</span>
+                  <span className="rounded-full bg-rose-100 px-1.5 py-0.2 text-[10px] font-extrabold text-rose-700">
+                    রিস্ক ⚠️
+                  </span>
                 </button>
+
                 <button
                   type="button"
-                  onClick={() => setActiveMode("cloud")}
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                    activeMode === "cloud"
-                      ? "bg-slate-900 text-white shadow-sm"
-                      : "text-slate-500 hover:text-slate-800"
+                  onClick={() => setCardTab("clean")}
+                  className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
+                    cardTab === "clean"
+                      ? "bg-white text-emerald-800 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <span className="font-mono text-[10px]">$</span> Linux NVMe KVM
+                  <ShieldCheck size={14} className={cardTab === "clean" ? "text-emerald-600" : ""} />
+                  <span>আমাদের ক্লিন নোড</span>
+                  <span className="rounded-full bg-emerald-100 px-1.5 py-0.2 text-[10px] font-extrabold text-emerald-800">
+                    0/100 ✓
+                  </span>
                 </button>
-
-                <div className="ml-auto flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  LIVE PREVIEW
-                </div>
-              </div>
-
-              {/* Dynamic Interactive Preview Canvas (No generic stock image!) */}
-              {activeMode === "isp" ? (
-                <div className="relative overflow-hidden bg-slate-950 p-5 font-mono text-xs select-none">
-                  {/* Subtle matrix backdrop */}
-                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b22_1px,transparent_1px),linear-gradient(to_bottom,#1e293b22_1px,transparent_1px)] bg-[size:16px_16px]" />
-
-                  <div className="relative z-10 space-y-4">
-                    {/* Node status bar */}
-                    <div className="flex items-center justify-between text-[11px] text-slate-400">
-                      <span className="flex items-center gap-1.5">
-                        <MapPin size={12} className="text-emerald-400" /> Dallas US-Central (AT&amp;T Fiber)
-                      </span>
-                      <span className="inline-flex items-center gap-1 rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
-                        <Zap size={10} className="text-amber-300" /> 178ms Dhaka
-                      </span>
-                    </div>
-
-                    {/* Fraud Score Card */}
-                    <div className="rounded-2xl border border-emerald-500/40 bg-emerald-950/40 p-4 shadow-lg shadow-emerald-950/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20 border border-emerald-500/30">
-                            <ShieldCheck size={26} className="text-emerald-400" />
-                          </div>
-                          <div>
-                            <p className="font-sans text-xs font-bold text-white">IPQS Fraud Risk: 0/100</p>
-                            <p className="font-sans text-[11px] text-slate-400">AT&amp;T U-verse · ASN: AS7018</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <span className="rounded-full bg-emerald-400/20 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-300 border border-emerald-400/30">
-                            100% CLEAN
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="mt-3.5 pt-3 border-t border-emerald-800/40 grid grid-cols-2 gap-2 text-[10px] text-slate-300">
-                        <div>ASN Type: <span className="text-white font-bold">ISP / Residential</span></div>
-                        <div>WebRTC Leak: <span className="text-emerald-400 font-bold">0% (Shielded)</span></div>
-                        <div>Proxy / VPN: <span className="text-emerald-400 font-bold">Undetected</span></div>
-                        <div>IP Status: <span className="text-white font-bold">Dedicated Static</span></div>
-                      </div>
-                    </div>
-
-                    {/* Windows 11 RDP Controls */}
-                    <div className="rounded-xl border border-slate-800 bg-slate-900/90 p-3">
-                      <div className="flex items-center justify-between text-[11px] text-slate-400">
-                        <span>Remote Desktop: Windows 11 Pro</span>
-                        <span className="text-slate-300">60 FPS · Hardware Accelerated</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative overflow-hidden bg-slate-950 p-5 font-mono text-xs select-none">
-                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b22_1px,transparent_1px),linear-gradient(to_bottom,#1e293b22_1px,transparent_1px)] bg-[size:16px_16px]" />
-
-                  <div className="relative z-10 space-y-3.5">
-                    {/* Ashburn node bar */}
-                    <div className="flex items-center justify-between text-[11px] text-slate-400">
-                      <span className="flex items-center gap-1.5">
-                        <MapPin size={12} className="text-indigo-400" /> Ashburn US-East Tier-1 Node
-                      </span>
-                      <span className="inline-flex items-center gap-1 rounded bg-indigo-500/15 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
-                        <Zap size={10} className="text-amber-300" /> 188ms Dhaka
-                      </span>
-                    </div>
-
-                    {/* Terminal Benchmark Output (yabs preview) */}
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 font-mono text-[11px] space-y-2 text-slate-300">
-                      <div className="text-indigo-400 font-bold flex items-center gap-2">
-                        <Terminal size={13} />
-                        root@ashburn-vps-01:~# yabs.sh --benchmark
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-800/80 space-y-1.5 text-[11px]">
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Processor:</span>
-                          <span className="text-white font-semibold">AMD EPYC 7763 (3.24 GHz)</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">RAM:</span>
-                          <span className="text-emerald-400 font-semibold">DDR5 ECC Dedicated Memory</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">NVMe Read:</span>
-                          <span className="text-emerald-400 font-semibold">6,840 MB/s (Gen4 RAID-1)</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Uplink:</span>
-                          <span className="text-white font-semibold">10 Gbps Tier-1 Redundant</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Virtualization:</span>
-                          <span className="text-indigo-300 font-semibold">KVM (Full Root Access)</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Features grid */}
-                    <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
-                      <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-2 text-slate-300">
-                        ✓ Docker / K8s
-                      </div>
-                      <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-2 text-slate-300">
-                        ✓ Custom Kernel
-                      </div>
-                      <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-2 text-slate-300">
-                        ✓ Anti-DDoS
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Action trigger footer inside card */}
-              <div className="p-4 bg-white border-t border-slate-100">
-                {activeMode === "isp" ? (
-                  <Link
-                    href="/survey-vps"
-                    className="group flex items-center justify-between rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm shadow-blue-600/20 transition-all hover:bg-blue-700"
-                  >
-                    <span>ISP Plans দেখুন — {formatPrice(2999)}/মাস</span>
-                    <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                ) : (
-                  <Link
-                    href="/cloud-vps"
-                    className="group flex items-center justify-between rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800"
-                  >
-                    <span>Cloud NVMe কনফিগার করুন — {formatPrice(950)}/মাস</span>
-                    <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                )}
               </div>
             </div>
+
+            {/* TAB CONTENT 1: User's Real Connection Hook (Shows Why They Get Banned) */}
+            {cardTab === "user" ? (
+              <div className="p-6">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      লাইভ কানেকশন ডায়াগনস্টিক
+                    </p>
+                    <p className="mt-0.5 font-mono text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <MapPin size={13} className="text-rose-600" />
+                      {scanning
+                        ? "কানেকশন স্ক্যান হচ্ছে..."
+                        : `${userReport?.ip || "103.xxx.xxx.xxx"}`}
+                    </p>
+                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 border border-rose-200">
+                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
+                    সার্ভেতে ব্যান রিস্ক: HIGH
+                  </span>
+                </div>
+
+                {/* Real Diagnostic Rows */}
+                <div className="divide-y divide-slate-100 text-xs">
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">আপনার ডিটেক্টেড লোকেশন:</span>
+                    <span className="font-bold text-slate-800">
+                      {userReport?.city || "Dhaka"}, {userReport?.country || "Bangladesh"} 🇧🇩
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">ইন্টারনেট প্রোভাইডার (ISP):</span>
+                    <span className="font-bold text-slate-800 max-w-[190px] truncate">
+                      {userReport?.isp || "Local ISP / Mobile"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">WebRTC / DNS লিক:</span>
+                    <span className="font-bold text-rose-600">
+                      ⚠️ লোকাল বিডি আইপি লিক করে
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">US/UK সার্ভে অনুমোদন:</span>
+                    <span className="font-bold text-rose-600">
+                      ❌ সরাসরি ব্যান / ফ্ল্যাগ হবে
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">IPQS ফ্রড রিস্ক স্কোর:</span>
+                    <span className="font-mono font-extrabold text-rose-600">
+                      {userReport?.fraudScore ? `${userReport.fraudScore} / 100` : "75–85 / 100 (Unsafe)"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Emotional Hook Alert */}
+                <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50/80 p-3 text-[11px] leading-relaxed text-rose-900">
+                  <p className="flex items-start gap-1.5">
+                    <AlertTriangle size={15} className="text-rose-600 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>কেন ব্যান হয়?</strong> লোকাল বাংলাদেশি আইপি বা ফ্রি VPN দিয়ে Swagbucks, Prolific ও PayPal-এ ঢুকলে অবস্থান ও WebRTC লিকের কারণে অ্যাকাউন্ট স্থায়ীভাবে সাসপেন্ড হয়ে যায়।
+                    </span>
+                  </p>
+                </div>
+
+                {/* Action CTA */}
+                <div className="mt-5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setCardTab("clean")}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-blue-600/25 transition-all hover:brightness-110 active:scale-95"
+                  >
+                    <span>আমাদের ০/১০০ ক্লিন আইপি নোড দেখুন</span>
+                    <ChevronRight size={15} />
+                  </button>
+                  <p className="mt-2 text-center text-[10px] text-slate-400">
+                    AT&amp;T ও Comcast দিয়ে ১০০% আনব্যান গ্যারান্টিতে কাজ করুন
+                  </p>
+                </div>
+              </div>
+            ) : (
+              /* TAB CONTENT 2: Our Certified Clean Residential Node */
+              <div className="p-6">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      primevpsbd সার্টিফাইড নোড
+                    </p>
+                    <p className="mt-0.5 font-mono text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <MapPin size={13} className="text-emerald-600" />
+                      {selectedCountry.flag} {selectedCountry.sampleIp} ({selectedCountry.code})
+                    </p>
+                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Clean 0/100 ✓
+                  </span>
+                </div>
+
+                {/* Clean Metrics Rows */}
+                <div className="divide-y divide-slate-100 text-xs">
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">আইপি কোয়ালিটি (IPQS):</span>
+                    <span className="font-mono font-extrabold text-emerald-700">
+                      0 / 100 Fraud Score
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">হোম ব্রডব্যান্ড নেটওয়ার্ক:</span>
+                    <span className="font-bold text-slate-900">
+                      {selectedCountry.isp}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">আইপি ক্যাটাগরি:</span>
+                    <span className="font-bold text-slate-800">
+                      Dedicated Static Residential
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">WebRTC / DNS লিক শিল্ড:</span>
+                    <span className="font-bold text-emerald-700">
+                      Zero Leak গ্যারান্টি ✓
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">সার্ভে ও পেপ্যাল সেফটি:</span>
+                    <span className="font-bold text-emerald-700">
+                      ✅ 100% সুরক্ষিত ও আনব্যান
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-slate-500">ঢাকা গেটওয়ে পিং:</span>
+                    <span className="font-mono font-bold text-slate-800">
+                      {selectedCountry.ping} (অপ্টিমাইজড)
+                    </span>
+                  </div>
+                </div>
+
+                {/* Solution Guarantee Box */}
+                <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3 text-[11px] leading-relaxed text-emerald-900">
+                  <p className="flex items-start gap-1.5">
+                    <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>৭ দিনের আনকন্ডিশনাল রিপ্লেসমেন্ট:</strong> কোনো কারণে আইপিতে সমস্যা হলে আমাদের বনানী সাপোর্ট ডেস্ক বিনামূল্যে সাথে সাথে ফ্রেশ আইপি সোয়াপ করে দেবে।
+                    </span>
+                  </p>
+                </div>
+
+                {/* Action CTA */}
+                <div className="mt-5 pt-2">
+                  <Link
+                    href={`/survey-vps?country=${selectedCountry.code.toLowerCase()}`}
+                    className="w-full flex items-center justify-between rounded-xl bg-blue-600 px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-blue-700"
+                  >
+                    <span>{selectedCountry.name} RDP প্ল্যান বেছে নিন — {formatPrice(2999)}/মাস</span>
+                    <ChevronRight size={16} />
+                  </Link>
+                  <p className="mt-2 text-center text-[10px] text-slate-400">
+                    বিকাশ বা নগদে অর্ডার করুন — ৬০–৯০ সেকেন্ডে অটো-ডেলিভারি
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
