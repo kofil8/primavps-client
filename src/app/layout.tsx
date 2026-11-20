@@ -2,6 +2,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { ChatWidget } from "@/components/ChatWidget";
+import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { StickySocialBar } from "@/components/ui/StickySocialBar";
 import { CurrencyProvider } from "@/lib/currency";
 import { bodyFont, displayFont, monoFont } from "@/lib/fonts";
@@ -56,6 +57,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <StickySocialBar />
+          <FloatingWhatsApp />
           <ChatWidget />
         </CurrencyProvider>
       </body>

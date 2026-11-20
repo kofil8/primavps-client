@@ -1,7 +1,8 @@
 "use client";
 
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, MessageCircle, Send, X } from "lucide-react";
+import { Bot, Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -120,27 +121,24 @@ export function ChatWidget() {
     },
   ]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);   // waiting for first token
-  const [streaming, setStreaming] = useState(false); // tokens arriving
+  const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [showChips, setShowChips] = useState(true);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Listen for open-chat event dispatched from any button across the page
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
     window.addEventListener("open-chat", handleOpen);
     return () => window.removeEventListener("open-chat", handleOpen);
   }, []);
 
-  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Focus input when chat opens
   useEffect(() => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 100);
   }, [isOpen]);
@@ -152,7 +150,6 @@ export function ChatWidget() {
     const trimmed = text.trim();
     if (!trimmed || loading || streaming) return;
 
-    // Emergency WhatsApp chip — open in new tab instead of sending to AI
     if (trimmed.includes("WhatsApp") || trimmed.includes("জরুরি")) {
       window.open(WA_LINK, "_blank", "noopener,noreferrer");
       return;
@@ -164,9 +161,8 @@ export function ChatWidget() {
     const userMsg: Message = { id: uid(), role: "user", content: trimmed };
     const nextMessages = [...messages, userMsg];
     setMessages(nextMessages);
-    setLoading(true); // show typing dots
+    setLoading(true);
 
-    // Placeholder for the streaming assistant message
     const assistantId = uid();
 
     const abort = new AbortController();
@@ -177,7 +173,10 @@ export function ChatWidget() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: nextMessages.map(({ role, content }) => ({ role, content })),
+          messages: nextMessages.map(({ role, content }) => ({
+            role,
+            content,
+          })),
         }),
         signal: abort.signal,
       });
@@ -185,7 +184,8 @@ export function ChatWidget() {
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
         const errText =
-          data.error ?? "Sorry, kichu ekta problem hoyeche. Please abar try korun.";
+          data.error ??
+          "Sorry, kichu ekta problem hoyeche. Please abar try korun.";
         setMessages((prev) => [
           ...prev,
           { id: assistantId, role: "assistant", content: errText },
@@ -193,7 +193,6 @@ export function ChatWidget() {
         return;
       }
 
-      // Insert empty streaming bubble
       setMessages((prev) => [
         ...prev,
         { id: assistantId, role: "assistant", content: "", streaming: true },
@@ -211,7 +210,7 @@ export function ChatWidget() {
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split("\n");
-        buffer = lines.pop() ?? ""; // keep incomplete line
+        buffer = lines.pop() ?? "";
 
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
@@ -221,9 +220,13 @@ export function ChatWidget() {
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId
-                  ? { ...m, content: "Network error. Please try again.", streaming: false }
-                  : m
-              )
+                  ? {
+                      ...m,
+                      content: "Network error. Please try again.",
+                      streaming: false,
+                    }
+                  : m,
+              ),
             );
             return;
           }
@@ -231,10 +234,8 @@ export function ChatWidget() {
             const token: string = JSON.parse(payload);
             setMessages((prev) =>
               prev.map((m) =>
-                m.id === assistantId
-                  ? { ...m, content: m.content + token }
-                  : m
-              )
+                m.id === assistantId ? { ...m, content: m.content + token } : m,
+              ),
             );
           } catch {
             // malformed chunk — skip
@@ -244,26 +245,34 @@ export function ChatWidget() {
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") return;
       setMessages((prev) => {
-        // Replace streaming bubble or append error
         const hasPlaceholder = prev.some((m) => m.id === assistantId);
         if (hasPlaceholder) {
           return prev.map((m) =>
             m.id === assistantId
-              ? { ...m, content: "Network error hoyeche. Internet check kore abar try korun.", streaming: false }
-              : m
+              ? {
+                  ...m,
+                  content:
+                    "Network error hoyeche. Internet check kore abar try korun.",
+                  streaming: false,
+                }
+              : m,
           );
         }
         return [
           ...prev,
-          { id: assistantId, role: "assistant", content: "Network error hoyeche. Internet check kore abar try korun." },
+          {
+            id: assistantId,
+            role: "assistant",
+            content:
+              "Network error hoyeche. Internet check kore abar try korun.",
+          },
         ];
       });
     } finally {
-      // Mark streaming bubble as done
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantId ? { ...m, streaming: false } : m
-        )
+          m.id === assistantId ? { ...m, streaming: false } : m,
+        ),
       );
       setLoading(false);
       setStreaming(false);
@@ -303,8 +312,12 @@ export function ChatWidget() {
                   <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-indigo-600 bg-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Live Support</p>
-                  <p className="text-xs text-indigo-200">primevpsbd.com • Online</p>
+                  <p className="text-sm font-semibold text-white">
+                    Live Support
+                  </p>
+                  <p className="text-xs text-indigo-200">
+                    primevpsbd.com • Online
+                  </p>
                 </div>
               </div>
               <button
@@ -321,7 +334,6 @@ export function ChatWidget() {
               {messages.map((msg) => (
                 <MessageBubble key={msg.id} msg={msg} />
               ))}
-              {/* Typing dots only while waiting for FIRST token */}
               {loading && <TypingDots />}
               <div ref={bottomRef} />
             </div>
@@ -336,7 +348,9 @@ export function ChatWidget() {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden border-t border-slate-100 bg-white px-3 py-2"
                 >
-                  <p className="mb-1.5 text-xs text-slate-400">Quick questions:</p>
+                  <p className="mb-1.5 text-xs text-slate-400">
+                    Quick questions:
+                  </p>
                   <div className="flex flex-wrap gap-1.5">
                     {QUICK_REPLIES.map((chip) => (
                       <button
@@ -378,32 +392,18 @@ export function ChatWidget() {
         )}
       </AnimatePresence>
 
-      {/* ── Toggle button ── */}
+      {/* ── Toggle button (Full open Lottie when closed, X when open) ── */}
       <motion.button
+        type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={isOpen ? "Close chat" : "Open chat"}
-        whileHover={{ scale: 1.08 }}
+        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        animate={{
-          boxShadow: isOpen
-            ? "0 0 0 0px rgba(99,102,241,0.4)"
-            : [
-                "0 0 0 0px rgba(99,102,241,0.4)",
-                "0 0 0 10px rgba(99,102,241,0)",
-              ],
-        }}
-        transition={
+        className={`relative flex items-center justify-center transition-all cursor-pointer ${
           isOpen
-            ? { duration: 0.2 }
-            : {
-                boxShadow: {
-                  duration: 1.8,
-                  repeat: Infinity,
-                  ease: "easeOut",
-                },
-              }
-        }
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg"
+            ? "h-14 w-14 rounded-full bg-indigo-600 text-white shadow-xl hover:bg-indigo-700"
+            : "h-24 w-24 sm:h-28 sm:w-28 bg-transparent border-0 outline-none p-0 focus:outline-none"
+        }`}
       >
         <AnimatePresence mode="wait" initial={false}>
           {isOpen ? (
@@ -417,15 +417,22 @@ export function ChatWidget() {
               <X className="h-6 w-6" />
             </motion.span>
           ) : (
-            <motion.span
-              key="open"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
+            <motion.div
+              key="lottie-open"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.18 }}
+              className="pointer-events-none h-24 w-24 sm:h-28 sm:w-28 flex items-center justify-center"
             >
-              <MessageCircle className="h-6 w-6" />
-            </motion.span>
+              <DotLottieReact
+                src="/customer-care.lottie"
+                loop
+                autoplay
+                className="h-full w-full object-contain"
+                style={{ width: "100%", height: "100%" }}
+              />
+            </motion.div>
           )}
         </AnimatePresence>
       </motion.button>

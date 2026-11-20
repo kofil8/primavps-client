@@ -115,7 +115,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-white">
+    <section id="hero" className="relative overflow-hidden bg-white">
       {/* Subtle soft gradient background */}
       <div
         aria-hidden

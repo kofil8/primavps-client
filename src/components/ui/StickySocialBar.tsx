@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 import {
@@ -11,34 +12,74 @@ import {
 } from "react-icons/fa";
 
 export function StickySocialBar() {
-  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const [isInHero, setIsInHero] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Hide on smaller devices as soon as user scrolls down past the hero top
-      if (window.scrollY > 90) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+    let observer: IntersectionObserver | null = null;
+    let cancelled = false;
+
+    const setupObserver = () => {
+      const heroEl = document.getElementById("hero");
+      if (!heroEl) {
+        setIsInHero(false);
+        return;
       }
+
+      // Check current scroll position relative to the hero section
+      const rect = heroEl.getBoundingClientRect();
+      const inHeroNow = rect.bottom > 80 && rect.top < window.innerHeight;
+      setIsInHero(inHeroNow);
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (cancelled) return;
+          const [entry] = entries;
+          setIsInHero(entry.isIntersecting);
+        },
+        {
+          root: null,
+          threshold: 0.05,
+          rootMargin: "0px 0px -50px 0px",
+        }
+      );
+
+      observer.observe(heroEl);
+    };
+
+    const frameId = requestAnimationFrame(setupObserver);
+
+    const handleScroll = () => {
+      const heroEl = document.getElementById("hero");
+      if (!heroEl) {
+        setIsInHero(false);
+        return;
+      }
+      const rect = heroEl.getBoundingClientRect();
+      setIsInHero(rect.bottom > 80 && rect.top < window.innerHeight);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", handleScroll);
+      if (observer) observer.disconnect();
+    };
+  }, [pathname]);
 
   return (
     <aside
-      className={`fixed z-40 flex flex-col items-center gap-2 sm:gap-3 pointer-events-auto transition-all duration-300 ease-out
+      className={`fixed z-40 flex flex-col items-center gap-2 sm:gap-3 transition-opacity duration-200 ease-out
         /* Desktop wide layout: vertical center on right in the free margin */
-        min-[1420px]:right-4 2xl:right-6 min-[1420px]:top-1/2 min-[1420px]:-translate-y-1/2 min-[1420px]:opacity-60 min-[1420px]:hover:opacity-100 min-[1420px]:translate-x-0
-        /* Smaller devices & mobile: positioned near top-right, auto-hides on scroll */
+        min-[1420px]:right-4 2xl:right-6 min-[1420px]:top-1/2 min-[1420px]:-translate-y-1/2
+        /* Smaller devices & mobile: positioned near top-right */
         max-[1419px]:top-24 sm:max-[1419px]:top-28 max-[1419px]:right-2 sm:max-[1419px]:right-3.5
         ${
-          scrolled
-            ? "max-[1419px]:opacity-0 max-[1419px]:pointer-events-none max-[1419px]:translate-x-8"
-            : "max-[1419px]:opacity-85 max-[1419px]:translate-x-0"
+          isInHero
+            ? "opacity-85 min-[1420px]:opacity-60 min-[1420px]:hover:opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }
       `}
       aria-label="Follow us on social media"

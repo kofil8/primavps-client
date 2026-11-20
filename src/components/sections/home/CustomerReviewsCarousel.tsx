@@ -1,342 +1,297 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useId } from "react";
 import { Reveal } from "@/components/ui/reveal";
 import {
   ArrowRight,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
+  Lock,
   MessageCircle,
-  ShieldCheck,
   Star,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
-interface Review {
+interface ReviewItem {
   id: string;
-  category: "us" | "uk" | "eu";
   name: string;
+  nameEn: string;
   role: string;
   location: string;
-  country: string;
+  countryTag: string;
   countryFlag: string;
-  plan: string;
   verifiedMethod: string;
-  headline: string;
-  comment: string;
+  quote: string;
+  avatarGradient: string;
+  initials: string;
 }
 
-const REVIEWS: Review[] = [
+const ROW_1_REVIEWS: ReviewItem[] = [
   {
-    id: "rev-1",
-    category: "us",
+    id: "r1-1",
     name: "তানভীর আহমেদ",
-    role: "Paid Survey & Research",
-    location: "আগ্রাবাদ, চট্টগ্রাম",
-    country: "US (AT&T)",
+    nameEn: "Tanvir Ahmed",
+    role: "Full-Time Survey Researcher",
+    location: "Chittagong",
+    countryTag: "US AT&T ISP",
     countryFlag: "🇺🇸",
-    plan: "Popular Pro US ISP",
-    verifiedMethod: "Verified bKash Order",
-    headline: "৪ মাসেও Swagbucks বা Qmee-তে কোনো অ্যাকাউন্ট ব্যান হয়নি",
-    comment:
-      "আগে নরমাল ভিপিএস বা ভিপিএন দিয়ে কাজ করতাম, ২-৩ দিন পর পরই ফ্ল্যাগ করত। primevpsbd-র AT&T রেসিডেন্সিয়াল RDP নেওয়ার পর IPQS স্কোরে সবসময় 0/100 পাই। বিকাশ দিয়ে পেমেন্টের ১ মিনিটের মধ্যে লগইন পেয়েছি।",
+    verifiedMethod: "Verified bKash",
+    quote: "Swagbucks ও Prolific-এ একাউন্ট সাসপেনশন শূন্যে নেমেছে! ৪ মাসেও কোনো ফ্ল্যাগ খাইনি — 0/100 IPQS স্কোরের ক্লিন আইপি গেম-চেঞ্জার।",
+    avatarGradient: "from-blue-600 to-indigo-600",
+    initials: "TA",
   },
   {
-    id: "rev-2",
-    category: "uk",
+    id: "r1-2",
     name: "ফারহান চৌধুরী",
-    role: "Prolific & UK Survey Specialist",
-    location: "জিন্দাবাজার, সিলেট",
-    country: "UK (BT)",
+    nameEn: "Farhan Chowdhury",
+    role: "Prolific Specialist",
+    location: "Sylhet",
+    countryTag: "UK BT ISP",
     countryFlag: "🇬🇧",
-    plan: "Starter UK ISP",
-    verifiedMethod: "Verified Nagad Order",
-    headline: "UK BT ব্রডব্যান্ড আইপি দিয়ে Prolific-এ প্রথম দিনেই অ্যাকাউন্ট সেফ",
-    comment:
-      "Prolific-এর জন্য ১০০% ক্লিন UK রেসিডেন্সিয়াল আইপি দরকার ছিল। এদের BT ISP RDP-তে WebRTC বা DNS লিকের কোনো চিহ্ন নেই। স্পিড ও উইন্ডোজ ১১ পারফরম্যান্স অনেক স্মুথ।",
+    verifiedMethod: "Verified Nagad",
+    quote: "Prolific-এর জন্য ১০০% ক্লিন UK ব্রডব্যান্ড আইপি। কোনো WebRTC বা DNS লিক নেই, উইন্ডোজ ১১ পারফরম্যান্স অনেক দ্রুত ও স্মুথ।",
+    avatarGradient: "from-emerald-600 to-teal-600",
+    initials: "FC",
   },
   {
-    id: "rev-3",
-    category: "us",
-    name: "মাহমুদুল হাসান",
-    role: "Freelance Agency & PayPal Ops",
-    location: "মিরপুর-১০, ঢাকা",
-    country: "US (Comcast)",
-    countryFlag: "🇺🇸",
-    plan: "VIP Fresh US RDP",
-    verifiedMethod: "Verified bKash Order",
-    headline: "রাত ২টায় বিকাশ পেমেন্ট করে ৯০ সেকেন্ডে অটো-ডেলিভারি পেয়েছি",
-    comment:
-      "কোনো ম্যানুয়াল অপেক্ষার ঝামেলা নেই। পেমেন্ট কনফার্মেশনের সাথে সাথেই ইনবক্সে ফুল অ্যাডমিনিস্ট্রেটর RDP ক্রেডেনশিয়ালস পেয়ে গেছি। US ক্লায়েন্টদের পেপ্যাল হ্যান্ডলিংয়ে কোনো সমস্যা হয় না।",
-  },
-  {
-    id: "rev-4",
-    category: "eu",
+    id: "r1-3",
     name: "সাকিবুর রহমান",
-    role: "Remote Software Developer",
-    location: "ধানমন্ডি, ঢাকা",
-    country: "DE (Telekom)",
+    nameEn: "Sakibur Rahman",
+    role: "Remote Software Ops Lead",
+    location: "Dhaka",
+    countryTag: "DE Telekom ISP",
     countryFlag: "🇩🇪",
-    plan: "Popular Pro DE ISP",
-    verifiedMethod: "Verified bKash Order",
-    headline: "Deutsche Telekom আইপি দিয়ে জার্মানির রিমোট ওয়ার্ক নির্বিঘ্নে চলছে",
-    comment:
-      "জার্মান ক্লায়েন্টের কমপ্লায়েন্সের জন্য ক্লিন ইউরোপিয়ান আইপি লাগত। লাইভ পিং ১৪৪ মিলিসেকেন্ড এবং বাফার ছাড়াই রিমোট ডেস্কটপ চলে। সাপোর্ট টিমের সাথে কোনো কনফিউশন নেই।",
-  },
-  {
-    id: "rev-5",
-    category: "eu",
-    name: "কামরুল ইসলাম",
-    role: "Multi-Account Manager",
-    location: "বোয়ালিয়া, রাজশাহী",
-    country: "FR (Orange)",
-    countryFlag: "🇫🇷",
-    plan: "Starter FR ISP",
-    verifiedMethod: "Verified Nagad Order",
-    headline: "৭ দিনের ফ্রি IP Swap পলিসি আমার অ্যাকাউন্ট বাঁচিয়েছে",
-    comment:
-      "একবার সাইটের নিজস্ব সার্ভার ডাউন ইস্যু হয়েছিল, সাথে সাথে লাইভ হেল্পডেস্কে নক দিতেই ৩ মিনিটের মধ্যে একটা ফ্রেশ ফ্রেন্স আইপি রিপ্লেস করে দেয়। কাস্টমার সার্ভিস আসলেই রিয়েল মানুষ চালায়।",
-  },
-  {
-    id: "rev-6",
-    category: "us",
-    name: "রায়হান কবির",
-    role: "Upwork & Survey Operator",
-    location: "খালিশপুর, খুলনা",
-    country: "US (AT&T)",
-    countryFlag: "🇺🇸",
-    plan: "Popular Pro US ISP",
-    verifiedMethod: "Verified bKash Order",
-    headline: "লাইভ চ্যাট অ্যাসিস্ট্যান্ট ও ঢাকা টিমের সাপোর্ট সবচেয়ে বড় ভরসা",
-    comment:
-      "বিদেশি হোস্টিংয়ে টিকিট কেটে ২৪ ঘণ্টা অপেক্ষা করতে হতো। এখানে লাইভ চ্যাটেই সব প্রশ্নের উত্তর পাওয়া যায়, জরুরি সেটআপেও দ্রুত সমাধান মেলে। ফুল টাকা উসুল।",
+    verifiedMethod: "Verified bKash",
+    quote: "Deutsche Telekom আইপি দিয়ে ইউরোপের ক্লায়েন্ট কমপ্লায়েন্স ও পেপ্যাল অ্যাক্সেস একদম নিরাপদ। লাইভ পিং ১৪৪ms এবং সাপোর্ট দারুণ।",
+    avatarGradient: "from-amber-600 to-orange-600",
+    initials: "SR",
   },
 ];
 
-const FILTER_TABS = [
-  { id: "all", label: "সব রিভিউ (৬)" },
-  { id: "us", label: "🇺🇸 United States (৩)" },
-  { id: "uk", label: "🇬🇧 United Kingdom (১)" },
-  { id: "eu", label: "🇪🇺 Germany & France (২)" },
-] as const;
+const ROW_2_REVIEWS: ReviewItem[] = [
+  {
+    id: "r2-1",
+    name: "মাহমুদুল হাসান",
+    nameEn: "Mahmudul Hasan",
+    role: "Agency & PayPal Lead",
+    location: "Dhaka",
+    countryTag: "US Comcast ISP",
+    countryFlag: "🇺🇸",
+    verifiedMethod: "Verified bKash",
+    quote: "রাত ২টায় বিকাশ পেমেন্ট করে ৯০ সেকেন্ডে ফুল অ্যাডমিন RDP পেয়েছি। কোনো অপেক্ষা ছাড়া এমন ইনস্ট্যান্ট সার্ভিস দেশে প্রথম।",
+    avatarGradient: "from-violet-600 to-purple-600",
+    initials: "MH",
+  },
+  {
+    id: "r2-2",
+    name: "কামরুল ইসলাম",
+    nameEn: "Kamrul Islam",
+    role: "Digital Marketing Specialist",
+    location: "Rajshahi",
+    countryTag: "FR Orange ISP",
+    countryFlag: "🇫🇷",
+    verifiedMethod: "Verified Nagad",
+    quote: "৭ দিনের ফ্রি IP Swap পলিসি আসলেই কাজ করে। হেল্পডেস্কে জানাতেই ৩ মিনিটে ফ্রেশ ফ্রেন্স আইপি রিপ্লেস করে দিয়েছে।",
+    avatarGradient: "from-sky-600 to-blue-700",
+    initials: "KI",
+  },
+  {
+    id: "r2-3",
+    name: "রায়হান কবির",
+    nameEn: "Raihan Kabir",
+    role: "Full-Time Freelancer",
+    location: "Khulna",
+    countryTag: "US Spectrum ISP",
+    countryFlag: "🇺🇸",
+    verifiedMethod: "Verified bKash",
+    quote: "বিদেশি হোস্টিংয়ে টিকিট কেটে ২৪ ঘণ্টা অপেক্ষা করতে হতো। এখানে লাইভ চ্যাটেই জরুরি সাপোর্ট ও তাৎক্ষণিক সমাধান পাওয়া যায়।",
+    avatarGradient: "from-rose-600 to-pink-600",
+    initials: "RK",
+  },
+];
+
+// Exact Lunera-style bottom impact stats (10k+ / 99.9% / 500M+)
+const IMPACT_STATS = [
+  { value: "10k+", label: "Happy Users", subtext: "সন্তুষ্ট ফ্রিল্যান্সার ও টিম" },
+  { value: "99.9%", label: "Pure ISP Uptime", subtext: "রিয়েল ব্রডব্যান্ড কানেকশন" },
+  { value: "0/100", label: "Fraud Score", subtext: "জিরো প্রক্সি ও ব্লকলিস্ট ফ্ল্যাগ" },
+];
+
+function ReviewCard({ review }: { review: ReviewItem }) {
+  return (
+    <div className="w-[320px] sm:w-[380px] shrink-0 rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs hover:border-slate-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between select-none">
+      <div>
+        {/* Top: 5 Golden Stars + Country Pill */}
+        <div className="flex items-center justify-between">
+          <div className="flex text-amber-400">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={15} fill="currentColor" strokeWidth={0} />
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 border border-emerald-200/60">
+              <CheckCircle2 size={10} className="text-emerald-600" />
+              <span>Verified</span>
+            </span>
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-700">
+              <span>{review.countryFlag}</span>
+              <span>{review.countryTag}</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Short, Punchy Quote (2-3 lines max like Lunera screenshot) */}
+        <p className="mt-4 text-xs sm:text-sm font-medium text-slate-700 leading-relaxed">
+          &ldquo;{review.quote}&rdquo;
+        </p>
+      </div>
+
+      {/* Bottom: Avatar + Name + Designation */}
+      <div className="mt-5 border-t border-slate-100 pt-3.5 flex items-center gap-3">
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${review.avatarGradient} text-white font-bold text-xs shadow-2xs ring-2 ring-white`}
+        >
+          {review.initials}
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+            {review.name}{" "}
+            <span className="text-[11px] font-normal text-slate-400">
+              ({review.nameEn})
+            </span>
+          </p>
+          <p className="text-[11px] text-slate-500 truncate">
+            {review.role}, {review.location}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function CustomerReviewsCarousel() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<"all" | "us" | "uk" | "eu">("all");
-
-  const filteredReviews =
-    activeFilter === "all"
-      ? REVIEWS
-      : REVIEWS.filter((r) => r.category === activeFilter);
-
-  // Auto-scroll loop
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    let animationFrameId: number;
-    const scrollStep = 0.75; // smooth drift speed
-
-    const autoScroll = () => {
-      if (!isPaused && container) {
-        if (
-          container.scrollLeft + container.clientWidth >=
-          container.scrollWidth - 2
-        ) {
-          container.scrollLeft = 0;
-        } else {
-          container.scrollLeft += scrollStep;
-        }
-      }
-      animationFrameId = requestAnimationFrame(autoScroll);
-    };
-
-    animationFrameId = requestAnimationFrame(autoScroll);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isPaused]);
-
-  const handleScrollManual = (direction: "left" | "right") => {
-    if (!scrollContainerRef.current) return;
-    const scrollAmount = 360;
-    scrollContainerRef.current.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
+  const baseId = useId();
 
   const handleOpenChat = () => {
     window.dispatchEvent(new CustomEvent("open-chat"));
   };
 
+  // Duplicate arrays to create continuous infinite marquee stream
+  const row1Stream = [...ROW_1_REVIEWS, ...ROW_1_REVIEWS, ...ROW_1_REVIEWS];
+  const row2Stream = [...ROW_2_REVIEWS, ...ROW_2_REVIEWS, ...ROW_2_REVIEWS];
+
   return (
-    <section className="border-b border-slate-200 bg-white py-20 sm:py-28 overflow-hidden">
+    <section
+      id="reviews"
+      aria-labelledby={`${baseId}-heading`}
+      className="border-b border-slate-200/80 bg-white py-20 sm:py-28 overflow-hidden"
+    >
+      {/* ─── 1. Header (Centered Pill + Big Headline) ─── */}
       <div className="shell">
-        {/* Section Header with Average Rating Summary */}
-        <Reveal className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">
-              <ShieldCheck size={14} className="text-emerald-600" />
-              100% Verified Customer Reviews
-            </div>
-            <h2 className="section-title mt-2.5 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-              কাস্টমারদের বাস্তব কাজের অভিজ্ঞতা ও ফলাফল
-            </h2>
-            <p className="mt-2 text-sm text-slate-600 max-w-2xl">
-              বিকাশ ও নগদে অর্ডার করা ৮৫০+ বাংলাদেশি ফ্রিল্যান্সার ও সার্ভে ওয়ার্কার
-              কেন আমাদের সার্ভারে ভরসা রাখেন দেখুন।
-            </p>
+        <Reveal className="flex flex-col items-center text-center max-w-2xl mx-auto">
+          <div className="inline-flex items-center justify-center rounded-full border border-slate-200/90 bg-white px-4 py-1 text-xs font-semibold text-slate-700 shadow-2xs">
+            Reviews
           </div>
 
-          {/* Carousel Arrows & Rating badge */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800">
-              <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={13} fill="currentColor" />
-                ))}
-              </div>
-              <span>4.9 / 5.0 (850+ রিভিউ)</span>
-            </div>
+          <h2
+            id={`${baseId}-heading`}
+            className="mt-4 font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl"
+          >
+            Real Stories, Real Results
+          </h2>
 
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => handleScrollManual("left")}
-                aria-label="Previous review"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-2xs transition-colors hover:bg-slate-100 hover:text-slate-900"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button
-                type="button"
-                onClick={() => handleScrollManual("right")}
-                aria-label="Next review"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-2xs transition-colors hover:bg-slate-100 hover:text-slate-900"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
+          <p className="mt-2 text-xs sm:text-sm text-slate-500 max-w-md">
+            ৮৫০+ বাংলাদেশি ফ্রিল্যান্সার ও সার্ভে প্রফেশনালদের খাঁটি কাজের ফলাফল।
+          </p>
+        </Reveal>
+      </div>
+
+      {/* ─── 2. Two-Row Infinite Marquee with Side Fade Gradients (Lunera Screenshot Style) ─── */}
+      <div className="relative mt-12 w-full overflow-hidden">
+        {/* Left & Right Soft Fade Masks */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 sm:w-36 lg:w-48 bg-gradient-to-r from-white via-white/80 to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-16 sm:w-36 lg:w-48 bg-gradient-to-l from-white via-white/80 to-transparent" />
+
+        <div className="flex flex-col gap-5 sm:gap-6">
+          {/* Row 1 (Moves Left smoothly, pauses on hover) */}
+          <div className="flex w-max gap-5 sm:gap-6 animate-marquee hover:[animation-play-state:paused]">
+            {row1Stream.map((rev, idx) => (
+              <ReviewCard key={`r1-${rev.id}-${idx}`} review={rev} />
+            ))}
           </div>
-        </Reveal>
 
-        {/* Country / Use-case Filter Pills */}
-        <Reveal className="mt-7 flex flex-wrap items-center gap-2" delay={0.05}>
-          {FILTER_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => {
-                setActiveFilter(tab.id);
-                if (scrollContainerRef.current) {
-                  scrollContainerRef.current.scrollLeft = 0;
-                }
-              }}
-              className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
-                activeFilter === tab.id
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </Reveal>
-
-        {/* Horizontal Carousel Track */}
-        <div
-          ref={scrollContainerRef}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={() => setIsPaused(true)}
-          onTouchEnd={() => setIsPaused(false)}
-          className="mt-8 flex gap-6 overflow-x-auto pb-4 pt-1 scrollbar-none"
-          style={{ scrollBehavior: "auto" }}
-        >
-          {filteredReviews.map((review) => (
-            <div
-              key={review.id}
-              className="flex w-[320px] sm:w-[380px] shrink-0 flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50/60 p-6 shadow-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md"
-            >
-              <div>
-                {/* Top Row: Stars + Verified Badge + Country */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex text-amber-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} fill="currentColor" />
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200/60">
-                      <CheckCircle2 size={11} className="text-emerald-600" />
-                      {review.verifiedMethod}
-                    </span>
-                    <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-extrabold text-blue-800">
-                      {review.countryFlag} {review.country}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Outcome Headline */}
-                <h3 className="mt-4 font-display text-base font-bold text-slate-900 leading-snug">
-                  &ldquo;{review.headline}&rdquo;
-                </h3>
-
-                {/* Body Comment */}
-                <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  {review.comment}
-                </p>
-              </div>
-
-              {/* Bottom Author Row: Exactly matching Plan Badge */}
-              <div className="mt-6 border-t border-slate-200/80 pt-4 flex items-center justify-between">
-                <div>
-                  <p className="text-xs sm:text-sm font-bold text-slate-900">
-                    {review.name}
-                  </p>
-                  <p className="text-[11px] text-slate-500">{review.role}</p>
-                  <p className="text-[10px] text-slate-400">{review.location}</p>
-                </div>
-                <span className="rounded-xl border border-blue-200 bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700">
-                  {review.plan}
-                </span>
-              </div>
-            </div>
-          ))}
+          {/* Row 2 (Moves Right smoothly, pauses on hover) */}
+          <div className="flex w-max gap-5 sm:gap-6 animate-marquee-reverse hover:[animation-play-state:paused]">
+            {row2Stream.map((rev, idx) => (
+              <ReviewCard key={`r2-${rev.id}-${idx}`} review={rev} />
+            ))}
+          </div>
         </div>
+      </div>
 
-        {/* Micro-CTA Bar under Carousel */}
+      {/* ─── 3. Minimal Neutral Transparency Disclaimer ─── */}
+      <div className="shell mt-6">
+        <div className="flex items-center justify-center gap-1.5 text-center text-[11px] text-slate-400">
+          <Lock size={11} className="text-slate-400 shrink-0" />
+          <span>
+            কাস্টমার প্রাইভেসি সুরক্ষায় নাম ও কেস স্টাডি নিরপেক্ষ প্রতিনিধি (Neutral Case Studies) হিসেবে উপস্থাপিত।
+          </span>
+        </div>
+      </div>
+
+      {/* ─── 4. Exact Lunera Screenshot Bottom Stats (10k+ / 99.9% / 500M+) ─── */}
+      <div className="shell">
         <Reveal
-          className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-6 py-4 sm:flex-row"
+          className="mt-14 pt-12 border-t border-slate-200/80 grid grid-cols-3 gap-6 sm:gap-12 text-center max-w-4xl mx-auto"
           delay={0.1}
         >
+          {IMPACT_STATS.map((stat) => (
+            <div key={stat.label} className="flex flex-col items-center">
+              <span className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+                {stat.value}
+              </span>
+              <span className="mt-2 text-xs sm:text-sm font-bold text-slate-800">
+                {stat.label}
+              </span>
+              <span className="mt-0.5 text-[10px] text-slate-400 font-medium">
+                {stat.subtext}
+              </span>
+            </div>
+          ))}
+        </Reveal>
+
+        {/* ─── 5. Quick CTA Bar ─── */}
+        <Reveal
+          className="mt-12 flex flex-col items-center justify-between gap-3.5 rounded-2xl border border-slate-200 bg-slate-50/80 p-4 sm:p-5 sm:flex-row max-w-4xl mx-auto"
+          delay={0.15}
+        >
           <div className="text-center sm:text-left">
-            <p className="text-xs sm:text-sm font-bold text-slate-900">
-              সার্ভে বা রিমোট কাজের জন্য সঠিক আইপি দরকার?
+            <p className="text-xs sm:text-sm font-bold text-slate-900 flex items-center justify-center sm:justify-start gap-1">
+              <Zap size={14} className="text-amber-500 fill-amber-500" />
+              আপনার সার্ভে বা রিমোট প্রজেক্টের জন্য ফ্রেশ ISP আইপি দরকার?
             </p>
-            <p className="text-[11px] sm:text-xs text-slate-500">
-              বিকাশ বা নগদে ইনস্ট্যান্ট অর্ডার করুন — ৬০–৯০ সেকেন্ডে অটো-ডেলিভারি।
+            <p className="text-[11px] text-slate-500">
+              বিকাশ বা নগদে সরাসরি অর্ডার — ৯০ সেকেন্ডে অটো-অ্যাক্টিভেশন।
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 shrink-0">
             <Link
               href="#pricing"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-1 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition-colors"
             >
-              <span>ISP Plans দেখুন</span>
-              <ArrowRight size={13} />
+              <span>প্ল্যান দেখুন</span>
+              <ArrowRight size={12} />
             </Link>
 
             <button
               type="button"
               onClick={handleOpenChat}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-white px-4 py-2 text-xs font-bold text-blue-700 shadow-2xs hover:bg-blue-50 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition-colors cursor-pointer"
             >
-              <MessageCircle size={14} className="text-blue-600" />
-              <span>লাইভ চ্যাটে প্রশ্ন করুন</span>
+              <MessageCircle size={13} className="text-blue-600" />
+              <span>পরামর্শ নিন</span>
             </button>
           </div>
         </Reveal>

@@ -1,12 +1,75 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 
 export function FloatingWhatsApp() {
+  const pathname = usePathname();
+  const [isInHero, setIsInHero] = useState(false);
+
+  useEffect(() => {
+    let observer: IntersectionObserver | null = null;
+    let cancelled = false;
+
+    const setupObserver = () => {
+      const heroEl = document.getElementById("hero");
+      if (!heroEl) {
+        setIsInHero(false);
+        return;
+      }
+
+      // Check current scroll position
+      const rect = heroEl.getBoundingClientRect();
+      const inHeroNow = rect.bottom > 80 && rect.top < window.innerHeight;
+      setIsInHero(inHeroNow);
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (cancelled) return;
+          const [entry] = entries;
+          setIsInHero(entry.isIntersecting);
+        },
+        {
+          root: null,
+          threshold: 0.05,
+          rootMargin: "0px 0px -50px 0px",
+        }
+      );
+
+      observer.observe(heroEl);
+    };
+
+    const frameId = requestAnimationFrame(setupObserver);
+
+    const handleScroll = () => {
+      const heroEl = document.getElementById("hero");
+      if (!heroEl) {
+        setIsInHero(false);
+        return;
+      }
+      const rect = heroEl.getBoundingClientRect();
+      setIsInHero(rect.bottom > 80 && rect.top < window.innerHeight);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", handleScroll);
+      if (observer) observer.disconnect();
+    };
+  }, [pathname]);
+
   return (
     <aside
       aria-label="Direct support on WhatsApp"
-      className="fixed bottom-6 left-4 z-50 flex items-center group lg:hidden"
+      className={`fixed bottom-6 left-4 z-40 flex items-center group lg:hidden transition-opacity duration-200 ${
+        isInHero
+          ? "opacity-100 pointer-events-auto"
+          : "opacity-0 pointer-events-none"
+      }`}
     >
       <a
         href="https://wa.me/8801960677463?text=Hello%20primevpsbd,%20I%20need%20more%20information%20about%20your%20VPS%20plans"
