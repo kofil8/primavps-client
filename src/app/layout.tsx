@@ -1,6 +1,5 @@
-import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ChatWidget } from "@/components/ChatWidget";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { StickySocialBar } from "@/components/ui/StickySocialBar";
@@ -52,8 +51,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
         <CurrencyProvider>
-          <AnnouncementBar />
-          <Navbar />
+          <SiteHeader />
           <main className="flex-1">{children}</main>
           <Footer />
           <StickySocialBar />

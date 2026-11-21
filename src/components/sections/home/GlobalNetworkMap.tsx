@@ -45,7 +45,7 @@ export function GlobalNetworkMap() {
   return (
     <section
       id="network"
-      className="relative isolate scroll-mt-24 overflow-hidden bg-white py-20 sm:py-28 border-b border-slate-200/80"
+      className="relative isolate scroll-mt-28 overflow-hidden bg-white py-20 sm:py-28 border-b border-slate-200/80"
     >
       {/* Background subtle radial wash */}
       <div

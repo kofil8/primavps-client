@@ -89,8 +89,9 @@ export function Navbar() {
   const navLink =
     "rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900";
 
+  // Sticky placement and stacking live in SiteHeader, which owns both rows.
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-md">
+    <div className="relative z-40 border-b border-slate-200 bg-white/90 backdrop-blur-md">
       <div
         ref={navRef}
         className="shell flex h-16 items-center justify-between gap-4"
@@ -294,6 +295,6 @@ export function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </div>
   );
 }

@@ -39,7 +39,7 @@ export default function HotDealsPage() {
       <DealsHero />
 
       {/* 2. Interactive Coupon Codes Section (Anchor target) */}
-      <section id="coupons-section" className="section bg-white scroll-mt-20">
+      <section id="coupons-section" className="section bg-white scroll-mt-28">
         <div className="shell">
           <div className="mx-auto max-w-2xl text-center">
             <span className="eyebrow flex items-center justify-center gap-1.5">

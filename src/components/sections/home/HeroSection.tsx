@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { IpReport } from "@/app/api/ip-check/route";
+import {
+  BkashLogo,
+  NagadLogo,
+  UsdtLogo,
+  VisaLogo,
+} from "@/components/ui/PaymentLogos";
 import { useCurrency } from "@/lib/currency";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -14,17 +20,43 @@ import {
   MessageCircle,
   ShieldAlert,
   ShieldCheck,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { BkashLogo, NagadLogo, VisaLogo, UsdtLogo } from "@/components/ui/PaymentLogos";
-import { IpReport } from "@/app/api/ip-check/route";
+import { useEffect, useState } from "react";
 
 const SUPPORTED_COUNTRIES = [
-  { flag: "🇺🇸", code: "US", name: "United States", isp: "AT&T / Comcast", sampleIp: "108.204.142.88", ping: "~178 ms" },
-  { flag: "🇬🇧", code: "UK", name: "United Kingdom", isp: "BT / Virgin Media", sampleIp: "51.89.144.12", ping: "~152 ms" },
-  { flag: "🇩🇪", code: "DE", name: "Germany", isp: "Deutsche Telekom", sampleIp: "80.153.24.90", ping: "~144 ms" },
-  { flag: "🇫🇷", code: "FR", name: "France", isp: "Orange / Free", sampleIp: "90.84.180.33", ping: "~148 ms" },
+  {
+    flag: "🇺🇸",
+    code: "US",
+    name: "United States",
+    isp: "AT&T / Comcast",
+    sampleIp: "108.204.142.88",
+    ping: "~178 ms",
+  },
+  {
+    flag: "🇬🇧",
+    code: "UK",
+    name: "United Kingdom",
+    isp: "BT / Virgin Media",
+    sampleIp: "51.89.144.12",
+    ping: "~152 ms",
+  },
+  {
+    flag: "🇩🇪",
+    code: "DE",
+    name: "Germany",
+    isp: "Deutsche Telekom",
+    sampleIp: "80.153.24.90",
+    ping: "~144 ms",
+  },
+  {
+    flag: "🇫🇷",
+    code: "FR",
+    name: "France",
+    isp: "Orange / Free",
+    sampleIp: "90.84.180.33",
+    ping: "~148 ms",
+  },
 ];
 
 const ISP_BULLETS = [
@@ -36,7 +68,14 @@ const ISP_BULLETS = [
 
 // Helper to sanitize IP display
 const getDisplayIp = (ip?: string) => {
-  if (!ip || ip === "::1" || ip === "127.0.0.1" || ip.startsWith("192.168.") || ip.startsWith("10.") || ip.startsWith("172.")) {
+  if (
+    !ip ||
+    ip === "::1" ||
+    ip === "127.0.0.1" ||
+    ip.startsWith("192.168.") ||
+    ip.startsWith("10.") ||
+    ip.startsWith("172.")
+  ) {
     return "103.114.98.42";
   }
   return ip;
@@ -55,19 +94,21 @@ const getCountryFlag = (code?: string) => {
 export function HeroSection() {
   const { formatPrice } = useCurrency();
   const reduceMotion = useReducedMotion();
-  const [copied, setCopied] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(SUPPORTED_COUNTRIES[0]);
+  // const [copied, setCopied] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState(
+    SUPPORTED_COUNTRIES[0],
+  );
 
   // Interactive Live Diagnostic State for the Hero Card
   const [cardTab, setCardTab] = useState<"user" | "clean">("user");
   const [userReport, setUserReport] = useState<IpReport | null>(null);
   const [scanning, setScanning] = useState(true);
 
-  const copyCode = () => {
-    navigator.clipboard.writeText("LAUNCH10");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  // const copyCode = () => {
+  //   navigator.clipboard.writeText("LAUNCH10");
+  //   setCopied(true);
+  //   setTimeout(() => setCopied(false), 2000);
+  // };
 
   const handleOpenChat = () => {
     window.dispatchEvent(new CustomEvent("open-chat"));
@@ -127,7 +168,7 @@ export function HeroSection() {
       />
 
       {/* Top clean promo bar */}
-      <div className="relative z-20 border-b border-slate-100 bg-slate-50/90 px-4 py-2 backdrop-blur-sm">
+      {/* <div className="relative z-20 border-b border-slate-100 bg-slate-50/90 px-4 py-2 backdrop-blur-sm">
         <div className="shell flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs text-slate-600">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <button
@@ -157,7 +198,7 @@ export function HeroSection() {
             লাইভ এআই হেল্পডেস্ক (তাৎক্ষণিক রিপ্লাই)
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Main hero grid */}
       <div className="shell relative z-10 grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-12 lg:gap-14 lg:py-20">
@@ -202,7 +243,8 @@ export function HeroSection() {
 
           {/* Subheadline */}
           <p className="mt-6 max-w-2xl text-base leading-[1.75] text-slate-600 sm:text-[1.05rem]">
-            AT&amp;T · Comcast রেসিডেন্সিয়াল IP — সার্ভে, ফ্রিল্যান্সিং ও পেপ্যাল অ্যাকাউন্টের জন্য{" "}
+            AT&amp;T · Comcast রেসিডেন্সিয়াল IP — সার্ভে, ফ্রিল্যান্সিং ও
+            পেপ্যাল অ্যাকাউন্টের জন্য{" "}
             <strong className="font-semibold text-slate-900">
               100% ক্লিন {selectedCountry.code} VPS
             </strong>
@@ -242,7 +284,10 @@ export function HeroSection() {
           {/* Bullet points */}
           <ul className="mt-6 space-y-2.5">
             {ISP_BULLETS.map((bullet) => (
-              <li key={bullet} className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700">
+              <li
+                key={bullet}
+                className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700"
+              >
                 <Check size={16} className="shrink-0 text-emerald-600" />
                 <span>{bullet}</span>
               </li>
@@ -301,7 +346,10 @@ export function HeroSection() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <ShieldAlert size={14} className={cardTab === "user" ? "text-rose-600" : ""} />
+                  <ShieldAlert
+                    size={14}
+                    className={cardTab === "user" ? "text-rose-600" : ""}
+                  />
                   <span>আপনার কানেকশন</span>
                   <span className="rounded-full bg-rose-100 px-1.5 py-0.2 text-[10px] font-extrabold text-rose-700">
                     রিস্ক ⚠️
@@ -317,7 +365,10 @@ export function HeroSection() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <ShieldCheck size={14} className={cardTab === "clean" ? "text-emerald-600" : ""} />
+                  <ShieldCheck
+                    size={14}
+                    className={cardTab === "clean" ? "text-emerald-600" : ""}
+                  />
                   <span>আমাদের ক্লিন নোড</span>
                   <span className="rounded-full bg-emerald-100 px-1.5 py-0.2 text-[10px] font-extrabold text-emerald-800">
                     0/100 ✓
@@ -350,14 +401,20 @@ export function HeroSection() {
                 {/* Real Diagnostic Rows */}
                 <div className="divide-y divide-slate-100 text-xs">
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">আপনার ডিটেক্টেড লোকেশন:</span>
+                    <span className="text-slate-500">
+                      আপনার ডিটেক্টেড লোকেশন:
+                    </span>
                     <span className="font-bold text-slate-800">
-                      {userReport?.city || "Dhaka"}, {userReport?.country || "Bangladesh"} {getCountryFlag(userReport?.countryCode)}
+                      {userReport?.city || "Dhaka"},{" "}
+                      {userReport?.country || "Bangladesh"}{" "}
+                      {getCountryFlag(userReport?.countryCode)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">ইন্টারনেট প্রোভাইডার (ISP):</span>
+                    <span className="text-slate-500">
+                      ইন্টারনেট প্রোভাইডার (ISP):
+                    </span>
                     <span className="font-bold text-slate-800 max-w-[190px] truncate">
                       {userReport?.isp || "Local Broadband ISP"}
                     </span>
@@ -371,16 +428,22 @@ export function HeroSection() {
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">US/UK সার্ভে অনুমোদন:</span>
+                    <span className="text-slate-500">
+                      US/UK সার্ভে অনুমোদন:
+                    </span>
                     <span className="font-bold text-rose-600">
                       ❌ সরাসরি ব্যান / ফ্ল্যাগ হবে
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">IPQS ফ্রড রিস্ক স্কোর:</span>
+                    <span className="text-slate-500">
+                      IPQS ফ্রড রিস্ক স্কোর:
+                    </span>
                     <span className="font-mono font-extrabold text-rose-600">
-                      {userReport?.fraudScore ? `${userReport.fraudScore} / 100` : "82 / 100 (High Risk)"}
+                      {userReport?.fraudScore
+                        ? `${userReport.fraudScore} / 100`
+                        : "82 / 100 (High Risk)"}
                     </span>
                   </div>
                 </div>
@@ -388,9 +451,15 @@ export function HeroSection() {
                 {/* Emotional Hook Alert */}
                 <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50/80 p-3 text-[11px] leading-relaxed text-rose-900">
                   <p className="flex items-start gap-1.5">
-                    <AlertTriangle size={15} className="text-rose-600 shrink-0 mt-0.5" />
+                    <AlertTriangle
+                      size={15}
+                      className="text-rose-600 shrink-0 mt-0.5"
+                    />
                     <span>
-                      <strong>কেন ব্যান হয়?</strong> লোকাল আইপি বা সাধারণ VPN দিয়ে Swagbucks, Prolific ও PayPal-এ ঢুকলে ভৌগোলিক অবস্থান ও WebRTC লিকের কারণে অ্যাকাউন্ট সাথে সাথে স্থায়ীভাবে ব্যান হয়ে যায়।
+                      <strong>কেন ব্যান হয়?</strong> লোকাল আইপি বা সাধারণ VPN
+                      দিয়ে Swagbucks, Prolific ও PayPal-এ ঢুকলে ভৌগোলিক অবস্থান
+                      ও WebRTC লিকের কারণে অ্যাকাউন্ট সাথে সাথে স্থায়ীভাবে ব্যান
+                      হয়ে যায়।
                     </span>
                   </p>
                 </div>
@@ -420,7 +489,8 @@ export function HeroSection() {
                     </p>
                     <p className="mt-0.5 font-mono text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
                       <MapPin size={13} className="text-emerald-600" />
-                      {selectedCountry.flag} {selectedCountry.sampleIp} ({selectedCountry.code})
+                      {selectedCountry.flag} {selectedCountry.sampleIp} (
+                      {selectedCountry.code})
                     </p>
                   </div>
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200">
@@ -432,14 +502,18 @@ export function HeroSection() {
                 {/* Clean Metrics Rows */}
                 <div className="divide-y divide-slate-100 text-xs">
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">আইপি কোয়ালিটি (IPQS):</span>
+                    <span className="text-slate-500">
+                      আইপি কোয়ালিটি (IPQS):
+                    </span>
                     <span className="font-mono font-extrabold text-emerald-700">
                       0 / 100 Fraud Score
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">হোম ব্রডব্যান্ড নেটওয়ার্ক:</span>
+                    <span className="text-slate-500">
+                      হোম ব্রডব্যান্ড নেটওয়ার্ক:
+                    </span>
                     <span className="font-bold text-slate-900">
                       {selectedCountry.isp}
                     </span>
@@ -453,14 +527,18 @@ export function HeroSection() {
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">WebRTC / DNS লিক শিল্ড:</span>
+                    <span className="text-slate-500">
+                      WebRTC / DNS লিক শিল্ড:
+                    </span>
                     <span className="font-bold text-emerald-700">
                       Zero Leak গ্যারান্টি ✓
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between py-2.5">
-                    <span className="text-slate-500">সার্ভে ও পেপ্যাল সেফটি:</span>
+                    <span className="text-slate-500">
+                      সার্ভে ও পেপ্যাল সেফটি:
+                    </span>
                     <span className="font-bold text-emerald-700">
                       ✅ 100% সুরক্ষিত ও আনব্যান
                     </span>
@@ -477,9 +555,14 @@ export function HeroSection() {
                 {/* Solution Guarantee Box */}
                 <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3 text-[11px] leading-relaxed text-emerald-900">
                   <p className="flex items-start gap-1.5">
-                    <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2
+                      size={15}
+                      className="text-emerald-600 shrink-0 mt-0.5"
+                    />
                     <span>
-                      <strong>৭ দিনের আনকন্ডিশনাল রিপ্লেসমেন্ট:</strong> কোনো কারণে আইপিতে সমস্যা হলে আমাদের সাপোর্ট ডেস্ক বিনামূল্যে সাথে সাথে ফ্রেশ আইপি সোয়াপ করে দেবে।
+                      <strong>৭ দিনের আনকন্ডিশনাল রিপ্লেসমেন্ট:</strong> কোনো
+                      কারণে আইপিতে সমস্যা হলে আমাদের সাপোর্ট ডেস্ক বিনামূল্যে
+                      সাথে সাথে ফ্রেশ আইপি সোয়াপ করে দেবে।
                     </span>
                   </p>
                 </div>
@@ -490,7 +573,10 @@ export function HeroSection() {
                     href={`/survey-vps?country=${selectedCountry.code.toLowerCase()}`}
                     className="w-full flex items-center justify-between rounded-xl bg-blue-600 px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-blue-700"
                   >
-                    <span>{selectedCountry.name} RDP প্ল্যান বেছে নিন — {formatPrice(2999)}/মাস</span>
+                    <span>
+                      {selectedCountry.name} RDP প্ল্যান বেছে নিন —{" "}
+                      {formatPrice(2999)}/মাস
+                    </span>
                     <ChevronRight size={16} />
                   </Link>
                   <p className="mt-2 text-center text-[10px] text-slate-400">

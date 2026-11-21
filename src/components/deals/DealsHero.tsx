@@ -55,7 +55,7 @@ export function DealsHero() {
     <section className="relative overflow-hidden py-12 text-white sm:py-16 lg:py-20 bg-[#5b16d0]">
       {/* Custom Graphic Background: /public/Hot deals bg.webp */}
       <Image
-        src="/Hot%20deals%20bg.webp"
+        src="/hot-deals-bg.webp"
         alt="Hot Deals Background"
         fill
         priority
@@ -203,7 +203,7 @@ export function DealsHero() {
                 <div className="absolute -top-3.5 right-3 sm:right-4 z-20 flex w-15 sm:w-18 flex-col items-center justify-center bg-[#ff0a6c] py-2 text-white shadow-md">
                   {/* 3D Fold flap top-right corner */}
                   <div className="absolute top-0 -right-2 h-0 w-0 border-b-[12px] border-b-[#9e003a] border-r-[8px] border-r-transparent" />
-                  
+
                   <span className="font-display text-xl font-black leading-none tracking-tight sm:text-2xl">
                     {item.discountPercent}%
                   </span>

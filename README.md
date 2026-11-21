@@ -134,7 +134,7 @@ No test runner or test files are configured.
 - **Free diagnostics** — IP fraud checker, WebRTC leak test, and (simulated) looking glass.
 - **Deals** — four copy-to-clipboard coupon codes (`HOTVPS35`, `RESISP30`, `VIRGIN25`, `RESELL20`) and flash-sale pricing.
 - **Content** — seven local blog posts, three legal pages, a static status page, bilingual marketing copy.
-- **Global chrome** — dismissible announcement bar (`LAUNCH10`), sticky navbar with dropdowns, currency toggle, footer with payment logos, floating social rail, cookie notice that auto-dismisses.
+- **Global chrome** — announcement bar (`LAUNCH10`) that hides on scroll and returns only at the top, sticky navbar with dropdowns, currency toggle, footer with payment logos, floating social rail, cookie notice that auto-dismisses.
 - **Motion and accessibility** — reveal-on-scroll, shimmer/marquee/drift animations, and a global `prefers-reduced-motion` override.
 
 ---
@@ -163,7 +163,7 @@ No test runner or test files are configured.
 │   │   ├── page.tsx             # Home composition
 │   │   └── globals.css          # Tailwind import, tokens, component utilities
 │   ├── components/
-│   │   ├── layout/              # AnnouncementBar, Navbar, Footer
+│   │   ├── layout/              # SiteHeader, AnnouncementBar, Navbar, Footer
 │   │   ├── sections/home/       # Landing sections (some unused — see review)
 │   │   ├── sections/isp/        # CheckoutDrawer
 │   │   ├── deals/               # Hot-deals page sections
