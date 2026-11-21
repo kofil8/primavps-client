@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useCurrency } from "@/lib/currency";
 import { Reveal } from "@/components/ui/reveal";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 import {
   ArrowRight,
   Check,
-  ChevronDown,
   Globe,
   RefreshCw,
   ShieldCheck,
@@ -18,10 +18,10 @@ import Link from "next/link";
 // ─── Countries ───────────────────────────────────────────────────────────────
 
 const COUNTRIES = [
-  { code: "us", flag: "🇺🇸", name: "United States", isp: "AT&T / Comcast" },
-  { code: "uk", flag: "🇬🇧", name: "United Kingdom", isp: "BT / Virgin Media" },
-  { code: "de", flag: "🇩🇪", name: "Germany", isp: "Deutsche Telekom" },
-  { code: "fr", flag: "🇫🇷", name: "France", isp: "Orange / Free" },
+  { code: "us", name: "United States", shortName: "US", isp: "AT&T / Comcast" },
+  { code: "uk", name: "United Kingdom", shortName: "UK", isp: "BT / Virgin Media" },
+  { code: "de", name: "Germany", shortName: "DE", isp: "Deutsche Telekom" },
+  { code: "fr", name: "France", shortName: "FR", isp: "Orange / Free" },
 ];
 
 // ─── Plan Tiers ──────────────────────────────────────────────────────────────
@@ -181,54 +181,65 @@ export function SurveyRdpPlans() {
                   {tier.name}
                 </h3>
 
-                {/* Country Selector Dropdown inside card */}
+                {/* Interactive Country Selector Pills */}
                 <div className="mt-4">
-                  <label
-                    htmlFor={`country-select-${tier.id}`}
-                    className={`block text-[11px] font-semibold uppercase tracking-wider mb-1.5 ${
-                      tier.highlight ? "text-blue-100" : "text-slate-500"
-                    }`}
-                  >
-                    সার্ভার লোকেশন ও ISP:
-                  </label>
-                  <div className="relative">
-                    <select
-                      id={`country-select-${tier.id}`}
-                      value={currentCountryCode}
-                      onChange={(e) => handleCountryChange(tier.id, e.target.value)}
-                      className={`w-full appearance-none rounded-xl px-3.5 py-2.5 pr-8 text-xs font-bold transition-all outline-none cursor-pointer ${
-                        tier.highlight
-                          ? "bg-white/15 text-white border border-white/30 focus:border-white focus:ring-1 focus:ring-white/40"
-                          : "bg-slate-50 text-slate-800 border border-slate-200 focus:border-blue-600 focus:bg-white focus:ring-1 focus:ring-blue-600/20"
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      className={`text-[11px] font-bold uppercase tracking-wider ${
+                        tier.highlight ? "text-blue-100" : "text-slate-500"
                       }`}
                     >
-                      {COUNTRIES.map((c) => (
-                        <option
-                          key={c.code}
-                          value={c.code}
-                          className="bg-white text-slate-900 py-1"
-                        >
-                          {c.flag} {c.name} — {c.isp}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      size={15}
-                      className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${
-                        tier.highlight ? "text-blue-100" : "text-slate-400"
+                      সার্ভার লোকেশন:
+                    </span>
+                    <span
+                      className={`text-[11px] font-semibold ${
+                        tier.highlight ? "text-blue-100" : "text-blue-600"
                       }`}
-                    />
+                    >
+                      {currentCountry.name}
+                    </span>
+                  </div>
+
+                  <div
+                    className={`grid grid-cols-4 gap-1 p-1 rounded-2xl border transition-colors ${
+                      tier.highlight
+                        ? "bg-black/15 border-white/20"
+                        : "bg-slate-100/80 border-slate-200/80"
+                    }`}
+                  >
+                    {COUNTRIES.map((c) => {
+                      const isSelected = c.code === currentCountryCode;
+                      return (
+                        <button
+                          key={c.code}
+                          type="button"
+                          onClick={() => handleCountryChange(tier.id, c.code)}
+                          className={`flex items-center justify-center gap-1.5 py-1.5 px-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                            isSelected
+                              ? tier.highlight
+                                ? "bg-white text-blue-700 shadow-md scale-102"
+                                : "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 scale-102"
+                              : tier.highlight
+                              ? "text-blue-100 hover:bg-white/10"
+                              : "text-slate-600 hover:bg-white/60 hover:text-slate-900"
+                          }`}
+                        >
+                          <CountryFlag code={c.code} size={15} />
+                          <span className="tracking-tight">{c.shortName}</span>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {/* Active ISP Info indicator */}
                   <div
-                    className={`mt-2 flex items-center gap-1.5 text-xs font-semibold ${
-                      tier.highlight ? "text-blue-200" : "text-blue-600"
+                    className={`mt-2.5 flex items-center gap-1.5 text-xs font-semibold ${
+                      tier.highlight ? "text-blue-100" : "text-slate-600"
                     }`}
                   >
-                    <Globe size={13} className="shrink-0" />
+                    <Globe size={13} className={`shrink-0 ${tier.highlight ? "text-blue-200" : "text-blue-600"}`} />
                     <span>
-                      {currentCountry.flag} {currentCountry.isp} Residential IP
+                      {currentCountry.isp} Residential IP
                     </span>
                   </div>
                 </div>
@@ -311,7 +322,7 @@ export function SurveyRdpPlans() {
                         : "bg-blue-600 text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
                     }`}
                   >
-                    <span>এখনই নিন ({currentCountry.code.toUpperCase()})</span>
+                    <span>এখনই নিন ({currentCountry.shortName})</span>
                     <ArrowRight size={15} />
                   </Link>
                 </div>

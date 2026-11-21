@@ -1,8 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ChatWidget } from "@/components/ChatWidget";
-import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
-import { StickySocialBar } from "@/components/ui/StickySocialBar";
 import { CurrencyProvider } from "@/lib/currency";
 import { bodyFont, displayFont, monoFont } from "@/lib/fonts";
 import type { Metadata } from "next";
@@ -54,8 +52,6 @@ export default function RootLayout({
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <Footer />
-          <StickySocialBar />
-          <FloatingWhatsApp />
           <ChatWidget />
         </CurrencyProvider>
       </body>

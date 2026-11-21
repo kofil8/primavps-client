@@ -4,6 +4,7 @@ import { useCurrency } from "@/lib/currency";
 import { IspPlan } from "@/lib/data/plans";
 import { ArrowRight, Check, Lock, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 
 export interface CheckoutPlan {
   id?: string;
@@ -27,8 +28,39 @@ interface CheckoutDrawerProps {
   carrier?: string;
   isFresh?: boolean;
   initialBillingCycle?: "monthly" | "quarterly" | "annual";
+  initialCountry?: string;
   onClose: () => void;
 }
+
+const COUNTRY_CONFIGS: Record<
+  string,
+  { label: string; defaultCity: string; cities: string[]; carriers: string[] }
+> = {
+  us: {
+    label: "United States",
+    defaultCity: "Dallas, TX",
+    cities: ["Dallas, TX", "Ashburn, VA", "Los Angeles, CA"],
+    carriers: ["AT&T", "Comcast", "Verizon"],
+  },
+  uk: {
+    label: "United Kingdom",
+    defaultCity: "London, UK",
+    cities: ["London, UK", "Manchester, UK"],
+    carriers: ["BT", "Virgin Media", "Vodafone UK"],
+  },
+  de: {
+    label: "Germany",
+    defaultCity: "Frankfurt, DE",
+    cities: ["Frankfurt, DE", "Berlin, DE"],
+    carriers: ["Deutsche Telekom", "Vodafone DE", "O2 DE"],
+  },
+  fr: {
+    label: "France",
+    defaultCity: "Paris, FR",
+    cities: ["Paris, FR", "Marseille, FR"],
+    carriers: ["Orange", "Free", "SFR"],
+  },
+};
 
 const CYCLES = [
   { id: "monthly", label: "1 month", months: 1, discount: 0 },
@@ -41,17 +73,25 @@ export function CheckoutDrawer({
   carrier = "AT&T",
   isFresh = false,
   initialBillingCycle = "monthly",
+  initialCountry = "us",
   onClose,
 }: CheckoutDrawerProps) {
-  const { formatPrice } = useCurrency();
-  const [selectedCarrier, setSelectedCarrier] = useState(
-    carrier === "All" ? "AT&T" : carrier,
-  );
-  const [location, setLocation] = useState(
+  const normCountry = (initialCountry || "us").toLowerCase();
+  const activeCountryConfig = COUNTRY_CONFIGS[normCountry] || COUNTRY_CONFIGS.us;
+
+  const defaultCarrier =
+    carrier && carrier !== "All"
+      ? carrier
+      : activeCountryConfig.carriers[0];
+
+  const defaultLocation =
     plan && "regionName" in plan && plan.regionName
       ? plan.regionName
-      : "Dallas, TX",
-  );
+      : activeCountryConfig.defaultCity;
+
+  const { formatPrice } = useCurrency();
+  const [selectedCarrier, setSelectedCarrier] = useState(defaultCarrier);
+  const [location, setLocation] = useState(defaultLocation);
   const [billingCycle, setBillingCycle] =
     useState<(typeof CYCLES)[number]["id"]>(initialBillingCycle);
   const [coupon, setCoupon] = useState("");
@@ -59,6 +99,20 @@ export function CheckoutDrawer({
   const [couponError, setCouponError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [complete, setComplete] = useState(false);
+
+  useEffect(() => {
+    const config = COUNTRY_CONFIGS[normCountry] || COUNTRY_CONFIGS.us;
+    if (carrier && carrier !== "All") {
+      setSelectedCarrier(carrier);
+    } else {
+      setSelectedCarrier(config.carriers[0]);
+    }
+    if (plan && "regionName" in plan && plan.regionName) {
+      setLocation(plan.regionName);
+    } else {
+      setLocation(config.defaultCity);
+    }
+  }, [plan, initialCountry, carrier, normCountry]);
 
   useEffect(() => {
     if (!plan) return;
@@ -130,9 +184,12 @@ export function CheckoutDrawer({
         <div>
           <div className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
             <div>
-              <p className="text-xs font-semibold text-blue-700 uppercase">
-                Checkout
-              </p>
+              <div className="flex items-center gap-1.5">
+                <CountryFlag code={normCountry} size={14} />
+                <p className="text-xs font-semibold text-blue-700 uppercase">
+                  Checkout · {activeCountryConfig.label}
+                </p>
+              </div>
               <h2
                 id="checkout-title"
                 className="mt-0.5 font-display text-lg font-bold text-slate-900"
@@ -183,7 +240,7 @@ export function CheckoutDrawer({
                 <div>
                   <p className="mb-2 font-medium text-slate-900">Carrier</p>
                   <div className="grid grid-cols-3 gap-2">
-                    {["AT&T", "Comcast", "Verizon"].map((item) => (
+                    {activeCountryConfig.carriers.map((item) => (
                       <button
                         key={item}
                         onClick={() => setSelectedCarrier(item)}
@@ -198,8 +255,14 @@ export function CheckoutDrawer({
 
               <div>
                 <p className="mb-2 font-medium text-slate-900">Location</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {["Dallas, TX", "Ashburn, VA"].map((item) => (
+                <div
+                  className={`grid gap-2 ${
+                    activeCountryConfig.cities.length > 2
+                      ? "grid-cols-3"
+                      : "grid-cols-2"
+                  }`}
+                >
+                  {activeCountryConfig.cities.map((item) => (
                     <button
                       key={item}
                       onClick={() => setLocation(item)}

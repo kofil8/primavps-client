@@ -23,10 +23,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 
 const SUPPORTED_COUNTRIES = [
   {
-    flag: "🇺🇸",
     code: "US",
     name: "United States",
     isp: "AT&T / Comcast",
@@ -34,7 +34,6 @@ const SUPPORTED_COUNTRIES = [
     ping: "~178 ms",
   },
   {
-    flag: "🇬🇧",
     code: "UK",
     name: "United Kingdom",
     isp: "BT / Virgin Media",
@@ -42,7 +41,6 @@ const SUPPORTED_COUNTRIES = [
     ping: "~152 ms",
   },
   {
-    flag: "🇩🇪",
     code: "DE",
     name: "Germany",
     isp: "Deutsche Telekom",
@@ -50,7 +48,6 @@ const SUPPORTED_COUNTRIES = [
     ping: "~144 ms",
   },
   {
-    flag: "🇫🇷",
     code: "FR",
     name: "France",
     isp: "Orange / Free",
@@ -274,7 +271,7 @@ export function HeroSection() {
                       : "border border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
                   }`}
                 >
-                  <span>{country.flag}</span>
+                  <CountryFlag code={country.code} size={15} />
                   <span>{country.name}</span>
                 </button>
               );
@@ -404,10 +401,10 @@ export function HeroSection() {
                     <span className="text-slate-500">
                       আপনার ডিটেক্টেড লোকেশন:
                     </span>
-                    <span className="font-bold text-slate-800">
+                    <span className="font-bold text-slate-800 inline-flex items-center gap-1.5">
                       {userReport?.city || "Dhaka"},{" "}
                       {userReport?.country || "Bangladesh"}{" "}
-                      {getCountryFlag(userReport?.countryCode)}
+                      <CountryFlag code={userReport?.countryCode || "bd"} size={14} />
                     </span>
                   </div>
 
@@ -489,7 +486,7 @@ export function HeroSection() {
                     </p>
                     <p className="mt-0.5 font-mono text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
                       <MapPin size={13} className="text-emerald-600" />
-                      {selectedCountry.flag} {selectedCountry.sampleIp} (
+                      <CountryFlag code={selectedCountry.code} size={15} /> {selectedCountry.sampleIp} (
                       {selectedCountry.code})
                     </p>
                   </div>
