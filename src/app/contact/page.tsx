@@ -13,7 +13,7 @@ const CHANNELS = [
   {
     icon: Mail,
     title: "Email",
-    value: "support@primevpsbd.com",
+    value: "support@primavps.com",
     note: "Replies within 15 minutes",
   },
   {

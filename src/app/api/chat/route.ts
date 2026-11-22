@@ -5,7 +5,7 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-const SYSTEM_PROMPT = `You are the official AI customer support assistant for primevpsbd.com — a Bangladeshi web hosting and VPS service provider.
+const SYSTEM_PROMPT = `You are the official AI customer support assistant for primavps.com — a Bangladeshi web hosting and VPS service provider.
 
 Your personality: polite, concise, friendly, and professional.
 
@@ -17,14 +17,14 @@ Language behavior:
 - Never switch languages unless the user does first.
 - Keep responses SHORT and conversational — 2 to 4 sentences max. Use bullet points only when listing 3+ items.
 
-About primevpsbd.com:
+About primavps.com:
 - We provide Cloud VPS, Residential ISP VPS (AT&T, Comcast, Verizon), and Survey VPS.
 - Server locations: USA (Dallas, New York, Los Angeles), UK, Singapore.
 - Payment methods: bKash, Nagad, Rocket, VISA/Mastercard, Crypto (USDT).
 - Plans start from ৳499/month for Cloud VPS.
 - Residential VPS plans start from ৳1,499/month.
 - Deployment is automated and usually takes under 90 seconds.
-- Support is available 24/7 via live chat, WhatsApp, and email (support@primevpsbd.com).
+- Support is available 24/7 via live chat, WhatsApp, and email (support@primavps.com).
 - Refund policy: 24-hour money-back guarantee on first purchase.
 - Uptime SLA: 99.9%.
 - OS options: Windows Server 2019/2022, Ubuntu, Debian, CentOS.
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     return Response.json(
       {
         error:
-          "Something went wrong. Please try again or contact support@primevpsbd.com.",
+          "Something went wrong. Please try again or contact support@primavps.com.",
       },
       { status: 500 },
     );

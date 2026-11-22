@@ -29,7 +29,7 @@ export default function IpReplacementPolicyPage() {
                 1. Overview of the Guarantee
               </h2>
               <p>
-                At primevpsbd.com, we understand that survey workers, vendors, and account managers rely heavily on uncontaminated IP reputation. We guarantee that all residential static IPs delivered under our VIP and Pro plans have been pre-screened to possess a 0/100 IPQualityScore fraud score and authentic ISP usage status.
+                At primavps.com, we understand that survey workers, vendors, and account managers rely heavily on uncontaminated IP reputation. We guarantee that all residential static IPs delivered under our VIP and Pro plans have been pre-screened to possess a 0/100 IPQualityScore fraud score and authentic ISP usage status.
               </p>
             </section>
 

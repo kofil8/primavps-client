@@ -28,7 +28,7 @@ const FAQS = [
   },
   {
     q: "এজেন্সি বা ব্যবসার জন্য ভ্যাট চালান বা অফিস ভিজিটের সুযোগ আছে কি?",
-    a: "হ্যাঁ, primevpsbd একটি নিবন্ধিত বাংলাদেশি প্রযুক্তি প্রতিষ্ঠান। আমাদের হেড অফিস ঢাকার বনানী ১১ নম্বর রোডে। আমরা যেকোনো এজেন্সি ও ফ্রিল্যান্সার টিমকে অফিশিয়াল ভ্যাট ইনভয়েস প্রদান করি।",
+    a: "হ্যাঁ, primavps একটি নিবন্ধিত বাংলাদেশি প্রযুক্তি প্রতিষ্ঠান। আমাদের হেড অফিস ঢাকার বনানী ১১ নম্বর রোডে। আমরা যেকোনো এজেন্সি ও ফ্রিল্যান্সার টিমকে অফিশিয়াল ভ্যাট ইনভয়েস প্রদান করি।",
   },
 ];
 
@@ -52,7 +52,7 @@ export function ProofAndFaq() {
 
           <div className="mt-7 flex flex-col sm:flex-row gap-3">
             <Link
-              href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20primevpsbd%20সার্ভার%20সম্পর্কে%20কিছু%20জানতে%20চাচ্ছি"
+              href="https://wa.me/8801960677463?text=হ্যালো,%20আমি%20primavps%20সার্ভার%20সম্পর্কে%20কিছু%20জানতে%20চাচ্ছি"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-xs font-bold text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-700 transition-colors"

@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "HOT Deals & Flash Sales | PrimeVPS BD",
+  title: "HOT Deals & Flash Sales | PrimaVPS",
   description:
     "Exclusive limited-time flash sales and promo discounts on NVMe Cloud VPS, Residential Survey VPS, Virgin US IPs, and Reseller clusters.",
 };

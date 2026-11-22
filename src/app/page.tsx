@@ -1,9 +1,9 @@
 import { CustomerReviewsCarousel } from "@/components/sections/home/CustomerReviewsCarousel";
 import { GlobalNetworkMap } from "@/components/sections/home/GlobalNetworkMap";
 import { HeroSection } from "@/components/sections/home/HeroSection";
+import { HowItWorks } from "@/components/sections/home/HowItWorks";
 import { SurveyFaq } from "@/components/sections/home/SurveyFaq";
 import { SurveyRdpPlans } from "@/components/sections/home/SurveyRdpPlans";
-import { TrustBadgesStrip } from "@/components/sections/home/TrustBadgesStrip";
 import { WhyTrustUs } from "@/components/sections/home/WhyTrustUs";
 import { CookieConsentNotice } from "@/components/ui/CookieConsentNotice";
 
@@ -13,8 +13,8 @@ export default function HomePage() {
       {/* 1. Hero — clean ISP-First headline, US/UK/DE/FR country selector, live IP proof card */}
       <HeroSection />
 
-      {/* 2. Trust strip — 0/100 · 7-Day Swap · <90s delivery · Secure Payment */}
-      <TrustBadgesStrip />
+      {/* 2. How it works */}
+      <HowItWorks />
 
       {/* 3. Survey RDP Plans — 3 clean tiers with in-card country selector dropdown */}
       <SurveyRdpPlans />

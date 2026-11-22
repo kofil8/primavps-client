@@ -125,7 +125,7 @@ export function Navbar() {
               <Server size={17} />
             </span>
             <span className="font-display text-lg font-extrabold tracking-tight text-slate-900">
-              primevps<span className="text-blue-600">bd</span>
+              prima<span className="text-blue-600">vps</span>
             </span>
           </Link>
 

@@ -149,7 +149,7 @@ export function DealsHero() {
               <div className="absolute -inset-4 rounded-3xl bg-amber-400/20 blur-2xl transition duration-500 group-hover:bg-amber-400/30" />
               <Image
                 src="/promotion.webp"
-                alt="PrimeVPS BD Flash Sale Badge"
+                alt="PrimaVPS Flash Sale Badge"
                 width={500}
                 height={333}
                 priority

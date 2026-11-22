@@ -14,7 +14,7 @@ export function CookieConsentNotice() {
   const handleDismiss = () => {
     setVisible(false);
     try {
-      localStorage.setItem("primevpsbd_cookie_consent", "true");
+      localStorage.setItem("primavps_cookie_consent", "true");
     } catch {
       // ignore storage errors
     }
@@ -22,7 +22,7 @@ export function CookieConsentNotice() {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem("primevpsbd_cookie_consent")) return;
+      if (localStorage.getItem("primavps_cookie_consent")) return;
     } catch {
       // ignore
     }
