@@ -69,14 +69,13 @@ export function WhyTrustUs() {
   };
 
   return (
-    <section className="border-b border-slate-200/80 bg-slate-50/50 py-16 sm:py-24">
+    <section className="border-b border-slate-200/80 bg-slate-50/50 py-12 sm:py-16 lg:py-24">
       <div className="shell">
-        {/* Header — Clean & Consistent with Pricing/Network */}
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
             কেন primavps বেছে নেবেন
           </p>
-          <h2 className="mt-2 font-display text-2xl font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="mt-2 font-display text-2xl font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
             ব্যান-মুক্ত কাজের ৪টি নিশ্চয়তা
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
@@ -85,59 +84,55 @@ export function WhyTrustUs() {
           </p>
         </Reveal>
 
-        {/* 4 Clean Cards with Mini-UI Illustrations */}
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-5 xl:gap-6">
           {TRUST_CARDS.map((card, idx) => (
             <Reveal
               key={card.id}
               delay={0.05 * (idx + 1)}
-              className="group flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg sm:rounded-3xl"
+              className="group flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg sm:rounded-3xl sm:p-5"
             >
               <div>
-                {/* Top Illustration Canvas */}
-                <div className="relative mb-4 flex h-36 w-full items-center justify-center overflow-hidden rounded-xl border border-slate-100/80 bg-gradient-to-b from-slate-50 to-slate-100/60 transition-colors group-hover:from-blue-50/30 group-hover:to-slate-100/70 sm:rounded-2xl">
-                  {/* Subtle dot grid */}
+                {/* Responsive Illustration Canvas — never clips at 1024px */}
+                <div className="relative mb-4 flex h-34 w-full items-center justify-center overflow-hidden rounded-xl border border-slate-100/80 bg-gradient-to-b from-slate-50 to-slate-100/60 px-3 transition-colors group-hover:from-blue-50/30 group-hover:to-slate-100/70 sm:h-36 sm:rounded-2xl">
                   <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px] opacity-40" />
 
-                  {/* 1. Real Home ISP */}
                   {card.illustration === "isp" && (
-                    <div className="relative z-10 flex items-center justify-center gap-2 transition-transform duration-300 group-hover:scale-105">
-                      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200/90 bg-white px-2.5 py-1.5 shadow-2xs">
+                    <div className="relative z-10 flex items-center justify-center gap-1.5 transition-transform duration-300 group-hover:scale-105 lg:scale-90 xl:scale-100">
+                      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200/90 bg-white px-2 py-1.5 shadow-2xs">
                         <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
                           <Router size={13} />
                         </div>
-                        <span className="mt-1 text-[9px] font-bold text-slate-800">
+                        <span className="mt-1 whitespace-nowrap text-[9px] font-bold text-slate-800">
                           Home ISP
                         </span>
                       </div>
 
                       <div className="flex flex-col items-center">
                         <div className="flex items-center">
-                          <span className="h-0.5 w-2.5 bg-slate-300" />
+                          <span className="h-0.5 w-2 bg-slate-300" />
                           <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-white shadow-2xs">
                             <Check size={8} strokeWidth={3} />
                           </span>
-                          <span className="h-0.5 w-2.5 bg-slate-300" />
+                          <span className="h-0.5 w-2 bg-slate-300" />
                         </div>
-                        <span className="mt-1 rounded-full border border-emerald-200/80 bg-emerald-50 px-1.5 py-0.5 text-[8px] font-bold text-emerald-700">
+                        <span className="mt-1 whitespace-nowrap rounded-full border border-emerald-200/80 bg-emerald-50 px-1.5 py-0.5 text-[8px] font-bold text-emerald-700">
                           0/100 Safe
                         </span>
                       </div>
 
-                      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200/90 bg-white px-2.5 py-1.5 shadow-2xs">
+                      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200/90 bg-white px-2 py-1.5 shadow-2xs">
                         <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
                           <Laptop size={13} />
                         </div>
-                        <span className="mt-1 text-[9px] font-bold text-slate-800">
+                        <span className="mt-1 whitespace-nowrap text-[9px] font-bold text-slate-800">
                           Surveys
                         </span>
                       </div>
                     </div>
                   )}
 
-                  {/* 2. 7-Day Swap */}
                   {card.illustration === "calendar" && (
-                    <div className="relative z-10 flex w-[180px] flex-col rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative z-10 flex w-full max-w-[180px] flex-col rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs transition-transform duration-300 group-hover:scale-105">
                       <div className="flex items-center justify-between border-b border-slate-100 pb-1 text-[9px] font-bold text-slate-700">
                         <span className="flex items-center gap-1 text-emerald-600">
                           <CalendarCheck size={11} /> Day 1
@@ -166,9 +161,8 @@ export function WhyTrustUs() {
                     </div>
                   )}
 
-                  {/* 3. Instant Activation */}
                   {card.illustration === "delivery" && (
-                    <div className="relative z-10 flex w-[190px] flex-col rounded-xl border border-slate-200/90 bg-white p-2 shadow-2xs transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative z-10 flex w-full max-w-[185px] flex-col rounded-xl border border-slate-200/90 bg-white p-2 shadow-2xs transition-transform duration-300 group-hover:scale-105">
                       <div className="space-y-1">
                         <div className="flex items-center justify-between rounded bg-slate-50 px-2 py-0.5 text-[8px]">
                           <span className="flex items-center gap-1 font-semibold text-slate-700">
@@ -208,9 +202,8 @@ export function WhyTrustUs() {
                     </div>
                   )}
 
-                  {/* 4. Dual-Tier Support */}
                   {card.illustration === "support" && (
-                    <div className="relative z-10 flex w-[180px] flex-col rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative z-10 flex w-full max-w-[180px] flex-col rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs transition-transform duration-300 group-hover:scale-105">
                       <div className="flex items-center justify-between border-b border-slate-100 pb-1">
                         <div className="flex items-center gap-1 text-[9px] font-bold text-slate-800">
                           <Bot size={11} className="text-violet-600" />
@@ -235,7 +228,6 @@ export function WhyTrustUs() {
                   )}
                 </div>
 
-                {/* Card Copy */}
                 <h3 className="font-display text-base font-bold text-slate-900 transition-colors group-hover:text-blue-600">
                   {card.title}
                 </h3>
@@ -244,7 +236,6 @@ export function WhyTrustUs() {
                 </p>
               </div>
 
-              {/* Bottom Link */}
               <div className="mt-4 border-t border-slate-100 pt-2.5">
                 {card.actionType === "chat" ? (
                   <button

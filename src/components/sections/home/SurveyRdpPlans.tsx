@@ -7,8 +7,6 @@ import { ArrowRight, Check, Globe } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-// ─── Countries ───────────────────────────────────────────────────────────────
-
 const COUNTRIES = [
   {
     code: "us",
@@ -39,8 +37,6 @@ const COUNTRIES = [
     allIsps: "Orange, Free",
   },
 ];
-
-// ─── Plan Tiers ──────────────────────────────────────────────────────────────
 
 interface PlanTier {
   id: string;
@@ -117,8 +113,6 @@ const TIERS: PlanTier[] = [
   },
 ];
 
-// ─── Component ───────────────────────────────────────────────────────────────
-
 export function SurveyRdpPlans() {
   const { formatPrice } = useCurrency();
   const [selectedCountryCode, setSelectedCountryCode] = useState("us");
@@ -129,19 +123,19 @@ export function SurveyRdpPlans() {
   return (
     <section
       id="pricing"
-      className="border-b border-slate-200 bg-white py-16 sm:py-24"
+      className="border-b border-slate-200 bg-white py-12 sm:py-16 lg:py-24"
     >
       <div className="shell">
         {/* Header + Global Location Switcher */}
-        <Reveal className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <Reveal className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between lg:gap-6">
           <div className="max-w-xl">
             <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
               Residential ISP RDP Plans
             </p>
-            <h2 className="mt-2 font-display text-2xl font-extrabold leading-[1.22] tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className="mt-2 font-display text-2xl font-extrabold leading-[1.22] tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
               আপনার কাজের জন্য সঠিক সার্ভার বেছে নিন
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+            <p className="mt-2.5 text-sm leading-relaxed text-slate-600 sm:mt-3 sm:text-base">
               সব প্ল্যানেই থাকছে{" "}
               <strong className="font-semibold text-slate-800">
                 {currentCountry.isp}
@@ -150,8 +144,8 @@ export function SurveyRdpPlans() {
             </p>
           </div>
 
-          {/* Single Global Country Switcher */}
-          <div className="flex flex-col items-start gap-2 lg:items-end">
+          {/* 2x2 Grid on small phones, clean pill bar on sm+ */}
+          <div className="flex w-full flex-col items-start gap-2 sm:w-auto lg:items-end">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
               <Globe size={12} className="text-blue-600" />
               সার্ভার লোকেশন সিলেক্ট করুন
@@ -159,7 +153,7 @@ export function SurveyRdpPlans() {
             <div
               role="group"
               aria-label="Select server location"
-              className="inline-flex flex-wrap items-center gap-1 rounded-2xl border border-slate-200 bg-slate-100/80 p-1"
+              className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-slate-100/80 p-1 sm:inline-flex sm:w-auto sm:flex-wrap sm:items-center"
             >
               {COUNTRIES.map((c) => {
                 const isSelected = c.code === selectedCountryCode;
@@ -169,14 +163,14 @@ export function SurveyRdpPlans() {
                     type="button"
                     aria-pressed={isSelected}
                     onClick={() => setSelectedCountryCode(c.code)}
-                    className={`inline-flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                    className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all sm:px-3 sm:py-1.5 ${
                       isSelected
                         ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/80"
                         : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
                     <CountryFlag code={c.code} size={15} />
-                    <span>{c.name}</span>
+                    <span className="truncate">{c.name}</span>
                   </button>
                 );
               })}
@@ -184,28 +178,31 @@ export function SurveyRdpPlans() {
           </div>
         </Reveal>
 
-        {/* Plan Cards Grid */}
+        {/* Plan Cards Grid: 1-col Mobile -> 2-col Tablet -> 3-col Laptop/Desktop */}
         <Reveal
-          className="mt-10 grid gap-6 lg:grid-cols-3 lg:items-stretch"
+          className="mt-8 grid grid-cols-1 gap-5 sm:mt-10 md:grid-cols-2 lg:grid-cols-3 lg:items-stretch lg:gap-6"
           delay={0.08}
         >
-          {TIERS.map((tier) => (
+          {TIERS.map((tier, idx) => (
             <div
               key={tier.id}
-              className={`relative flex flex-col rounded-3xl p-6 transition-all duration-200 sm:p-7 ${
+              className={`relative flex flex-col rounded-2xl p-5 transition-all duration-200 sm:rounded-3xl sm:p-6 xl:p-7 ${
                 tier.highlight
-                  ? "bg-white ring-2 ring-blue-600 shadow-xl shadow-blue-600/10"
+                  ? "bg-white shadow-xl shadow-blue-600/10 ring-2 ring-blue-600"
                   : "border border-slate-200 bg-white shadow-xs hover:border-slate-300 hover:shadow-md"
+              } ${
+                idx === 2
+                  ? "md:col-span-2 md:mx-auto md:w-full md:max-w-md lg:col-span-1 lg:max-w-none"
+                  : ""
               }`}
             >
-              {/* Top Row: Plan Name + Optional Badge (Fixed height alignment) */}
               <div className="flex items-center justify-between gap-2">
-                <h3 className="font-display text-xl font-extrabold text-slate-900">
+                <h3 className="font-display text-lg font-extrabold text-slate-900 sm:text-xl">
                   {tier.name}
                 </h3>
                 {tier.badge && (
                   <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                    className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
                       tier.highlight
                         ? "bg-blue-600 text-white"
                         : "border border-amber-200 bg-amber-50 text-amber-800"
@@ -216,50 +213,47 @@ export function SurveyRdpPlans() {
                 )}
               </div>
 
-              {/* 1-Line Use-Case Tagline */}
               <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
                 {tier.tagline}
               </p>
 
-              {/* Price — Top & Immediately Scannable */}
-              <div className="mt-5 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-black tracking-tight text-slate-900">
+              <div className="mt-4 flex items-baseline gap-1 sm:mt-5">
+                <span className="font-display text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
                   {formatPrice(tier.monthlyPrice)}
                 </span>
-                <span className="text-sm font-medium text-slate-400">/মাস</span>
+                <span className="text-xs font-medium text-slate-400 sm:text-sm">
+                  /মাস
+                </span>
               </div>
 
-              {/* Active Location + ISP Pill */}
               <div
                 title={currentCountry.allIsps}
-                className="mt-4 inline-flex items-center gap-2 self-start rounded-lg bg-slate-50 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 ring-1 ring-slate-200/70"
+                className="mt-3.5 inline-flex max-w-full items-center gap-2 self-start rounded-lg bg-slate-50 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 ring-1 ring-slate-200/70 sm:mt-4"
               >
                 <CountryFlag code={currentCountry.code} size={14} />
-                <span>{currentCountry.isp}</span>
+                <span className="truncate">{currentCountry.isp}</span>
               </div>
 
-              {/* Clean Hardware Specs Grid (No redundant labels) */}
-              <div className="mt-5 grid grid-cols-3 divide-x divide-slate-200/80 rounded-2xl border border-slate-200/70 bg-slate-50/70 py-3 text-center">
+              <div className="mt-4 grid grid-cols-3 divide-x divide-slate-200/80 rounded-2xl border border-slate-200/70 bg-slate-50/70 py-2.5 text-center sm:mt-5 sm:py-3">
                 {[
                   { label: "CPU", value: tier.vcpu },
                   { label: "RAM", value: tier.ram },
                   { label: "NVMe SSD", value: tier.storage },
                 ].map(({ label, value }) => (
-                  <div key={label} className="px-2">
-                    <p className="text-sm font-extrabold text-slate-900">
+                  <div key={label} className="px-1.5 sm:px-2">
+                    <p className="text-xs font-extrabold text-slate-900 sm:text-sm">
                       {value}
                     </p>
-                    <p className="mt-0.5 text-[10px] font-medium text-slate-500">
+                    <p className="mt-0.5 text-[9.5px] font-medium text-slate-500 sm:text-[10px]">
                       {label}
                     </p>
                   </div>
                 ))}
               </div>
 
-              {/* Primary CTA Button */}
               <Link
                 href={`/survey-vps?plan=${tier.planSlug}&country=${selectedCountryCode}`}
-                className={`mt-5 flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-all active:scale-[0.99] ${
+                className={`mt-5 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition-all active:scale-[0.99] sm:px-5 sm:text-sm ${
                   tier.highlight
                     ? "bg-blue-600 text-white shadow-md shadow-blue-600/25 hover:bg-blue-700"
                     : "border border-slate-300 bg-white text-slate-900 hover:border-blue-600 hover:bg-blue-50/40 hover:text-blue-700"
@@ -271,15 +265,14 @@ export function SurveyRdpPlans() {
                 <ArrowRight size={15} />
               </Link>
 
-              {/* Feature Bullet Points */}
-              <ul className="mt-6 flex-1 space-y-2.5 border-t border-slate-100 pt-5">
+              <ul className="mt-5 flex-1 space-y-2.5 border-t border-slate-100 pt-4 sm:mt-6 sm:pt-5">
                 {tier.features.map((feature) => (
                   <li
                     key={feature}
-                    className="flex items-start gap-2.5 text-xs leading-relaxed text-slate-600"
+                    className="flex items-start gap-2 text-xs leading-relaxed text-slate-600 sm:gap-2.5"
                   >
                     <Check
-                      size={15}
+                      size={14}
                       strokeWidth={2.5}
                       className={`mt-0.5 shrink-0 ${
                         tier.highlight ? "text-blue-600" : "text-emerald-600"
@@ -295,7 +288,7 @@ export function SurveyRdpPlans() {
 
         {/* Footer info note */}
         <Reveal
-          className="mt-9 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-slate-500"
+          className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-xs text-slate-500 sm:mt-9 sm:gap-x-5"
           delay={0.14}
         >
           <span>পেমেন্ট: বিকাশ · নগদ · কার্ড · USDT</span>
