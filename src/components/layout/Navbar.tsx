@@ -9,6 +9,7 @@ import {
   Flame,
   Home,
   LayoutGrid,
+  Menu,
   Search,
   Server,
   ShieldCheck,
@@ -20,6 +21,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { BrandLogo } from "../ui/BrandLogo";
 
 const PRODUCT_LINKS = [
   {
@@ -97,7 +99,7 @@ export function Navbar() {
   };
 
   const navLinkClass =
-    "rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100/80 hover:text-slate-900";
+    "whitespace-nowrap shrink-0 rounded-lg px-2.5 xl:px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100/80 hover:text-slate-900";
 
   const isHomeActive = pathname === "/" && !mobileSheetOpen;
   const isServersActive =
@@ -109,28 +111,24 @@ export function Navbar() {
 
   return (
     <>
-      {/* ─── TOP HEADER (Desktop Full Nav + Mobile Minimal Brand & Currency) ─── */}
+      {/* ─── TOP HEADER ─── */}
       <header className="relative z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
         <div
           ref={navRef}
-          className="shell flex h-14 md:h-16 items-center justify-between gap-4"
+          className="shell flex h-14 items-center justify-between gap-3 md:h-16 md:gap-4"
         >
           {/* 1. Brand Logo */}
           <Link
             href="/"
-            className="group flex items-center gap-2.5 focus-visible:outline-none"
+            aria-label="primavps home"
+            className="group flex shrink-0 items-center focus-visible:outline-none"
             onClick={closeAll}
           >
-            <span className="grid size-8 place-items-center rounded-lg bg-blue-600 text-white shadow-xs transition-transform group-hover:scale-105">
-              <Server size={17} />
-            </span>
-            <span className="font-display text-lg font-extrabold tracking-tight text-slate-900">
-              prima<span className="text-blue-600">vps</span>
-            </span>
+            <BrandLogo theme="light" size="md" />
           </Link>
 
-          {/* 2. Desktop Center Navigation Links */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
+          {/* 2. Desktop Center Navigation Links (xl+: 1280px+) */}
+          <nav className="hidden items-center gap-1 xl:flex" aria-label="Main">
             {/* Servers Dropdown */}
             <div className="relative">
               <button
@@ -139,7 +137,7 @@ export function Navbar() {
                   setOpenMenu(openMenu === "products" ? null : "products")
                 }
                 aria-expanded={openMenu === "products"}
-                className={`flex items-center gap-1.5 ${navLinkClass} ${
+                className={`flex cursor-pointer items-center gap-1.5 ${navLinkClass} ${
                   openMenu === "products" ? "bg-slate-100 text-slate-900" : ""
                 }`}
               >
@@ -153,7 +151,7 @@ export function Navbar() {
               </button>
 
               {openMenu === "products" && (
-                <div className="absolute top-full left-0 mt-2 w-80 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5 animate-fade-up">
+                <div className="animate-fade-up absolute top-full left-0 mt-2 w-80 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5">
                   {PRODUCT_LINKS.map((item) => (
                     <Link
                       key={item.href}
@@ -193,7 +191,7 @@ export function Navbar() {
                   setOpenMenu(openMenu === "tools" ? null : "tools")
                 }
                 aria-expanded={openMenu === "tools"}
-                className={`flex items-center gap-1.5 ${navLinkClass} ${
+                className={`flex cursor-pointer items-center gap-1.5 ${navLinkClass} ${
                   openMenu === "tools" ? "bg-slate-100 text-slate-900" : ""
                 }`}
               >
@@ -207,7 +205,7 @@ export function Navbar() {
               </button>
 
               {openMenu === "tools" && (
-                <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5 animate-fade-up">
+                <div className="animate-fade-up absolute top-full left-0 mt-2 w-72 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5">
                   {TOOL_LINKS.map((item) => (
                     <Link
                       key={item.href}
@@ -235,11 +233,11 @@ export function Navbar() {
             <Link
               href="/hot-deals"
               onClick={closeAll}
-              className="group flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50/80"
+              className="group flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50/80"
             >
               <Flame
                 size={15}
-                className="text-rose-500 transition-transform group-hover:scale-110"
+                className="shrink-0 text-rose-500 transition-transform group-hover:scale-110"
               />
               <span>Hot Deals</span>
               <span className="rounded-full bg-rose-100 px-1.5 py-0.5 text-[10px] font-extrabold tracking-wide text-rose-700">
@@ -255,17 +253,17 @@ export function Navbar() {
             </Link>
           </nav>
 
-          {/* 3. Desktop Right Controls */}
-          <div className="hidden items-center gap-2.5 md:flex">
+          {/* 3. Tablet & Desktop Right Controls (md+) */}
+          <div className="hidden shrink-0 items-center gap-2 md:flex xl:gap-2.5">
             <div
-              className="inline-flex items-center rounded-lg border border-slate-200/90 bg-slate-100/70 p-0.5 text-xs font-semibold"
+              className="inline-flex shrink-0 items-center rounded-lg border border-slate-200/90 bg-slate-100/70 p-0.5 text-xs font-semibold"
               role="group"
               aria-label="Currency selector"
             >
               <button
                 type="button"
                 onClick={() => setCurrency("BDT")}
-                className={`rounded-md px-2.5 py-1 transition-all ${
+                className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
                   currency === "BDT"
                     ? "bg-white text-slate-900 shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -276,7 +274,7 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => setCurrency("USD")}
-                className={`rounded-md px-2.5 py-1 transition-all ${
+                className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
                   currency === "USD"
                     ? "bg-white text-slate-900 shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -289,7 +287,7 @@ export function Navbar() {
             <Link
               href="/login"
               onClick={closeAll}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
+              className="whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900 xl:px-4"
             >
               Sign in
             </Link>
@@ -297,19 +295,30 @@ export function Navbar() {
             <Link
               href="/survey-vps"
               onClick={closeAll}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-700"
+              className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-700 xl:px-4"
             >
               <span>Deploy server</span>
-              <ArrowRight size={15} />
+              <ArrowRight size={15} className="shrink-0" />
             </Link>
+
+            {/* Tablet & Small-Laptop Menu Trigger (768px–1279px) */}
+            <button
+              type="button"
+              onClick={() => setMobileSheetOpen((prev) => !prev)}
+              aria-expanded={mobileSheetOpen}
+              aria-label="Toggle navigation menu"
+              className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 xl:hidden"
+            >
+              {mobileSheetOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
 
-          {/* 4. Mobile Top Right Controls (Clean Currency Pill + Sign in) */}
-          <div className="flex items-center gap-2 md:hidden">
+          {/* 4. Mobile Top Right Controls (<768px) */}
+          <div className="flex shrink-0 items-center gap-1.5 md:hidden">
             <button
               type="button"
               onClick={() => setCurrency(currency === "BDT" ? "USD" : "BDT")}
-              className="rounded-full border border-slate-200/90 bg-slate-50/90 px-3 py-1 text-xs font-bold text-slate-700 active:scale-95 transition-transform"
+              className="whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50/90 px-2.5 py-1 text-[11px] font-bold text-slate-700 transition-transform active:scale-95"
               aria-label={`Switch to ${currency === "BDT" ? "USD" : "BDT"}`}
             >
               {currency === "BDT" ? "৳ BDT" : "$ USD"}
@@ -317,7 +326,7 @@ export function Navbar() {
             <Link
               href="/login"
               onClick={closeAll}
-              className="rounded-full border border-slate-200/90 bg-white px-3 py-1 text-xs font-semibold text-slate-800 active:scale-95 transition-transform"
+              className="whitespace-nowrap rounded-full border border-slate-200/90 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 transition-transform active:scale-95"
             >
               Sign in
             </Link>
@@ -325,25 +334,25 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* ─── MOBILE GLASS SHEET OVERLAY (Opens when "More" tab is tapped) ─── */}
+      {/* ─── GLASS MENU SHEET (Mobile, Tablet & Small Laptop < xl) ─── */}
       {mobileSheetOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/25 backdrop-blur-xs md:hidden animate-fade-up"
+          className="animate-fade-up fixed inset-0 z-40 bg-slate-900/25 backdrop-blur-xs xl:hidden"
           onClick={() => setMobileSheetOpen(false)}
         >
           <div
-            className="fixed inset-x-3 bottom-24 z-50 max-h-[72vh] overflow-y-auto rounded-3xl border border-white/80 bg-white/85 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.18)] backdrop-blur-2xl"
+            className="fixed inset-x-3 bottom-24 z-50 max-h-[72dvh] overflow-y-auto rounded-3xl border border-white/80 bg-white/90 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.18)] backdrop-blur-2xl md:inset-x-auto md:top-20 md:right-6 md:bottom-auto md:w-[380px]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Sheet Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200/60">
+            <div className="flex items-center justify-between border-b border-slate-200/60 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                 All Services &amp; Tools
               </span>
               <button
                 type="button"
                 onClick={() => setMobileSheetOpen(false)}
-                className="grid size-7 place-items-center rounded-full bg-slate-200/70 text-slate-700"
+                className="grid size-7 cursor-pointer place-items-center rounded-full bg-slate-200/70 text-slate-700"
                 aria-label="Close menu"
               >
                 <X size={15} />
@@ -377,7 +386,7 @@ export function Navbar() {
                       key={item.href}
                       href={item.href}
                       onClick={closeAll}
-                      className="flex items-center gap-3 rounded-2xl bg-white/70 p-2.5 border border-slate-200/50 active:scale-[0.99] transition-transform"
+                      className="flex items-center gap-3 rounded-2xl border border-slate-200/50 bg-white/80 p-2.5 transition-transform active:scale-[0.99]"
                     >
                       <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-blue-600/10 text-blue-600">
                         <item.icon size={16} />
@@ -386,7 +395,7 @@ export function Navbar() {
                         <p className="text-xs font-bold text-slate-900">
                           {item.title}
                         </p>
-                        <p className="text-[11px] text-slate-500 truncate">
+                        <p className="truncate text-[11px] text-slate-500">
                           {item.desc}
                         </p>
                       </div>
@@ -406,10 +415,10 @@ export function Navbar() {
                       key={item.href}
                       href={item.href}
                       onClick={closeAll}
-                      className="flex flex-col items-center justify-center rounded-2xl bg-white/70 p-2.5 text-center border border-slate-200/50 active:scale-95 transition-transform"
+                      className="flex flex-col items-center justify-center rounded-2xl border border-slate-200/50 bg-white/80 p-2.5 text-center transition-transform active:scale-95"
                     >
-                      <item.icon size={16} className="text-blue-600 mb-1" />
-                      <span className="text-[11px] font-semibold text-slate-800 leading-tight">
+                      <item.icon size={16} className="mb-1 text-blue-600" />
+                      <span className="text-[11px] leading-tight font-semibold text-slate-800">
                         {item.title
                           .replace(" Checker", "")
                           .replace(" Test", "")}
@@ -438,82 +447,72 @@ export function Navbar() {
         </div>
       )}
 
-      {/* ─── IPHONE LIQUID GLASS FLOATING BOTTOM NAV BAR (Mobile Only) ─── */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex flex-col items-center px-4 pb-[env(safe-area-inset-bottom)] md:hidden">
-        {/* Top Floating Quick-Action Pill */}
+      {/* ─── MOBILE FLOATING BOTTOM DOCK (<768px Only) ─── */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex flex-col items-center px-3 pb-[env(safe-area-inset-bottom)] md:hidden">
         <Link
           href="/survey-vps"
           onClick={closeAll}
-          className="pointer-events-auto mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/75 px-3.5 py-1 text-[11px] font-bold text-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-xl transition-transform active:scale-95"
+          className="pointer-events-auto mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/85 px-3 py-1 text-[11px] font-bold text-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-transform active:scale-95"
         >
-          <span className="size-1.5 rounded-full bg-blue-600 animate-pulse-dot" />
+          <span className="size-1.5 animate-pulse rounded-full bg-blue-600" />
           <span>Deploy Clean VPS</span>
           <ArrowRight size={11} className="text-blue-600" />
         </Link>
 
-        {/* Main Frosted Glass Floating Dock */}
         <nav
           aria-label="Mobile bottom navigation"
-          className="pointer-events-auto flex w-full max-w-[360px] items-center justify-between rounded-full border border-white/80 bg-white/70 p-1.5 shadow-[0_12px_36px_rgba(15,23,42,0.14),inset_0_1px_1.5px_rgba(255,255,255,0.95)] backdrop-blur-2xl"
+          className="pointer-events-auto flex w-full max-w-[350px] items-center justify-between rounded-full border border-white/80 bg-white/80 p-1.5 shadow-[0_12px_36px_rgba(15,23,42,0.14)] backdrop-blur-2xl"
         >
-          {/* Tab 1: Home */}
           <Link
             href="/"
             onClick={closeAll}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-2 text-[11px] font-semibold transition-all duration-200 active:scale-95 ${
+            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
               isHomeActive
-                ? "bg-blue-600/12 text-blue-600 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]"
+                ? "bg-blue-600/12 text-blue-600"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Home
-              size={19}
-              strokeWidth={isHomeActive ? 2.4 : 1.9}
-              className="transition-transform"
-            />
+            <Home size={18} strokeWidth={isHomeActive ? 2.4 : 1.9} />
             <span>Home</span>
           </Link>
 
-          {/* Tab 2: Servers */}
           <Link
             href="/survey-vps"
             onClick={closeAll}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-2 text-[11px] font-semibold transition-all duration-200 active:scale-95 ${
+            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
               isServersActive
-                ? "bg-blue-600/12 text-blue-600 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]"
+                ? "bg-blue-600/12 text-blue-600"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Server size={19} strokeWidth={isServersActive ? 2.4 : 1.9} />
+            <Server size={18} strokeWidth={isServersActive ? 2.4 : 1.9} />
             <span>Servers</span>
           </Link>
 
-          {/* Tab 3: Tools */}
           <Link
             href="/tools/ip-checker"
             onClick={closeAll}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-2 text-[11px] font-semibold transition-all duration-200 active:scale-95 ${
+            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
               isToolsActive
-                ? "bg-blue-600/12 text-blue-600 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]"
+                ? "bg-blue-600/12 text-blue-600"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Wrench size={19} strokeWidth={isToolsActive ? 2.4 : 1.9} />
+            <Wrench size={18} strokeWidth={isToolsActive ? 2.4 : 1.9} />
             <span>Tools</span>
           </Link>
 
-          {/* Tab 4: More / Menu Sheet */}
           <button
             type="button"
             onClick={() => setMobileSheetOpen(!mobileSheetOpen)}
             aria-expanded={mobileSheetOpen}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-2 text-[11px] font-semibold transition-all duration-200 active:scale-95 ${
+            className={`relative flex flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
               mobileSheetOpen
                 ? "bg-slate-900 text-white shadow-sm"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <LayoutGrid size={19} strokeWidth={mobileSheetOpen ? 2.4 : 1.9} />
+            <LayoutGrid size={18} strokeWidth={mobileSheetOpen ? 2.4 : 1.9} />
             <span>More</span>
           </button>
         </nav>

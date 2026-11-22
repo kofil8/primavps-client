@@ -27,7 +27,7 @@ const REVIEWS: ReviewItem[] = [
     name: "তানভীর আহমেদ",
     nameEn: "Tanvir Ahmed",
     initials: "TA",
-    avatarUrl: "/man-1.webp",
+    avatarUrl: "/avatar/man-1.webp",
     role: "Survey Researcher",
     location: "Chittagong",
     countryTag: "US AT&T ISP",
@@ -40,7 +40,7 @@ const REVIEWS: ReviewItem[] = [
     name: "সাবরিনা ইয়াসমিন",
     nameEn: "Sabrina Yasmin",
     initials: "SY",
-    avatarUrl: "/woman-1.webp",
+    avatarUrl: "/avatar/woman-1.webp",
     role: "Remote Account Manager",
     location: "Dhaka",
     countryTag: "UK Virgin ISP",
@@ -53,7 +53,7 @@ const REVIEWS: ReviewItem[] = [
     name: "ফারহান চৌধুরী",
     nameEn: "Farhan Chowdhury",
     initials: "FC",
-    avatarUrl: "/man-2.webp",
+    avatarUrl: "/avatar/man-2.webp",
     role: "Prolific Specialist",
     location: "Sylhet",
     countryTag: "UK BT ISP",
@@ -66,7 +66,7 @@ const REVIEWS: ReviewItem[] = [
     name: "মাহমুদুল হাসান",
     nameEn: "Mahmudul Hasan",
     initials: "MH",
-    avatarUrl: "/man-3.webp",
+    avatarUrl: "/avatar/man-3.webp",
     role: "Agency & PayPal Lead",
     location: "Dhaka",
     countryTag: "US Comcast ISP",
@@ -79,7 +79,7 @@ const REVIEWS: ReviewItem[] = [
     name: "সাকিবুর রহমান",
     nameEn: "Sakibur Rahman",
     initials: "SR",
-    avatarUrl: "/man-4.webp",
+    avatarUrl: "/avatar/man-4.webp",
     role: "Remote Ops Lead",
     location: "Dhaka",
     countryTag: "DE Telekom ISP",
@@ -92,7 +92,7 @@ const REVIEWS: ReviewItem[] = [
     name: "কামরুল ইসলাম",
     nameEn: "Kamrul Islam",
     initials: "KI",
-    avatarUrl: "/man-5.webp",
+    avatarUrl: "/avatar/man-5.webp",
     role: "Digital Marketer",
     location: "Rajshahi",
     countryTag: "FR Orange ISP",
@@ -105,7 +105,7 @@ const REVIEWS: ReviewItem[] = [
     name: "আশরাফুল ইসলাম",
     nameEn: "Ashraful Islam",
     initials: "AI",
-    avatarUrl: "/man-6.webp",
+    avatarUrl: "/avatar/man-6.webp",
     role: "CloudResearch Lead",
     location: "Sylhet",
     countryTag: "US Verizon ISP",
@@ -118,7 +118,7 @@ const REVIEWS: ReviewItem[] = [
     name: "নুসরাত জাহান",
     nameEn: "Nusrat Jahan",
     initials: "NJ",
-    avatarUrl: "/woman-2.webp",
+    avatarUrl: "/avatar/woman-2.webp",
     role: "Full-Time Freelancer",
     location: "Khulna",
     countryTag: "US Spectrum ISP",
@@ -165,7 +165,7 @@ function ReviewAvatar({
 
 function ReviewCard({ review }: { review: ReviewItem }) {
   return (
-    <div className="flex w-[320px] shrink-0 flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition-all duration-300 hover:border-slate-300 hover:shadow-md sm:w-[370px] sm:p-6">
+    <div className="flex w-[320px] shrink-0 flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition-all duration-300 hover:border-slate-300 hover:shadow-md w-[275px] p-4 sm:w-[350px] sm:p-6 lg:w-[380px]">
       {/* Top: 5 Stars + Verified + ISP Tag */}
       <div>
         <div className="flex items-center justify-between gap-2">
@@ -221,7 +221,7 @@ export function CustomerReviewsCarousel() {
     <section
       id="reviews"
       aria-labelledby={`${baseId}-heading`}
-      className="overflow-hidden border-b border-slate-200/80 bg-white py-16 sm:py-24"
+      className="overflow-hidden border-b border-slate-200/80 bg-white py-12 sm:py-16 lg:py-24"
     >
       {/* Header */}
       <div className="shell">
@@ -245,8 +245,8 @@ export function CustomerReviewsCarousel() {
       {/* Single-Row Smooth Infinite Marquee */}
       <div className="relative mt-10 w-full overflow-hidden">
         {/* Side Fade Masks */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-12 bg-gradient-to-r from-white via-white/80 to-transparent sm:w-32 lg:w-44" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-12 bg-gradient-to-l from-white via-white/80 to-transparent sm:w-32 lg:w-44" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-20 bg-gradient-to-r from-white via-white/80 to-transparent w-6 sm:w-24 lg:w-40" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-20 bg-gradient-to-l from-white via-white/80 to-transparent w-6 sm:w-24 lg:w-40" />
 
         <div className="flex w-max gap-5 animate-marquee hover:[animation-play-state:paused] sm:gap-6">
           {reviewStream.map((rev, idx) => (

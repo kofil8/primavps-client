@@ -42,7 +42,7 @@ export function SurveyFaq() {
   return (
     <section
       id="faq"
-      className="border-b border-slate-200 bg-slate-50/70 py-16 sm:py-24"
+      className="border-b border-slate-200 bg-slate-50/70 py-12 sm:py-16 lg:py-24"
     >
       <div className="shell grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-12">
         {/* Left: Header & CTAs */}
@@ -78,7 +78,7 @@ export function SurveyFaq() {
 
         {/* Right: Smooth Accordion */}
         <Reveal
-          className="divide-y divide-slate-200/80 rounded-3xl border border-slate-200 bg-white p-6 shadow-xs sm:p-8"
+          className="divide-y divide-slate-200/80 border border-slate-200 bg-white p-6 shadow-xs rounded-2xl p-4 sm:rounded-3xl sm:p-6 lg:p-8"
           delay={0.08}
         >
           {FAQS.map((faq, index) => {
@@ -89,7 +89,7 @@ export function SurveyFaq() {
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   aria-expanded={isOpen}
-                  className="flex w-full cursor-pointer items-center justify-between gap-4 text-left text-sm font-bold text-slate-900 transition-colors hover:text-blue-600"
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 text-left text-sm font-bold text-slate-900 transition-colors hover:text-blue-600 sm:w-auto"
                 >
                   <span className="flex items-start gap-3">
                     <span
