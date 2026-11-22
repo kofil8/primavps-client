@@ -9,8 +9,8 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: {
     default:
-      "primevpsbd — Enterprise Cloud VPS & Clean Residential ISP Servers",
-    template: "%s | primevpsbd",
+      "primavps — Enterprise Cloud VPS & Clean Residential ISP Servers",
+    template: "%s | primavps",
   },
   description:
     "Deploy isolated NVMe cloud instances or 100% clean AT&T, Comcast, and Verizon residential Windows VPS with zero WebRTC/DNS leaks. Sub-90s automated deployment with bKash and Cards.",
@@ -24,14 +24,14 @@ export const metadata: Metadata = {
     "bKash VPS hosting",
     "Clean Residential IP",
   ],
-  authors: [{ name: "primevpsbd Infrastructure" }],
-  metadataBase: new URL("https://primevpsbd.com"),
+  authors: [{ name: "primavps Infrastructure" }],
+  metadataBase: new URL("https://primavps.com"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://primevpsbd.com",
-    siteName: "primevpsbd",
-    title: "primevpsbd — Enterprise Cloud VPS & Clean Residential ISP Servers",
+    url: "https://primavps.com",
+    siteName: "primavps",
+    title: "primavps — Enterprise Cloud VPS & Clean Residential ISP Servers",
     description:
       "Deploy isolated NVMe cloud instances or 100% clean AT&T, Comcast, and Verizon residential Windows VPS with zero WebRTC/DNS leaks.",
   },
@@ -45,9 +45,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}
     >
-      <body className="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
+      <body
+        suppressHydrationWarning
+        className="flex min-h-screen flex-col bg-white text-slate-900 antialiased"
+      >
         <CurrencyProvider>
           <SiteHeader />
           <main className="flex-1">{children}</main>

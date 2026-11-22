@@ -10,10 +10,10 @@ import {
 import {
   ArrowRight,
   ArrowUpRight,
+  Headset,
   Mail,
   MapPin,
   ShieldCheck,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -77,49 +77,53 @@ export function Footer() {
   ).replace(/[^0-9]/g, "");
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    "Hello primevpsbd, I need assistance or want to order a server.",
+    "Hello primavps, I need assistance or want to order a server.",
   )}`;
 
   return (
-    <footer className="border-t border-slate-800/90 bg-slate-950 text-slate-400">
-      <div className="shell pt-10 pb-28 sm:pt-12 md:pb-8">
-        {/* ─── 1. Compact Pre-Footer Conversion Strip ─── */}
-        <div className="mb-10 flex flex-col justify-between gap-4 rounded-2xl border border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950/40 p-5 sm:flex-row sm:items-center sm:px-7">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-400">
-              <Zap size={13} className="fill-blue-400" />
-              <span>Instant Auto-Provisioning</span>
+    <>
+      {/* ─── 1. Pre-Footer Consultation Strip (Light Main App BG) ─── */}
+      <section className="bg-white pt-6 pb-12 sm:pt-8 sm:pb-16">
+        <div className="shell">
+          <div className="flex flex-col justify-between gap-5 rounded-2xl border border-blue-100/90 bg-gradient-to-r from-[#eff5ff] via-[#f1f6ff] to-[#eaf2ff] px-6 py-5 sm:flex-row sm:items-center sm:px-8 sm:py-5.5 shadow-[0_2px_12px_rgba(37,99,235,0.04)]">
+            <div className="flex items-center gap-3.5 sm:gap-4">
+              <Headset className="h-7 w-7 shrink-0 text-blue-600 sm:h-8 sm:w-8" />
+              <div>
+                <h3 className="font-display text-base font-bold text-slate-900 sm:text-lg">
+                  Not sure which VPS you need?
+                </h3>
+                <p className="mt-0.5 text-xs text-slate-600 sm:text-sm">
+                  Tell us what you&apos;re trying to run. We&apos;ll help you choose the right infrastructure.
+                </p>
+              </div>
             </div>
-            <h3 className="mt-1 font-display text-base font-bold text-white sm:text-lg">
-              ৯০ সেকেন্ডে আপনার ক্লিন 0/100 ISP সার্ভার চালু করুন
-            </h3>
-            <p className="mt-0.5 text-xs text-slate-400">
-              বিকাশ, নগদ বা কার্ডে পেমেন্ট করার সাথে সাথেই ইমেইলে RDP/SSH এক্সেস
-              পেয়ে যাবেন।
-            </p>
-          </div>
 
-          <div className="flex shrink-0 items-center gap-2.5">
-            <Link
-              href="/survey-vps"
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-blue-500 active:scale-95"
-            >
-              <span>Deploy Server</span>
-              <ArrowRight size={14} />
-            </Link>
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-700 bg-slate-900/90 px-3.5 py-2.5 text-xs font-semibold text-slate-200 transition-colors hover:border-slate-600 hover:bg-slate-800"
-            >
-              <FaWhatsapp size={14} className="text-emerald-400" />
-              <span>Live Chat</span>
-            </a>
+            <div className="flex shrink-0 flex-wrap items-center gap-2.5 sm:gap-3">
+              <Link
+                href="/survey-vps"
+                className="inline-flex items-center justify-center gap-1.5 rounded-full bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-500 active:scale-95 sm:text-sm"
+              >
+                <span>Get a VPS</span>
+                <ArrowRight size={14} />
+              </Link>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-200/90 bg-white px-4.5 py-2.5 text-xs font-semibold text-slate-700 shadow-xs transition-colors hover:border-blue-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 sm:text-sm"
+              >
+                <Headset size={15} className="text-slate-700" />
+                <span>Talk to an Engineer</span>
+              </a>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* ─── 2. Balanced 12-Column Main Grid ─── */}
+      {/* ─── 2. Main Dark Footer ─── */}
+      <footer className="border-t border-slate-800/90 bg-slate-950 text-slate-400">
+        <div className="shell pt-12 pb-28 sm:pt-14 md:pb-8">
+          {/* ─── Balanced 12-Column Main Grid ─── */}
         <div className="grid gap-8 lg:grid-cols-12 lg:gap-8">
           {/* Left Brand & Direct Support (4 Columns) */}
           <div className="flex flex-col justify-between space-y-5 pr-0 lg:col-span-4 lg:pr-4">
@@ -129,7 +133,7 @@ export function Footer() {
                   href="/"
                   className="font-display text-xl font-black tracking-tight text-white transition-opacity hover:opacity-90"
                 >
-                  primevps<span className="text-blue-500">bd</span>
+                  prima<span className="text-blue-500">vps</span>
                 </Link>
                 <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-400">
                   ISP-First
@@ -176,11 +180,11 @@ export function Footer() {
                   <span>Banani C/A, Dhaka 1213, Bangladesh</span>
                 </p>
                 <a
-                  href="mailto:support@primevpsbd.com"
+                  href="mailto:support@primavps.com"
                   className="flex items-center gap-2 transition-colors hover:text-white"
                 >
                   <Mail size={13} className="shrink-0 text-blue-400" />
-                  <span>support@primevpsbd.com</span>
+                  <span>support@primavps.com</span>
                 </a>
               </div>
             </div>
@@ -308,13 +312,13 @@ export function Footer() {
         {/* ─── 4. Bottom Copyright & Socials ─── */}
         <div className="mt-5 flex flex-col items-center justify-between gap-4 border-t border-slate-800/60 pt-5 sm:flex-row">
           <p className="text-center text-xs text-slate-500 sm:text-left">
-            © {new Date().getFullYear()} primevpsbd.com · All rights reserved.
+            © {new Date().getFullYear()} primavps.com · All rights reserved.
             Banani, Dhaka &amp; Dallas, TX.
           </p>
 
           <div className="flex items-center gap-4 text-slate-400">
             <a
-              href="https://facebook.com/primevpsbd"
+              href="https://facebook.com/primavps"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
@@ -323,7 +327,7 @@ export function Footer() {
               <FaFacebookF size={14} />
             </a>
             <a
-              href="https://youtube.com/@primevpsbd"
+              href="https://youtube.com/@primavps"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube"
@@ -332,7 +336,7 @@ export function Footer() {
               <FaYoutube size={15} />
             </a>
             <a
-              href="https://linkedin.com/company/primevpsbd"
+              href="https://linkedin.com/company/primavps"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
@@ -341,7 +345,7 @@ export function Footer() {
               <FaLinkedinIn size={14} />
             </a>
             <a
-              href="https://twitter.com/primevpsbd"
+              href="https://twitter.com/primavps"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Twitter"
@@ -353,5 +357,6 @@ export function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

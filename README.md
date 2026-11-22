@@ -1,6 +1,6 @@
-# primevpsbd
+# primavps
 
-Marketing and self-service storefront for **primevpsbd** — a Bangladeshi hosting brand selling US-routed **Cloud VPS** and **static residential ISP VPS** (AT&T, Comcast, Verizon), aimed at survey/RDP users, agencies, and resellers. The site is bilingual (English + Bangla/Banglish), prices in **BDT or USD**, and includes a streaming AI support assistant plus free network diagnostic tools.
+Marketing and self-service storefront for **primavps** — a Bangladeshi hosting brand selling US-routed **Cloud VPS** and **static residential ISP VPS** (AT&T, Comcast, Verizon), aimed at survey/RDP users, agencies, and resellers. The site is bilingual (English + Bangla/Banglish), prices in **BDT or USD**, and includes a streaming AI support assistant plus free network diagnostic tools.
 
 > **Status: marketing front end / prototype.** Purchasing, authentication, order persistence, and payments are simulated in the browser. Only the AI chat and IP lookup have working backends. See [Review findings](#review-findings) before treating this as production-ready.
 
@@ -339,7 +339,7 @@ Keyframes/utilities: `pulse-dot`, `slow-zoom`, `drift`, `shimmer` (`text-shimmer
 
 - `CurrencyProvider` (in `src/lib/currency.tsx`) exposes `currency`, `setCurrency`, `formatPrice()`, and `formatHourly()`.
 - Conversion is fixed: `1 BDT = 0.0082 USD` (`BDT_TO_USD`). There is no live FX feed.
-- Selection persists in `localStorage` under `primevps_currency`; server snapshot defaults to BDT to avoid hydration mismatches.
+- Selection persists in `localStorage` under `primavps_currency`; server snapshot defaults to BDT to avoid hydration mismatches.
 - Default prices render as `৳3,799`; USD as `$31.15`. Hourly figures assume a 720-hour month.
 - Marketing copy mixes English and Bangla (notably the hero, network map, and chat quick replies). `layout.tsx` sets `<html lang="en">`; there is no i18n framework or route prefixing.
 
@@ -431,4 +431,4 @@ The app is a standard Next.js Node deployment.
 
 ---
 
-© 2026 primevpsbd. Internal project documentation.
+© 2026 primavps. Internal project documentation.

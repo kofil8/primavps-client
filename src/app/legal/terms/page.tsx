@@ -24,7 +24,7 @@ export default function TermsPage() {
                 1. Acceptance of Terms
               </h2>
               <p>
-                By deploying or accessing any cloud instance, static residential ISP VPS, or API service provided by primevpsbd.com, you agree to be bound by these Terms of Service. If you do not agree, you must terminate your instance immediately.
+                By deploying or accessing any cloud instance, static residential ISP VPS, or API service provided by primavps.com, you agree to be bound by these Terms of Service. If you do not agree, you must terminate your instance immediately.
               </p>
             </section>
 

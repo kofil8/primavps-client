@@ -72,10 +72,10 @@ export function DealsFeatures() {
           <div className="lg:col-span-7">
             <span className="eyebrow">Enterprise Hosting Foundation</span>
             <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
-              Fast, Reliable & Scalable VPS Hosting by PrimeVPS BD
+              Fast, Reliable & Scalable VPS Hosting by PrimaVPS
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-              PrimeVPS BD offers high-performance hosting solutions backed by cutting-edge
+              PrimaVPS offers high-performance hosting solutions backed by cutting-edge
               NVMe infrastructure and round-the-clock technical support. Whether powering
               survey research, remote desktop operations, or commercial websites, our servers
               are engineered to deliver supreme reliability.

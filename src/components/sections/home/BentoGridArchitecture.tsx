@@ -19,7 +19,7 @@ export function BentoGridArchitecture() {
       <div className="shell">
         <Reveal className="max-w-3xl">
           <p className="eyebrow inline-flex items-center gap-1.5 text-blue-600 font-bold uppercase tracking-wider">
-            <ShieldCheck size={15} /> কেন primevpsbd আইপি কখনো ব্যান হয় না
+            <ShieldCheck size={15} /> কেন primavps আইপি কখনো ব্যান হয় না
           </p>
           <h2 className="section-title mt-2.5 text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             হার্ডওয়্যার-লেভেল সিকিউরিটি ও

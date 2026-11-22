@@ -14,7 +14,7 @@ interface CurrencyContextType {
 
 const CurrencyContext = createContext<CurrencyContextType | null>(null);
 
-const CURRENCY_STORAGE_KEY = 'primevps_currency';
+const CURRENCY_STORAGE_KEY = 'primavps_currency';
 const CURRENCY_CHANGE_EVENT = 'pv-currency-changed';
 
 function subscribeToCurrency(callback: () => void) {

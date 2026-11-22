@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 480" width="540" height="480" fill="none">
+  <defs>
+    
+    <radialGradient id="ambientGlow" cx="52%" cy="50%" r="48%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.32" />
+      <stop offset="48%" stop-color="#3B82F6" stop-opacity="0.14" />
+      <stop offset="100%" stop-color="#6366F1" stop-opacity="0" />
+    </radialGradient>
+
+    
+    <linearGradient id="roofTopLeft" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="55%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+
+    <linearGradient id="roofFrontRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="50%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#6D28D9" />
+    </linearGradient>
+
+    <linearGradient id="roofStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67E8F9" />
+      <stop offset="50%" stop-color="#60A5FA" />
+      <stop offset="100%" stop-color="#C4B5FD" />
+    </linearGradient>
+
+    
+    <linearGradient id="wallGable" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F3460" />
+      <stop offset="55%" stop-color="#1E3A8A" />
+      <stop offset="100%" stop-color="#172554" />
+    </linearGradient>
+
+    <linearGradient id="wallSide" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312E81" />
+      <stop offset="100%" stop-color="#1E1B4B" />
+    </linearGradient>
+
+    
+    <linearGradient id="baseTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E3A8A" />
+      <stop offset="100%" stop-color="#312E81" />
+    </linearGradient>
+
+    
+    <linearGradient id="glassFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.38" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.88" />
+    </linearGradient>
+
+    
+    <linearGradient id="pinGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE" />
+      <stop offset="52%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+
+    
+    <filter id="houseShadow" x="-15%" y="-15%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#1E3A8A" flood-opacity="0.28" />
+    </filter>
+
+    <filter id="pinGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#06B6D4" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  
+  <ellipse cx="275" cy="248" rx="235" ry="200" fill="url(#ambientGlow)" />
+
+  
+  <g opacity="0.8">
+    <circle cx="96" cy="98" r="4.5" fill="#22D3EE" />
+    <circle cx="72" cy="126" r="2.5" fill="#38BDF8" />
+    <circle cx="48" cy="222" r="3.5" fill="#06B6D4" />
+    <circle cx="468" cy="112" r="4" fill="#818CF8" />
+    <circle cx="494" cy="144" r="2.5" fill="#22D3EE" />
+    <circle cx="490" cy="264" r="3" fill="#60A5FA" />
+  </g>
+
+  
+  <g filter="url(#houseShadow)">
+    
+    <polygon points="270,446 40,314 270,182 500,314" fill="url(#baseTop)" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.4" />
+    <polygon points="40,314 270,446 270,460 40,328" fill="#0F172A" stroke="#22D3EE" stroke-opacity="0.45" stroke-width="1.2" />
+    <polygon points="270,446 500,314 500,328 270,460" fill="#1E1B4B" stroke="#818CF8" stroke-opacity="0.45" stroke-width="1.2" />
+
+    
+    <polygon points="82,310 270,418 270,264 176,138 82,160" fill="url(#wallGable)" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.4" stroke-linejoin="round" />
+
+    
+    <polygon points="270,418 458,310 458,156 270,264" fill="url(#wallSide)" stroke="#818CF8" stroke-opacity="0.5" stroke-width="1.4" stroke-linejoin="round" />
+
+    
+    <g fill="url(#glassFill)" stroke="#22D3EE" stroke-width="1.4">
+      <polygon points="104,190 118,198 118,213 104,205" />
+      <polygon points="134,207 148,215 148,230 134,222" />
+      <polygon points="164,225 178,233 178,248 164,240" />
+      <polygon points="194,242 208,250 208,265 194,257" />
+      <polygon points="224,259 238,267 238,282 224,274" />
+    </g>
+
+    
+    <g>
+      <polygon points="98,236 134,257 134,322 98,301" fill="url(#glassFill)" stroke="#22D3EE" stroke-width="1.8" />
+      <polygon points="103,242 129,257 129,316 103,301" fill="none" stroke="#67E8F9" stroke-opacity="0.45" stroke-width="1" />
+      <line x1="116" y1="247" x2="116" y2="311" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.1" />
+      <line x1="98" y1="269" x2="134" y2="290" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.1" />
+    </g>
+
+    
+    <g>
+      
+      <path d="M 156 353 L 156 286 C 156 270, 196 293, 196 309 L 196 376 Z" fill="url(#glassFill)" stroke="#22D3EE" stroke-width="1.8" />
+      
+      <path d="M 161 294 C 161 282, 191 299, 191 311" fill="none" stroke="#67E8F9" stroke-opacity="0.65" stroke-width="1.2" />
+      
+      <line x1="156" y1="297" x2="196" y2="320" stroke="#38BDF8" stroke-width="1.4" />
+      <line x1="176" y1="308" x2="176" y2="364" stroke="#38BDF8" stroke-width="1.3" />
+    </g>
+
+    
+    <g stroke="#38BDF8" stroke-opacity="0.75" stroke-width="1.1">
+      <polygon points="154,354 198,380 187,386 143,360" fill="#1E3A8A" />
+      <polygon points="143,360 187,386 187,393 143,367" fill="#0F172A" />
+      <polygon points="143,367 187,393 176,399 132,373" fill="#1E3A8A" />
+      <polygon points="132,373 176,399 176,406 132,380" fill="#0F172A" />
+      <polygon points="132,380 176,406 165,412 121,386" fill="#1E3A8A" />
+      <polygon points="121,386 165,412 165,419 121,393" fill="#0F172A" />
+    </g>
+
+    
+    <g>
+      <polygon points="214,303 250,324 250,389 214,368" fill="url(#glassFill)" stroke="#22D3EE" stroke-width="1.8" />
+      <polygon points="219,309 245,324 245,383 219,368" fill="none" stroke="#67E8F9" stroke-opacity="0.45" stroke-width="1" />
+      <line x1="232" y1="314" x2="232" y2="378" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.1" />
+      <line x1="214" y1="336" x2="250" y2="357" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.1" />
+    </g>
+
+    
+    <polygon points="60,152 176,128 364,20 248,44" fill="url(#roofTopLeft)" stroke="url(#roofStroke)" stroke-width="2" stroke-linejoin="round" />
+
+    
+    <g stroke="#67E8F9" stroke-opacity="0.32" stroke-width="1.2">
+      <line x1="87" y1="136" x2="203" y2="112" />
+      <line x1="114" y1="121" x2="230" y2="97" />
+      <line x1="141" y1="105" x2="257" y2="81" />
+      <line x1="168" y1="90" x2="284" y2="66" />
+      <line x1="195" y1="74" x2="311" y2="50" />
+      <line x1="222" y1="59" x2="338" y2="35" />
+    </g>
+
+    
+    <polygon points="176,128 292,276 480,168 364,20" fill="url(#roofFrontRight)" stroke="url(#roofStroke)" stroke-width="2" stroke-linejoin="round" />
+
+    
+    <g stroke="#93C5FD" stroke-opacity="0.34" stroke-width="1.3">
+      <line x1="203" y1="112" x2="319" y2="260" />
+      <line x1="230" y1="97" x2="346" y2="245" />
+      <line x1="257" y1="81" x2="373" y2="229" />
+      <line x1="284" y1="66" x2="400" y2="214" />
+      <line x1="311" y1="50" x2="427" y2="198" />
+      <line x1="338" y1="35" x2="454" y2="183" />
+    </g>
+
+    
+    <polygon points="60,152 176,128 176,139 60,163" fill="#0E7490" stroke="#67E8F9" stroke-width="1.2" />
+    <polygon points="176,128 292,276 292,287 176,139" fill="#1E3A8A" stroke="#60A5FA" stroke-width="1.2" />
+    <polygon points="292,276 480,168 480,179 292,287" fill="#4C1D95" stroke="#A78BFA" stroke-width="1.2" />
+
+    
+    <g>
+      <polygon points="366,56 392,71 372,83 346,68" fill="#1E1B4B" stroke="#67E8F9" stroke-width="1.3" />
+      <polygon points="346,68 372,83 372,126 346,111" fill="#312E81" stroke="#38BDF8" stroke-width="1.3" />
+      <polygon points="372,83 392,71 392,114 372,126" fill="#4C1D95" stroke="#C4B5FD" stroke-width="1.3" />
+      <polygon points="366,61 384,71 372,78 354,68" fill="#0F172A" />
+    </g>
+  </g>
+
+  
+  <g filter="url(#pinGlow)" transform="translate(362, 214)">
+    <path d="M 58 0 C 26 0 0 26 0 58 C 0 99 58 152 58 152 C 58 152 116 99 116 58 C 116 26 90 0 58 0 Z" fill="url(#pinGrad)" stroke="#E0F2FE" stroke-width="2.5" />
+    <circle cx="58" cy="56" r="36" fill="#0F172A" fill-opacity="0.22" stroke="#FFFFFF" stroke-opacity="0.9" stroke-width="2.2" />
+    <text x="58" y="67" text-anchor="middle" fill="#FFFFFF" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="32" font-weight="800" letter-spacing="1.5">IP</text>
+  </g>
+</svg>

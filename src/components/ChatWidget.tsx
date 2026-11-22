@@ -117,7 +117,7 @@ export function ChatWidget() {
       id: uid(),
       role: "assistant",
       content:
-        "Assalamu Alaikum! 👋 Ami primevpsbd-er AI assistant — সাধারণ প্রশ্নে এখনই সাহায্য করব। জটিল বিষয়ে নিচের 🟢 বাটনে বনানী টিমের সাথে সরাসরি কথা বলুন।",
+        "Assalamu Alaikum! 👋 Ami primavps-er AI assistant — সাধারণ প্রশ্নে এখনই সাহায্য করব। জটিল বিষয়ে নিচের 🟢 বাটনে বনানী টিমের সাথে সরাসরি কথা বলুন।",
     },
   ]);
   const [input, setInput] = useState("");
@@ -316,7 +316,7 @@ export function ChatWidget() {
                     Live Support
                   </p>
                   <p className="text-xs text-indigo-200">
-                    primevpsbd.com • Online
+                    primavps.com • Online
                   </p>
                 </div>
               </div>
