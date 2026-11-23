@@ -6,6 +6,9 @@ export interface BlogPost {
   readTime: string;
   date: string;
   featured?: boolean;
+  /** Optional SEO overrides for titles/descriptions outside meta length limits. */
+  metaTitle?: string;
+  metaDescription?: string;
   content: string;
 }
 
@@ -14,6 +17,8 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: 'how-to-choose-the-right-vps',
     title: 'How to Choose the Right VPS for Your Workload',
     summary: 'A practical framework for sizing compute, memory, storage, and residential IP requirements before buying.',
+    metaDescription:
+      'A practical framework for sizing vCPU, RAM, NVMe and residential IP needs before you buy a VPS, with rules of thumb for survey and RDP workloads.',
     category: 'Guides',
     readTime: '8 min read',
     date: 'Nov 16, 2026',
@@ -44,6 +49,9 @@ If your workflow touches high-reputation consumer platforms, always bind your se
     slug: 'vps-sizing-without-guesswork',
     title: 'VPS Sizing Without Guesswork',
     summary: 'Prevent out-of-memory crashes and CPU throttling with a simple arithmetic sizing model.',
+    metaTitle: 'VPS Sizing Without Guesswork — CPU & RAM Ratios',
+    metaDescription:
+      'Prevent out-of-memory crashes and CPU throttling with a simple sizing model: recommended vCPU-to-RAM ratios for web apps, databases and Windows RDP.',
     category: 'Guides',
     readTime: '6 min read',
     date: 'Nov 14, 2026',
@@ -62,6 +70,8 @@ Always ensure NVMe IOPS are not throttled behind shared spindle disks.`,
     slug: 'understanding-residential-isp-ips',
     title: 'Understanding Residential ISP IPs: ASN, Fraud Scores & BGP',
     summary: 'Why datacenter proxies fail anti-fraud checks and how authentic ISP subnets maintain 0/100 risk scores.',
+    metaDescription:
+      'Why datacenter proxies fail anti-fraud checks and how authentic ISP subnets keep 0/100 IPQS scores — ASN, BGP intent and fraud scoring explained.',
     category: 'IP Security',
     readTime: '7 min read',
     date: 'Nov 12, 2026',
@@ -82,6 +92,8 @@ By routing your Windows VPS traffic directly through an authentic ISP gateway wi
     slug: 'cloud-server-security-basics',
     title: 'Cloud Server Security Basics for Production Instances',
     summary: 'Essential hardening steps: SSH key authentication, UFW firewall rules, and automated security patches.',
+    metaDescription:
+      'Essential hardening for fresh cloud instances: Ed25519 SSH keys, UFW firewall rules, Fail2ban and automated patches in under five minutes.',
     category: 'Cloud & DevOps',
     readTime: '5 min read',
     date: 'Nov 10, 2026',
@@ -97,6 +109,8 @@ Securing a fresh cloud instance takes less than five minutes if done methodicall
     slug: 'webrtc-leaks-explained',
     title: 'WebRTC Leaks Explained: How Browsers Expose Real IPs',
     summary: 'A deep technical dive into STUN, ICE candidates, and how to eliminate WebRTC leaks at the OS level.',
+    metaDescription:
+      'How STUN and ICE candidates leak your real IP past SOCKS5 proxies, and how kernel-level NIC routing on a residential VPS closes the leak.',
     category: 'IP Security',
     readTime: '6 min read',
     date: 'Nov 08, 2026',
@@ -114,6 +128,8 @@ Kernel-level NIC routing. When the network interface itself is assigned the resi
     slug: 'nvme-vs-sata-storage',
     title: 'NVMe vs SATA Storage: Why Disk IOPS Matter for RDP',
     summary: 'Benchmarking random 4K read/write speeds and how storage latency impacts remote desktop smoothness.',
+    metaDescription:
+      'How NVMe RAID-1 IOPS affect Windows RDP smoothness, why SATA and SAN latency causes input lag, and what to benchmark before you buy.',
     category: 'Cloud & DevOps',
     readTime: '6 min read',
     date: 'Nov 05, 2026',
@@ -128,6 +144,8 @@ Our NVMe RAID-1 storage fabric delivers over 150,000 random 4K IOPS with sub-mil
     slug: 'how-to-read-an-ip-risk-report',
     title: 'How to Read an IP Risk Report: IPQS, MaxMind & IPinfo',
     summary: 'Deciphering fraud score metrics, proxy flags, and usage types across leading security databases.',
+    metaDescription:
+      'How to read an IP risk report: fraud score thresholds, usage type, proxy flags and abuse history across IPQS, MaxMind and IPinfo.',
     category: 'IP Security',
     readTime: '5 min read',
     date: 'Nov 02, 2026',

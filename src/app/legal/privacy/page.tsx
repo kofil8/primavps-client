@@ -1,4 +1,13 @@
+import { pageSeo } from '@/lib/seo';
+import type { Metadata } from 'next';
 import React from 'react';
+
+export const metadata: Metadata = pageSeo({
+  title: 'Privacy Policy for VPS & RDP Customers',
+  description:
+    'How primavps collects, stores and protects customer data across our Dhaka and US infrastructure, and the rights you have over your information.',
+  path: '/legal/privacy',
+});
 
 export default function PrivacyPolicyPage() {
   return (

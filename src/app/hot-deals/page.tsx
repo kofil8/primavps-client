@@ -1,61 +1,76 @@
 import { CouponCard } from "@/components/deals/CouponCard";
-import { DealsFeatures } from "@/components/deals/DealsFeatures";
 import { DealsHero } from "@/components/deals/DealsHero";
-import { DealsSupportBanner } from "@/components/deals/DealsSupportBanner";
-import { HOT_DEALS_LIST } from "@/lib/data/deals";
-import { ArrowRight, HelpCircle, ShieldCheck, Tag } from "lucide-react";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { HOT_DEALS_LIST, MAX_DISCOUNT_PERCENT } from "@/lib/data/deals";
+import { faqSchema } from "@/lib/schema";
+import { pageSeo } from "@/lib/seo";
+import { HelpCircle, Tag } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "HOT Deals & Flash Sales | PrimaVPS",
-  description:
-    "Exclusive limited-time flash sales and promo discounts on NVMe Cloud VPS, Residential Survey VPS, Virgin US IPs, and Reseller clusters.",
-};
+export const metadata: Metadata = pageSeo({
+  title: `VPS Hot Deals & Promo Codes — Save up to ${MAX_DISCOUNT_PERCENT}%`,
+  description: `Verified promo codes for residential survey VPS and NVMe cloud servers. Save up to ${MAX_DISCOUNT_PERCENT}% on your first month — pay with bKash, Nagad, card, or USDT.`,
+  path: "/hot-deals",
+  keywords: [
+    "VPS promo code Bangladesh",
+    "survey VPS discount",
+    "bKash VPS offer",
+    "residential VPS coupon",
+  ],
+});
 
 const FAQ_ITEMS = [
   {
-    q: "How do I redeem my coupon code?",
-    a: "Click 'Get Coupon Code' on any card above to copy it to your clipboard. Select your desired server configuration, and paste the code into the promo code field during checkout to receive your discount instantly.",
+    q: "কুপন কোড কীভাবে ব্যবহার করব?",
+    a: "যেকোনো কার্ডের 'কপি করুন' বাটনে ক্লিক করে কোডটি কপি করুন অথবা 'অফারসহ অর্ডার করুন' বাটনে ক্লিক করুন। চেকআউটে কোড বসালেই প্রথম মাসের বিলে ডিসকাউন্ট কমে যাবে।",
   },
   {
-    q: "Can I combine multiple coupon codes?",
-    a: "Only one coupon code may be redeemed per server deployment. However, you can use different coupons across distinct products in separate orders.",
+    q: "ডিসকাউন্ট কি শুধু প্রথম মাসের জন্য?",
+    a: "হ্যাঁ, সব প্রোমো কোড নতুন অর্ডারের প্রথম মাসের (First Invoice) জন্য প্রযোজ্য। পরবর্তী মাস থেকে রেগুলার মূল্যে রিনিউ হবে।",
   },
   {
-    q: "What payment methods are supported?",
-    a: "We accept local Bangladeshi payment methods including bKash, Nagad, Rocket, local bank transfer, as well as International Visa/MasterCard, PayPal, and major Cryptocurrencies (USDT, BTC).",
+    q: "বিকাশ ও নগদে কি কুপন কোড কাজ করবে?",
+    a: "অবশ্যই। বিকাশ, নগদ, রকেট, কার্ড ও USDT—সব পেমেন্ট মেথডেই কুপন কোড ব্যবহার করা যাবে।",
   },
   {
-    q: "Is there a money-back or IP replacement guarantee?",
-    a: "Yes. All our Residential and Virgin ISP VPS plans come with our 7-Day clean IP guarantee. If your assigned residential IP encounters fraud score issues, we replace it free of charge within 7 days.",
+    q: "অফারে কেনা সার্ভারেও কি ৭-দিনের IP Swap থাকবে?",
+    a: "হ্যাঁ, প্রতিটি রেসিডেন্সিয়াল ISP প্ল্যানে আমাদের ৭-দিনের ফ্রি IP Swap গ্যারান্টি সম্পূর্ণভাবে প্রযোজ্য থাকবে।",
   },
 ];
 
 export default function HotDealsPage() {
   return (
-    <main className="min-h-screen bg-white">
-      {/* 1. Flash Sale Hero with Countdown & /public/promotion.webp graphic */}
+    <main className="min-h-screen bg-white text-slate-900">
+      <JsonLd data={faqSchema(FAQ_ITEMS.map(({ q, a }) => ({ q, a })))} />
+
+      {/* 1. Original Flash Sale Hero */}
       <DealsHero />
 
-      {/* 2. Interactive Coupon Codes Section (Anchor target) */}
-      <section id="coupons-section" className="section bg-white scroll-mt-28">
+      {/* 2. Verified Coupons Grid */}
+      <section
+        id="coupons-section"
+        aria-labelledby="coupons-heading"
+        className="scroll-mt-24 bg-white py-14 sm:py-20"
+      >
         <div className="shell">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="eyebrow flex items-center justify-center gap-1.5">
-              <Tag size={14} />
+            <span className="inline-flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider text-blue-600">
+              <Tag size={14} aria-hidden="true" />
               Exclusive Vouchers
             </span>
-            <h2 className="section-title mt-2">
-              Verified Flash Coupons & Promo Codes
+            <h2
+              id="coupons-heading"
+              className="mt-2 font-display text-2xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"
+            >
+              ভেরিফায়েড কুপন ও প্রোমো কোড
             </h2>
-            <p className="lede">
-              Copy any promotional code below to unlock special introductory pricing.
-              All coupon codes are tested and valid for new deployments.
+            <p className="mt-2.5 text-sm text-slate-600 sm:text-base">
+              পছন্দের প্ল্যানের কোড কপি করে চেকআউটে বসান—প্রথম মাসেই সরাসরি
+              ছাড়।
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {HOT_DEALS_LIST.map((deal) => (
               <CouponCard key={deal.id} deal={deal} />
             ))}
@@ -63,76 +78,35 @@ export default function HotDealsPage() {
         </div>
       </section>
 
-      {/* 3. Fast, Reliable & Scalable Infrastructure Features */}
-      <DealsFeatures />
-
-      {/* 4. Growth & Tools Promotion Banner */}
-      <section className="section bg-gradient-to-b from-white to-slate-50">
-        <div className="shell">
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 shadow-lg sm:p-12 lg:flex lg:items-center lg:justify-between">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                <ShieldCheck size={14} />
-                Complimentary Diagnostics Included
-              </div>
-              <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-                Grow Your Business with Powerful VPS Tools & Insights
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
-                Every deal comes with unrestricted access to our diagnostic toolset.
-                Verify IP fraud scores, inspect WebRTC leak risks, and audit network latency
-                before and after provisioning.
-              </p>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3 lg:mt-0 lg:shrink-0">
-              <Link
-                href="/tools/ip-checker"
-                className="btn-primary"
-              >
-                IP Fraud Checker
-                <ArrowRight size={15} />
-              </Link>
-              <Link
-                href="/tools/webrtc-test"
-                className="btn-outline"
-              >
-                WebRTC Leak Test
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. 24/7 Support Banner */}
-      <DealsSupportBanner />
-
-      {/* 6. Frequently Asked Questions & Deal Terms */}
-      <section className="section bg-slate-50 border-t border-slate-200">
-        <div className="shell max-w-4xl">
+      {/* 3. Compact FAQ */}
+      <section
+        aria-labelledby="deals-faq-heading"
+        className="border-t border-slate-200 bg-slate-50 py-14 sm:py-16"
+      >
+        <div className="shell max-w-3xl">
           <div className="text-center">
-            <span className="eyebrow flex items-center justify-center gap-1.5">
-              <HelpCircle size={14} />
-              Clear & Transparent
+            <span className="inline-flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider text-blue-600">
+              <HelpCircle size={14} aria-hidden="true" />
+              Deal Terms
             </span>
-            <h2 className="section-title mt-2">
-              Frequently Asked Questions About Hot Deals
+            <h2
+              id="deals-faq-heading"
+              className="mt-2 font-display text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+            >
+              হট ডিলস সম্পর্কে সাধারণ প্রশ্ন
             </h2>
-            <p className="lede">
-              Everything you need to know about redeeming promotional discounts and service terms.
-            </p>
           </div>
 
-          <div className="mt-10 grid gap-4">
+          <div className="mt-8 grid gap-3.5">
             {FAQ_ITEMS.map((item) => (
               <div
                 key={item.q}
-                className="card p-5 sm:p-6 shadow-xs transition-shadow hover:shadow-md"
+                className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs"
               >
-                <h4 className="text-base font-bold text-slate-900">
+                <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                   {item.q}
-                </h4>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:text-sm">
                   {item.a}
                 </p>
               </div>

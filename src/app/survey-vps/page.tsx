@@ -1,28 +1,98 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { CheckoutDrawer } from "@/components/sections/isp/CheckoutDrawer";
-import { useCurrency } from "@/lib/currency";
-import { CARRIERS, ISP_PLANS, IspPlan } from "@/lib/data/plans";
 import { CountryFlag } from "@/components/ui/CountryFlag";
-import { ArrowRight, Check, ShieldCheck } from "lucide-react";
-import Image from "next/image";
+import { useCurrency } from "@/lib/currency";
+import { ISP_PLANS, IspPlan } from "@/lib/data/plans";
+import {
+  ArrowRight,
+  Cpu,
+  CreditCard,
+  Gauge,
+  HardDrive,
+  MemoryStick,
+  RefreshCw,
+  ShieldCheck,
+  Tag,
+  Users,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { FaWindows } from "react-icons/fa";
 
 const CYCLES = [
-  { id: "monthly", label: "Monthly", months: 1, discount: 0 },
-  { id: "quarterly", label: "3 months", months: 3, discount: 0.05 },
-  { id: "annual", label: "12 months", months: 12, discount: 0.15 },
+  { id: "monthly", label: "১ মাস", months: 1, discount: 0 },
+  { id: "quarterly", label: "৩ মাস", months: 3, discount: 0.05 },
+  { id: "annual", label: "১২ মাস", months: 12, discount: 0.15 },
 ] as const;
 
 type BillingCycle = (typeof CYCLES)[number]["id"];
 
+const COUNTRY_CARRIERS: Record<
+  string,
+  { label: string; short: string; carriers: string[] }
+> = {
+  us: {
+    label: "United States",
+    short: "US",
+    carriers: [
+      "All",
+      "AT&T",
+      "Comcast",
+      "Verizon",
+      "Spectrum",
+      "COX",
+      "Frontier",
+      "RCN",
+    ],
+  },
+  uk: {
+    label: "United Kingdom",
+    short: "UK",
+    carriers: ["All", "BT", "Virgin Media", "Vodafone UK"],
+  },
+  de: {
+    label: "Germany",
+    short: "DE",
+    carriers: ["All", "Deutsche Telekom", "Vodafone DE", "O2 DE"],
+  },
+  fr: {
+    label: "France",
+    short: "FR",
+    carriers: ["All", "Orange", "Free", "SFR"],
+  },
+};
+
 const SUPPORTED_COUNTRIES = [
-  { code: "us", label: "United States (US)" },
-  { code: "uk", label: "United Kingdom (UK)" },
-  { code: "de", label: "Germany (DE)" },
-  { code: "fr", label: "France (FR)" },
+  { code: "us", label: "US" },
+  { code: "uk", label: "UK" },
+  { code: "de", label: "DE" },
+  { code: "fr", label: "FR" },
+];
+
+const TRUST_POINTS = [
+  {
+    icon: ShieldCheck,
+    color: "bg-blue-50 text-blue-600",
+    text: "১০০% ডেডিকেটেড স্ট্যাটিক রেসিডেন্সিয়াল IP (শেয়ার্ড নয়)",
+  },
+  {
+    icon: CreditCard,
+    color: "bg-pink-50 text-pink-600",
+    text: "বিকাশ, নগদ, কার্ড ও USDT-তে সহজ লোকাল পেমেন্ট",
+  },
+  {
+    icon: Zap,
+    color: "bg-amber-50 text-amber-600",
+    text: "৬০–৯০ সেকেন্ডে অটো-ডেলিভারি ও ২৪/৭ বনানী সাপোর্ট",
+  },
+  {
+    icon: RefreshCw,
+    color: "bg-emerald-50 text-emerald-600",
+    text: "৭-দিনের মধ্যে আইপি ফ্ল্যাগ হলে ফ্রি IP রিপ্লেসমেন্ট",
+  },
 ];
 
 function SurveyVpsContent() {
@@ -31,16 +101,21 @@ function SurveyVpsContent() {
 
   const planParam = searchParams.get("plan");
   const countryParam = searchParams.get("country");
+  const couponParam = searchParams.get("coupon") || "";
+
+  const normalizedInitialCountry =
+    countryParam && COUNTRY_CARRIERS[countryParam.toLowerCase()]
+      ? countryParam.toLowerCase()
+      : "us";
 
   const [selectedCountry, setSelectedCountry] = useState(
-    countryParam ? countryParam.toLowerCase() : "us",
+    normalizedInitialCountry,
   );
   const [selectedCarrier, setSelectedCarrier] = useState("All");
   const [isFresh, setIsFresh] = useState(planParam === "vip");
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const [activePlan, setActivePlan] = useState<IspPlan | null>(null);
 
-  // Auto-detect plan and country from URL query parameters
   useEffect(() => {
     if (planParam) {
       const match = ISP_PLANS.find(
@@ -50,155 +125,232 @@ function SurveyVpsContent() {
       );
       if (match) {
         setActivePlan(match);
-        if (match.tier === "vip") {
-          setIsFresh(true);
-        }
+        if (match.tier === "vip") setIsFresh(true);
       }
     }
   }, [planParam]);
 
   useEffect(() => {
-    if (countryParam) {
+    if (countryParam && COUNTRY_CARRIERS[countryParam.toLowerCase()]) {
       setSelectedCountry(countryParam.toLowerCase());
+      setSelectedCarrier("All");
     }
   }, [countryParam]);
 
+  const activeCountryMeta =
+    COUNTRY_CARRIERS[selectedCountry] ?? COUNTRY_CARRIERS.us;
   const cycle = CYCLES.find((item) => item.id === billingCycle) ?? CYCLES[0];
 
-  const plans = ISP_PLANS.filter(
-    (plan) => selectedCarrier === "All" || plan.carriers.includes(selectedCarrier),
-  );
+  const handleCountryChange = (code: string) => {
+    setSelectedCountry(code);
+    setSelectedCarrier("All");
+  };
 
   return (
-    <div className="bg-slate-50">
-      <section className="relative isolate overflow-hidden bg-slate-950">
-        <Image
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=75"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-40"
+    <div className="bg-slate-50 text-slate-900">
+      {/* 1. Compact Fluid Hero with Right-Side Floating Protocol Card */}
+      <section className="relative isolate overflow-hidden bg-slate-950 text-white">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[url('/vps-bg.webp')] bg-cover bg-center bg-no-repeat"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/30" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-slate-950/75"
+        />
 
-        <div className="shell relative z-10 py-14 sm:py-16">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-white">
-            <ShieldCheck size={14} />
-            Static residential ISP
-          </span>
-          <h1 className="mt-4 max-w-2xl font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Clean Residential ISP IPs
-          </h1>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
-            US, UK, Germany &amp; France dedicated residential IPs on a hardened Windows
-            desktop. Online in 90 seconds.
-          </p>
+        <div className="shell relative z-10 py-10 sm:py-14 lg:flex lg:items-center lg:justify-between lg:gap-10 lg:py-16">
+          {/* Left: Headline & Copy */}
+          <div className="max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-sky-400">
+                Static Residential ISP · Dedicated IPv4
+              </p>
+              {couponParam && (
+                <span className="rounded-md border border-emerald-400/30 bg-emerald-500/15 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-300">
+                  {couponParam.toUpperCase()} সিলেক্টেড
+                </span>
+              )}
+            </div>
+
+            <h1 className="mt-2.5 font-display text-[1.65rem] font-extrabold leading-[1.22] tracking-tight text-white sm:text-4xl">
+              সার্ভে ও রিমোট কাজের জন্য ক্লিন রেসিডেন্সিয়াল ISP VPS
+            </h1>
+            <p className="mt-2.5 max-w-xl text-xs leading-relaxed text-slate-300 sm:mt-3 sm:text-base">
+              US, UK, Germany ও France-এর ডেডিকেটেড হোম ব্রডব্যান্ড IP সহ
+              প্রি-হার্ডেন্ড Windows RDP। বিকাশ বা নগদে পেমেন্ট করে ৯০ সেকেন্ডে
+              চালু করুন।
+            </p>
+
+            {/* Clean Inline Spec Line */}
+            <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-300">
+              <span className="inline-flex items-center gap-1.5 text-white">
+                <FaWindows size={13} className="text-[#38BDF8]" />
+                Windows 10/11 RDP
+              </span>
+              <span className="text-slate-600">·</span>
+              <span>Zero WebRTC Leak</span>
+              <span className="text-slate-600">·</span>
+              <span>৯০ সেকেন্ডে ডেলিভারি</span>
+              <span className="text-slate-600">·</span>
+              <span>৭-দিন ফ্রি IP Swap</span>
+            </p>
+          </div>
+
+          {/* Right: Transparent Glassy Protocol & IP Type Card (Fully Responsive) */}
+          <div className="mt-6 w-full rounded-2xl border border-white/20 bg-white/[0.07] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.35)] ring-1 ring-inset ring-white/10 backdrop-blur-xl sm:max-w-md sm:p-5 lg:mt-0 lg:w-80 lg:shrink-0">
+            <div className="flex items-center justify-between border-b border-white/15 pb-2.5">
+              <span className="text-[10.5px] font-semibold uppercase tracking-wider text-slate-200/90 sm:text-[11px]">
+                Supported Protocols
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-300">
+                <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" />
+                Ready
+              </span>
+            </div>
+
+            {/* Responsive 4-Column Protocol Pills */}
+            <div className="mt-3 grid grid-cols-4 gap-1.5 sm:gap-2">
+              {["SOCKS5", "HTTP", "HTTPS", "RDP"].map((proto) => (
+                <span
+                  key={proto}
+                  className="flex items-center justify-center rounded-lg border border-white/15 bg-white/10 py-1.5 font-mono text-[11px] font-bold tracking-wide text-white backdrop-blur-xs sm:text-xs"
+                >
+                  {proto}
+                </span>
+              ))}
+            </div>
+
+            {/* Quick IP Metadata */}
+            <div className="mt-3.5 space-y-1.5 border-t border-white/15 pt-3 text-[11.5px] sm:text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-slate-300">IP Type</span>
+                <span className="text-right font-semibold text-white">
+                  Static Residential ISP
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-slate-300">Assignment</span>
+                <span className="text-right font-semibold text-white">
+                  100% Dedicated IPv4
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Filter and Switcher Strip */}
-      <section className="border-b border-slate-200 bg-white">
-        <div className="shell flex flex-col gap-4 py-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
+      {/* 2. Responsive Filter Bar (Functional Country Flags Only) */}
+      <section className="border-b border-slate-200 bg-white/95 backdrop-blur-md lg:sticky lg:top-16 lg:z-30">
+        <div className="shell flex flex-col gap-3 py-3 xl:flex-row xl:items-center xl:justify-between">
+          {/* Top Row on Mobile/Tablet: Country + Clean/Virgin Toggle */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5 xl:contents">
             {/* Country Tabs */}
-            <div className="flex items-center gap-1.5 border-r border-slate-200 pr-3 mr-1">
-              <span className="hidden text-xs font-semibold text-slate-500 sm:inline">
-                Country:
+            <div className="flex items-center gap-1 xl:border-r xl:border-slate-200 xl:pr-3">
+              <span className="mr-1 hidden text-xs font-semibold text-slate-500 sm:inline">
+                দেশ:
               </span>
               {SUPPORTED_COUNTRIES.map((c) => (
                 <button
                   key={c.code}
                   type="button"
-                  onClick={() => setSelectedCountry(c.code)}
-                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  onClick={() => handleCountryChange(c.code)}
+                  className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-all ${
                     selectedCountry === c.code
                       ? "bg-blue-600 text-white shadow-xs"
-                      : "text-slate-600 hover:bg-slate-100"
+                      : "bg-slate-100/70 text-slate-600 hover:bg-slate-100 xl:bg-transparent"
                   }`}
                 >
                   <CountryFlag code={c.code} size={14} />
-                  <span>{c.code.toUpperCase()}</span>
+                  <span>{c.label}</span>
                 </button>
               ))}
             </div>
 
-            {/* Carrier Filters */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-              <span className="mr-1 hidden text-xs font-semibold text-slate-500 sm:inline">
-                Carrier:
-              </span>
-              {CARRIERS.map((carrier) => (
-                <button
-                  key={carrier}
-                  type="button"
-                  onClick={() => setSelectedCarrier(carrier)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
-                    selectedCarrier === carrier
-                      ? "bg-slate-900 text-white"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  {carrier === "All" ? "All Carriers" : carrier}
-                </button>
-              ))}
+            {/* Clean vs Virgin IP Toggle — Text Only */}
+            <div className="inline-flex rounded-xl bg-slate-100 p-1 text-[11px] font-semibold sm:text-xs xl:order-last">
+              <button
+                type="button"
+                onClick={() => setIsFresh(false)}
+                className={`cursor-pointer whitespace-nowrap rounded-lg px-3 py-1.5 transition-colors ${
+                  !isFresh
+                    ? "bg-white text-slate-900 shadow-xs"
+                    : "text-slate-600"
+                }`}
+              >
+                Clean IP
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFresh(true)}
+                className={`cursor-pointer whitespace-nowrap rounded-lg px-3 py-1.5 transition-colors ${
+                  isFresh
+                    ? "bg-white text-slate-900 shadow-xs"
+                    : "text-slate-600"
+                }`}
+              >
+                Virgin IP
+              </button>
             </div>
           </div>
 
-          <div className="inline-flex self-start rounded-xl bg-slate-100 p-1 text-xs font-semibold md:self-auto">
-            <button
-              type="button"
-              onClick={() => setIsFresh(false)}
-              className={`rounded-lg px-3 py-1.5 transition-colors cursor-pointer ${
-                !isFresh ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
-              }`}
-            >
-              Clean screened IP
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsFresh(true)}
-              className={`rounded-lg px-3 py-1.5 transition-colors cursor-pointer ${
-                isFresh ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
-              }`}
-            >
-              Virgin IP
-            </button>
+          {/* Swipeable Carrier Chips Row — Text Only */}
+          <div className="-mx-4 flex items-center gap-1.5 overflow-x-auto px-4 pb-0.5 scrollbar-none sm:mx-0 sm:px-0 xl:flex-1 xl:px-2">
+            <span className="mr-0.5 hidden shrink-0 text-xs font-semibold text-slate-500 sm:inline">
+              ISP:
+            </span>
+            {activeCountryMeta.carriers.map((carrier) => (
+              <button
+                key={carrier}
+                type="button"
+                onClick={() => setSelectedCarrier(carrier)}
+                className={`shrink-0 cursor-pointer whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                  selectedCarrier === carrier
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70 xl:bg-transparent xl:hover:bg-slate-100"
+                }`}
+              >
+                {carrier === "All" ? "Auto (Best IP)" : carrier}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section">
+      {/* 3. Plans Grid */}
+      <section className="py-10 sm:py-14 lg:py-16">
         <div className="shell">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="flex items-center gap-2">
                 <CountryFlag code={selectedCountry} size={20} />
-                <h2 className="font-display text-xl font-bold text-slate-900">
-                  Choose a plan for {selectedCountry.toUpperCase()}
+                <h2 className="font-display text-lg font-extrabold text-slate-900 sm:text-2xl">
+                  {activeCountryMeta.label} ({activeCountryMeta.short})
+                  প্ল্যানসমূহ
                 </h2>
               </div>
-              <p className="mt-1 text-sm text-slate-600">
-                All plans include dedicated static residential IP, full Windows Administrator,
-                and zero WebRTC leak guarantee.
+              <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                প্রতিটি প্ল্যানে ডেডিকেটেড স্ট্যাটিক রেসিডেন্সিয়াল IP, ফুল
+                Windows Admin এবং ৭-দিনের ফ্রি IP Swap থাকছে।
               </p>
             </div>
 
-            <div className="inline-flex self-start rounded-xl bg-slate-200/70 p-1 text-sm font-medium">
+            {/* Billing Cycle Switcher */}
+            <div className="grid w-full grid-cols-3 rounded-xl bg-slate-200/70 p-1 text-xs font-semibold sm:inline-flex sm:w-auto sm:text-sm">
               {CYCLES.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => setBillingCycle(item.id)}
-                  className={`rounded-lg px-3 py-1.5 transition-colors cursor-pointer ${
+                  className={`cursor-pointer whitespace-nowrap rounded-lg px-2.5 py-2 text-center transition-colors sm:px-3.5 sm:py-1.5 ${
                     billingCycle === item.id
-                      ? "bg-white text-slate-900 shadow-sm"
+                      ? "bg-white text-slate-900 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   {item.label}
                   {item.discount > 0 && (
-                    <span className="ml-1.5 text-xs text-emerald-700">
+                    <span className="ml-1 text-[10px] font-bold text-emerald-700 sm:text-[11px]">
                       −{item.discount * 100}%
                     </span>
                   )}
@@ -207,89 +359,142 @@ function SurveyVpsContent() {
             </div>
           </div>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {plans.map((plan) => {
+          {/* 1 col mobile -> 2 col tablet -> 3 col desktop */}
+          <div className="mt-7 grid grid-cols-1 gap-5 sm:mt-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            {ISP_PLANS.map((plan) => {
               const listPrice = isFresh ? plan.priceFreshBdt : plan.priceBdt;
               const monthly = Math.round(listPrice * (1 - cycle.discount));
               const total = monthly * cycle.months;
               const featured = plan.tier === "pro";
+              const cleanOs = plan.os.replace(/\s*\(Pre-hardened\)/i, "");
+
+              const specItems = [
+                { icon: Cpu, label: "CPU", value: `${plan.specs.vcpu} vCPU` },
+                {
+                  icon: MemoryStick,
+                  label: "RAM",
+                  value: `${plan.specs.ram} GB`,
+                },
+                {
+                  icon: HardDrive,
+                  label: "NVMe",
+                  value: `${plan.specs.nvme} GB`,
+                },
+                { icon: Gauge, label: "Port", value: plan.specs.bandwidth },
+              ];
 
               return (
                 <article
                   key={plan.id}
-                  className={`flex flex-col rounded-2xl border bg-white p-6 transition-all hover:shadow-lg ${
+                  className={`flex flex-col rounded-2xl bg-white p-5 transition-all duration-200 sm:rounded-3xl sm:p-6 ${
                     featured
-                      ? "border-blue-600 shadow-md shadow-blue-600/10 ring-1 ring-blue-600/20"
-                      : "border-slate-200"
+                      ? "ring-2 ring-blue-600 shadow-xl shadow-blue-600/10"
+                      : "border border-slate-200 shadow-xs hover:border-slate-300 hover:shadow-md"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-display text-lg font-bold text-slate-900">
+                  {/* Header Row */}
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-display text-base font-extrabold text-slate-900 sm:text-lg">
                       {plan.name}
                     </h3>
-                    <span className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200/60">
-                      <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      {plan.stockCount} in stock
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {featured && (
+                        <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[10.5px] font-bold text-white">
+                          জনপ্রিয়
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1 rounded-full border border-emerald-200/70 bg-emerald-50 px-2 py-0.5 text-[10.5px] font-bold text-emerald-700">
+                        <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+                        {plan.stockCount} স্টকে
+                      </span>
+                    </div>
                   </div>
 
-                  <p className="mt-1 text-sm text-slate-600">{plan.tagline}</p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
+                    {plan.tagline}
+                  </p>
 
-                  <div className="mt-5 border-y border-slate-100 py-4">
-                    <p className="font-display text-3xl font-extrabold tracking-tight text-slate-900">
+                  {/* Price */}
+                  <div className="mt-4 border-y border-slate-100 py-3.5 sm:mt-5 sm:py-4">
+                    <p className="font-display text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
                       {formatPrice(monthly)}
-                      <span className="text-sm font-normal text-slate-500">
+                      <span className="text-xs font-medium text-slate-500 sm:text-sm">
                         {" "}
-                        /mo
+                        /মাস
                       </span>
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-[11px] text-slate-500 sm:text-xs">
                       {cycle.months === 1
-                        ? "Billed monthly, cancel anytime"
-                        : `Billed ${formatPrice(total)} every ${cycle.months} months`}
+                        ? "মাসিক বিলিং · যেকোনো সময় ক্যানসেল"
+                        : `${cycle.months} মাসে মোট ${formatPrice(total)} বিল`}
                     </p>
                   </div>
 
-                  <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                    {[
-                      ["CPU", `${plan.specs.vcpu} vCPU`],
-                      ["RAM", `${plan.specs.ram} GB`],
-                      ["NVMe", `${plan.specs.nvme} GB`],
-                      ["Port", plan.specs.bandwidth],
-                    ].map(([label, value]) => (
-                      <div key={label}>
-                        <dt className="text-xs text-slate-500">{label}</dt>
-                        <dd className="font-bold text-slate-900">{value}</dd>
+                  {/* Hardware Specs with Icons */}
+                  <dl className="mt-4 grid grid-cols-2 gap-2.5 text-xs sm:gap-3 sm:text-sm">
+                    {specItems.map(({ icon: Icon, label, value }) => (
+                      <div
+                        key={label}
+                        className="flex items-center gap-2.5 rounded-xl bg-slate-50/90 px-3 py-2"
+                      >
+                        <Icon
+                          size={15}
+                          className="shrink-0 text-blue-600"
+                          aria-hidden="true"
+                        />
+                        <div className="min-w-0">
+                          <dt className="text-[10px] font-medium text-slate-500">
+                            {label}
+                          </dt>
+                          <dd className="truncate font-bold text-slate-900">
+                            {value}
+                          </dd>
+                        </div>
                       </div>
                     ))}
                   </dl>
 
-                  <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                    <li className="flex items-center gap-2">
-                      <Check size={15} className="text-emerald-600 shrink-0" />
-                      <span>Pre-hardened {plan.os}</span>
+                  {/* Features with Real Brand & Action Icons */}
+                  <ul className="mt-4 flex-1 space-y-2.5 text-xs text-slate-700 sm:mt-5 sm:text-sm">
+                    <li className="flex items-center gap-2.5">
+                      <FaWindows
+                        size={15}
+                        className="shrink-0 text-[#0078D4]"
+                        aria-hidden="true"
+                      />
+                      <span>Pre-hardened {cleanOs}</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check size={15} className="text-emerald-600 shrink-0" />
-                      <span className="flex items-center gap-1.5">
-                        <CountryFlag code={selectedCountry} size={13} />
-                        Static {selectedCarrier === "All" ? "Residential" : selectedCarrier} IP
+                    <li className="flex items-center gap-2.5">
+                      <CountryFlag code={selectedCountry} size={15} />
+                      <span>
+                        Static{" "}
+                        {selectedCarrier === "All"
+                          ? "Residential"
+                          : selectedCarrier}{" "}
+                        IP
                       </span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check size={15} className="text-emerald-600 shrink-0" />
-                      <span>7-Day Free IP Swap Guarantee</span>
+                    <li className="flex items-center gap-2.5">
+                      <RefreshCw
+                        size={14}
+                        className="shrink-0 text-emerald-600"
+                        aria-hidden="true"
+                      />
+                      <span>৭-দিনের ফ্রি IP Swap গ্যারান্টি</span>
                     </li>
                   </ul>
 
+                  {/* CTA */}
                   <button
                     type="button"
                     onClick={() => setActivePlan(plan)}
-                    className={`mt-6 w-full cursor-pointer ${
-                      featured ? "btn-primary" : "btn-outline"
+                    className={`mt-5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-all active:scale-[0.99] sm:mt-6 ${
+                      featured
+                        ? "bg-blue-600 text-white shadow-sm shadow-blue-600/20 hover:bg-blue-700"
+                        : "border border-slate-300 bg-white text-slate-900 hover:border-blue-600 hover:bg-blue-50/40 hover:text-blue-700"
                     }`}
                   >
-                    Deploy this plan ({selectedCountry.toUpperCase()})
+                    <span>অর্ডার করুন ({activeCountryMeta.short})</span>
                     <ArrowRight size={15} />
                   </button>
                 </article>
@@ -297,16 +502,57 @@ function SurveyVpsContent() {
             })}
           </div>
 
-          <p className="mt-8 text-sm text-slate-600">
-            Need 10 or more servers?{" "}
-            <Link
-              href="/resellers"
-              className="font-semibold text-blue-700 hover:underline"
-            >
-              See volume pricing
-            </Link>
-            .
-          </p>
+          {/* Compact Trust & Helpful Links with Icon Badges */}
+          <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-5 sm:mt-12 sm:rounded-3xl sm:p-8">
+            <h2 className="font-display text-base font-extrabold text-slate-900 sm:text-xl">
+              সার্ভে কাজের জন্য primavps কেন নিরাপদ?
+            </h2>
+            <p className="mt-2 max-w-3xl text-xs leading-relaxed text-slate-600 sm:text-sm">
+              সার্ভে প্যানেলগুলো পেআউটের আগেই আপনার IP ও ব্রাউজার চেক করে।
+              ডেটাসেন্টার IP সহজেই ফ্ল্যাগ হয়, কিন্তু AT&amp;T, Comcast,
+              Verizon বা BT-এর স্ট্যাটিক হোম ব্রডব্যান্ড IP সাধারণ বাসার
+              ইন্টারনেটের মতোই দেখায়।
+            </p>
+
+            <ul className="mt-5 grid gap-3 text-xs text-slate-700 sm:grid-cols-2 sm:text-sm">
+              {TRUST_POINTS.map(({ icon: Icon, color, text }) => (
+                <li
+                  key={text}
+                  className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/70 p-3"
+                >
+                  <span
+                    className={`grid size-8 shrink-0 place-items-center rounded-lg ${color}`}
+                  >
+                    <Icon size={16} aria-hidden="true" />
+                  </span>
+                  <span className="font-medium text-slate-800">{text}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-100 pt-4 text-xs text-slate-600 sm:mt-6 sm:text-sm">
+              <span className="inline-flex items-center gap-1.5">
+                <Users size={14} className="text-slate-400" />
+                ১০+ সার্ভার দরকার?{" "}
+                <Link
+                  href="/resellers"
+                  className="font-bold text-blue-600 hover:underline"
+                >
+                  রিসেলার প্রাইসিং দেখুন
+                </Link>
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Tag size={14} className="text-slate-400" />
+                অফার খুঁজছেন?{" "}
+                <Link
+                  href="/hot-deals"
+                  className="font-bold text-blue-600 hover:underline"
+                >
+                  অ্যাক্টিভ কুপন কোড
+                </Link>
+              </span>
+            </div>
+          </section>
         </div>
       </section>
 
@@ -316,6 +562,7 @@ function SurveyVpsContent() {
         isFresh={isFresh}
         initialBillingCycle={billingCycle}
         initialCountry={selectedCountry}
+        initialCoupon={couponParam}
         onClose={() => setActivePlan(null)}
       />
     </div>
@@ -326,8 +573,8 @@ export default function SurveyVpsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500 text-sm">
-          Loading plans…
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 text-sm text-slate-500">
+          প্ল্যান লোড হচ্ছে…
         </div>
       }
     >

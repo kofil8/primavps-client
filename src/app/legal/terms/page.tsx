@@ -1,5 +1,14 @@
+import { pageSeo } from '@/lib/seo';
+import type { Metadata } from 'next';
 import React from 'react';
 import Link from 'next/link';
+
+export const metadata: Metadata = pageSeo({
+  title: 'Terms of Service for VPS & RDP Hosting',
+  description:
+    'The terms that govern primavps cloud VPS, residential ISP VPS and API services, including acceptable use, billing, IP policy and cancellations.',
+  path: '/legal/terms',
+});
 
 export default function TermsPage() {
   return (

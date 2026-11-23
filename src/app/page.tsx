@@ -1,3 +1,4 @@
+import { JsonLd } from "@/components/seo/JsonLd";
 import { CustomerReviewsCarousel } from "@/components/sections/home/CustomerReviewsCarousel";
 import { GlobalNetworkMap } from "@/components/sections/home/GlobalNetworkMap";
 import { HeroSection } from "@/components/sections/home/HeroSection";
@@ -6,10 +7,14 @@ import { SurveyFaq } from "@/components/sections/home/SurveyFaq";
 import { SurveyRdpPlans } from "@/components/sections/home/SurveyRdpPlans";
 import { WhyTrustUs } from "@/components/sections/home/WhyTrustUs";
 import { CookieConsentNotice } from "@/components/ui/CookieConsentNotice";
+import { HOME_FAQS } from "@/lib/data/faqs";
+import { faqSchema, ispPlansSchema } from "@/lib/schema";
 
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={faqSchema(HOME_FAQS)} />
+      <JsonLd data={ispPlansSchema()} />
       {/* 1. Hero — clean ISP-First headline, US/UK/DE/FR country selector, live IP proof card */}
       <HeroSection />
 

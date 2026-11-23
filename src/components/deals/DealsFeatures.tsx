@@ -1,99 +1,106 @@
-import { Cpu, HardDrive, RefreshCw, Shield, Zap } from "lucide-react";
+import { CalendarCheck, Cpu, Globe, Shield, Zap } from "lucide-react";
+
+const FEATURES = [
+  {
+    title: "৬০–৯০ সেকেন্ডে অটো-ডেলিভারি",
+    desc: "বিকাশ, নগদ বা কার্ডে পেমেন্ট কনফার্ম হতেই ড্যাশবোর্ড ও ইমেইলে ফুল অ্যাডমিন RDP লগইন পেয়ে যাবেন।",
+    icon: Zap,
+  },
+  {
+    title: "১০০% ডেডিকেটেড হোম ISP IP",
+    desc: "AT&T, Comcast, Verizon, BT ও Deutsche Telekom-এর স্ট্যাটিক রেসিডেন্সিয়াল IP—অন্য কারো সাথে শেয়ার্ড নয়।",
+    icon: Globe,
+  },
+  {
+    title: "৭-দিনের ফ্রি IP Swap গ্যারান্টি",
+    desc: "প্রথম ৭ দিনের মধ্যে আইপিতে কোনো ফ্রড-স্কোর বা ডেলিভারি সমস্যা হলে বিনা খরচে ফ্রেশ আইপি রিপ্লেস করে দেওয়া হয়।",
+    icon: CalendarCheck,
+  },
+  {
+    title: "জিরো লিক ও DDoS প্রোটেকশন",
+    desc: "প্রি-কনফিগার্ড WebRTC/DNS লিক সুরক্ষা এবং এন্টারপ্রাইজ DDoS ফিল্টারিং সহ নিরবচ্ছিন্ন কানেক্টিভিটি।",
+    icon: Shield,
+  },
+];
 
 export function DealsFeatures() {
-  const features = [
-    {
-      title: "Instant Setup",
-      desc: "Get your server provisioned and active automatically within minutes of completing your order.",
-      icon: Zap,
-    },
-    {
-      title: "Free Site Migration",
-      desc: "Our expert engineers transfer your websites, databases, and cPanel accounts at no additional charge.",
-      icon: RefreshCw,
-    },
-    {
-      title: "99.99% Uptime Guarantee",
-      desc: "Redundant enterprise hardware and Tier-1 carrier backbones ensure uninterrupted connectivity.",
-      icon: HardDrive,
-    },
-    {
-      title: "Free DDoS Protection",
-      desc: "Multi-terabit volumetric traffic filtering defends your server against malicious web assaults.",
-      icon: Shield,
-    },
-  ];
-
   return (
-    <section className="section bg-slate-50/70 border-t border-slate-200">
+    <section className="border-t border-slate-200/80 bg-slate-50/70 py-14 sm:py-20">
       <div className="shell">
-        <div className="grid items-center gap-12 lg:grid-cols-12">
-          {/* Left: Graphic illustration block */}
-          <div className="flex items-center justify-center lg:col-span-5">
-            <div className="relative flex size-72 items-center justify-center rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl sm:size-84">
-              <div className="absolute inset-4 rounded-2xl bg-gradient-to-tr from-blue-50 via-purple-50 to-amber-50" />
-              
-              {/* Central Server Stack Graphic */}
-              <div className="relative flex flex-col items-center gap-3">
-                <div className="grid size-16 place-items-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25">
-                  <HardDrive size={32} />
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Tier-4 USA Datacenter
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+          {/* Left: Clean Infrastructure Summary Card */}
+          <div className="lg:col-span-5">
+            <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="grid size-11 place-items-center rounded-2xl bg-blue-600 text-white shadow-sm shadow-blue-600/20">
+                    <Cpu size={22} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-extrabold text-slate-900">
+                      primavps Infrastructure
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Ashburn, VA · Dallas, TX · EU Nodes
+                    </p>
                   </div>
                 </div>
-
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-xs">
-                    <Cpu size={14} className="text-blue-600" />
-                    AMD EPYC™ Gen4
-                  </div>
-                  <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-xs">
-                    <Shield size={14} className="text-emerald-600" />
-                    Virgin US ASN
-                  </div>
-                </div>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  99.98%
+                </span>
               </div>
 
-              {/* Decorative mini badges */}
-              <div className="absolute -top-3 -right-3 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-bold text-blue-600 shadow-md">
-                10 Gbps Uplink
-              </div>
-              <div className="absolute -bottom-3 -left-3 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-bold text-amber-600 shadow-md">
-                NVMe Gen4
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                {[
+                  { k: "Processor", v: "AMD EPYC™ Gen4" },
+                  { k: "Storage", v: "Enterprise NVMe" },
+                  { k: "Protocols", v: "RDP · SOCKS5 · HTTP" },
+                  { k: "Uplink", v: "10 Gbps Redundant" },
+                ].map((row) => (
+                  <div
+                    key={row.k}
+                    className="rounded-xl border border-slate-200/70 bg-slate-50/70 px-3.5 py-2.5"
+                  >
+                    <p className="text-[10.5px] font-medium text-slate-500">
+                      {row.k}
+                    </p>
+                    <p className="mt-0.5 text-xs font-bold text-slate-900">
+                      {row.v}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Right: Content & 2x2 Feature Grid */}
+          {/* Right: 2x2 Feature Grid */}
           <div className="lg:col-span-7">
-            <span className="eyebrow">Enterprise Hosting Foundation</span>
-            <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
-              Fast, Reliable & Scalable VPS Hosting by PrimaVPS
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
+              ডিসকাউন্টের সাথেও পূর্ণ সার্ভিস কোয়ালিটি
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-extrabold leading-[1.22] tracking-tight text-slate-900 sm:text-3xl">
+              অফার প্ল্যানেও কোনো স্পিড বা ফিচার কাটছাঁট নেই
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-              PrimaVPS offers high-performance hosting solutions backed by cutting-edge
-              NVMe infrastructure and round-the-clock technical support. Whether powering
-              survey research, remote desktop operations, or commercial websites, our servers
-              are engineered to deliver supreme reliability.
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              প্রোমো কোড ব্যবহার করলেও আপনি আমাদের রেগুলার সার্ভারের মতোই একই
+              ডেডিকেটেড হার্ডওয়্যার, ক্লিন রেসিডেন্সিয়াল IP এবং ২৪/৭ বনানী
+              সাপোর্ট পাবেন।
             </p>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {features.map((item) => (
+            <div className="mt-7 grid gap-4 sm:grid-cols-2">
+              {FEATURES.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-shadow hover:shadow-md"
+                  className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-2xs transition-shadow hover:shadow-sm"
                 >
                   <div className="inline-flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                    <item.icon size={20} />
+                    <item.icon size={19} />
                   </div>
                   <h3 className="mt-3 text-sm font-bold text-slate-900">
                     {item.title}
                   </h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                  <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
                     {item.desc}
                   </p>
                 </div>
