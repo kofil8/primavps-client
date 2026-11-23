@@ -1,6 +1,15 @@
+import { pageSeo } from '@/lib/seo';
+import type { Metadata } from 'next';
 import React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+
+export const metadata: Metadata = pageSeo({
+  title: '7-Day IP Replacement Policy',
+  description:
+    'How the primavps 7-day IP replacement guarantee works for residential and virgin ISP VPS plans, including eligibility and how to request a swap.',
+  path: '/legal/ip-replacement',
+});
 
 export default function IpReplacementPolicyPage() {
   return (

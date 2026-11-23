@@ -27,7 +27,7 @@ const PRODUCT_LINKS = [
   {
     href: "/cloud-vps",
     title: "Cloud VPS",
-    desc: "High-speed NVMe compute from ৳950/mo",
+    desc: "High-speed NVMe compute · Instant deploy",
     icon: Cpu,
   },
   {
@@ -43,7 +43,7 @@ const PRODUCT_LINKS = [
     desc: "Volume discounts up to 20% for teams",
     icon: Users,
   },
-];
+] as const;
 
 const TOOL_LINKS = [
   {
@@ -64,7 +64,10 @@ const TOOL_LINKS = [
     desc: "Test live latency & routing ping",
     icon: Terminal,
   },
-];
+] as const;
+
+const AUTH_ROUTES = ["/login", "/register"];
+const HIDE_DOCK_ROUTES = ["/login", "/register", "/checkout"];
 
 export function Navbar() {
   const pathname = usePathname();
@@ -73,6 +76,14 @@ export function Navbar() {
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
 
+  const isAuthPage = AUTH_ROUTES.some(
+    (route) => pathname === route || pathname?.startsWith(`${route}/`),
+  );
+  const hideMobileDock = HIDE_DOCK_ROUTES.some(
+    (route) => pathname === route || pathname?.startsWith(`${route}/`),
+  );
+
+  // Close menus on outside click or Escape
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
@@ -93,13 +104,33 @@ export function Navbar() {
     };
   }, []);
 
+  // Auto-close menus on route change
+  useEffect(() => {
+    setOpenMenu(null);
+    setMobileSheetOpen(false);
+  }, [pathname]);
+
+  // Lock background scroll when mobile glass sheet is open
+  useEffect(() => {
+    if (!mobileSheetOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [mobileSheetOpen]);
+
   const closeAll = () => {
     setOpenMenu(null);
     setMobileSheetOpen(false);
   };
 
-  const navLinkClass =
-    "whitespace-nowrap shrink-0 rounded-lg px-2.5 xl:px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100/80 hover:text-slate-900";
+  const getNavLinkClass = (active: boolean) =>
+    `whitespace-nowrap shrink-0 rounded-lg px-2.5 xl:px-3 py-2 text-sm font-medium transition-colors ${
+      active
+        ? "bg-blue-50/80 text-blue-700 font-semibold"
+        : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+    }`;
 
   const isHomeActive = pathname === "/" && !mobileSheetOpen;
   const isServersActive =
@@ -107,12 +138,17 @@ export function Navbar() {
       pathname?.startsWith("/cloud-vps") ||
       pathname?.startsWith("/resellers")) &&
     !mobileSheetOpen;
-  const isToolsActive = pathname?.startsWith("/tools") && !mobileSheetOpen;
+  const isToolsActive = Boolean(
+    pathname?.startsWith("/tools") && !mobileSheetOpen,
+  );
+  const isDealsActive = Boolean(pathname?.startsWith("/hot-deals"));
+  const isStatusActive = Boolean(pathname?.startsWith("/status"));
+  const isBlogActive = Boolean(pathname?.startsWith("/blog"));
 
   return (
     <>
-      {/* ─── TOP HEADER ─── */}
-      <header className="relative z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
+      {/* ─── TOP STICKY HEADER ─── */}
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
         <div
           ref={navRef}
           className="shell flex h-14 items-center justify-between gap-3 md:h-16 md:gap-4"
@@ -137,48 +173,67 @@ export function Navbar() {
                   setOpenMenu(openMenu === "products" ? null : "products")
                 }
                 aria-expanded={openMenu === "products"}
-                className={`flex cursor-pointer items-center gap-1.5 ${navLinkClass} ${
-                  openMenu === "products" ? "bg-slate-100 text-slate-900" : ""
-                }`}
+                aria-haspopup="menu"
+                className={`flex cursor-pointer items-center gap-1.5 ${getNavLinkClass(
+                  isServersActive || openMenu === "products",
+                )}`}
               >
                 <span>Servers</span>
                 <ChevronDown
                   size={14}
-                  className={`text-slate-400 transition-transform duration-200 ${
-                    openMenu === "products" ? "rotate-180 text-slate-700" : ""
+                  aria-hidden="true"
+                  className={`transition-transform duration-200 ${
+                    openMenu === "products"
+                      ? "rotate-180 text-blue-600"
+                      : "text-slate-400"
                   }`}
                 />
               </button>
 
               {openMenu === "products" && (
-                <div className="animate-fade-up absolute top-full left-0 mt-2 w-80 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5">
-                  {PRODUCT_LINKS.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={closeAll}
-                      className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-slate-50"
-                    >
-                      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                        <item.icon size={17} />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-slate-900">
-                            {item.title}
-                          </span>
-                          {item.badge && (
-                            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                              {item.badge}
-                            </span>
-                          )}
-                        </div>
-                        <span className="mt-0.5 block text-xs text-slate-500">
-                          {item.desc}
+                <div
+                  role="menu"
+                  className="animate-fade-up absolute top-full left-0 mt-2 w-80 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5"
+                >
+                  {PRODUCT_LINKS.map((item) => {
+                    const active = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        role="menuitem"
+                        onClick={closeAll}
+                        className={`group flex items-start gap-3 rounded-xl p-3 transition-colors ${
+                          active ? "bg-blue-50/60" : "hover:bg-slate-50"
+                        }`}
+                      >
+                        <span
+                          className={`grid size-9 shrink-0 place-items-center rounded-lg transition-colors ${
+                            active
+                              ? "bg-blue-600 text-white"
+                              : "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white"
+                          }`}
+                        >
+                          <item.icon size={17} aria-hidden="true" />
                         </span>
-                      </div>
-                    </Link>
-                  ))}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-slate-900">
+                              {item.title}
+                            </span>
+                            {"badge" in item && item.badge && (
+                              <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                          <span className="mt-0.5 block text-xs text-slate-500">
+                            {item.desc}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -191,41 +246,60 @@ export function Navbar() {
                   setOpenMenu(openMenu === "tools" ? null : "tools")
                 }
                 aria-expanded={openMenu === "tools"}
-                className={`flex cursor-pointer items-center gap-1.5 ${navLinkClass} ${
-                  openMenu === "tools" ? "bg-slate-100 text-slate-900" : ""
-                }`}
+                aria-haspopup="menu"
+                className={`flex cursor-pointer items-center gap-1.5 ${getNavLinkClass(
+                  isToolsActive || openMenu === "tools",
+                )}`}
               >
                 <span>Free tools</span>
                 <ChevronDown
                   size={14}
-                  className={`text-slate-400 transition-transform duration-200 ${
-                    openMenu === "tools" ? "rotate-180 text-slate-700" : ""
+                  aria-hidden="true"
+                  className={`transition-transform duration-200 ${
+                    openMenu === "tools"
+                      ? "rotate-180 text-blue-600"
+                      : "text-slate-400"
                   }`}
                 />
               </button>
 
               {openMenu === "tools" && (
-                <div className="animate-fade-up absolute top-full left-0 mt-2 w-72 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5">
-                  {TOOL_LINKS.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={closeAll}
-                      className="group flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-slate-50"
-                    >
-                      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-600 transition-colors group-hover:bg-blue-50 group-hover:text-blue-600">
-                        <item.icon size={15} />
-                      </span>
-                      <div>
-                        <span className="block text-sm font-semibold text-slate-900">
-                          {item.title}
+                <div
+                  role="menu"
+                  className="animate-fade-up absolute top-full left-0 mt-2 w-72 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl shadow-slate-900/5"
+                >
+                  {TOOL_LINKS.map((item) => {
+                    const active = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        role="menuitem"
+                        onClick={closeAll}
+                        className={`group flex items-start gap-3 rounded-xl p-2.5 transition-colors ${
+                          active ? "bg-blue-50/60" : "hover:bg-slate-50"
+                        }`}
+                      >
+                        <span
+                          className={`grid size-8 shrink-0 place-items-center rounded-lg transition-colors ${
+                            active
+                              ? "bg-blue-600 text-white"
+                              : "bg-slate-100 text-slate-600 group-hover:bg-blue-50 group-hover:text-blue-600"
+                          }`}
+                        >
+                          <item.icon size={15} aria-hidden="true" />
                         </span>
-                        <span className="block text-[11px] text-slate-500">
-                          {item.desc}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
+                        <div>
+                          <span className="block text-sm font-semibold text-slate-900">
+                            {item.title}
+                          </span>
+                          <span className="block text-[11px] text-slate-500">
+                            {item.desc}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -233,10 +307,14 @@ export function Navbar() {
             <Link
               href="/hot-deals"
               onClick={closeAll}
-              className="group flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50/80"
+              aria-current={isDealsActive ? "page" : undefined}
+              className={`group flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 transition-colors ${
+                isDealsActive ? "bg-rose-50" : "hover:bg-rose-50/80"
+              }`}
             >
               <Flame
                 size={15}
+                aria-hidden="true"
                 className="shrink-0 text-rose-500 transition-transform group-hover:scale-110"
               />
               <span>Hot Deals</span>
@@ -245,52 +323,70 @@ export function Navbar() {
               </span>
             </Link>
 
-            <Link href="/status" onClick={closeAll} className={navLinkClass}>
+            <Link
+              href="/status"
+              onClick={closeAll}
+              aria-current={isStatusActive ? "page" : undefined}
+              className={getNavLinkClass(isStatusActive)}
+            >
               Network
             </Link>
-            <Link href="/blog" onClick={closeAll} className={navLinkClass}>
+            <Link
+              href="/blog"
+              onClick={closeAll}
+              aria-current={isBlogActive ? "page" : undefined}
+              className={getNavLinkClass(isBlogActive)}
+            >
               Guides
             </Link>
           </nav>
 
           {/* 3. Tablet & Desktop Right Controls (md+) */}
           <div className="hidden shrink-0 items-center gap-2 md:flex xl:gap-2.5">
-            <div
-              className="inline-flex shrink-0 items-center rounded-lg border border-slate-200/90 bg-slate-100/70 p-0.5 text-xs font-semibold"
-              role="group"
-              aria-label="Currency selector"
-            >
-              <button
-                type="button"
-                onClick={() => setCurrency("BDT")}
-                className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
-                  currency === "BDT"
-                    ? "bg-white text-slate-900 shadow-2xs"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
+            {/* Hide Currency Switcher on /login & /register */}
+            {!isAuthPage && (
+              <div
+                className="inline-flex shrink-0 items-center rounded-lg border border-slate-200/90 bg-slate-100/70 p-0.5 text-xs font-semibold"
+                role="group"
+                aria-label="Currency selector"
               >
-                ৳ BDT
-              </button>
-              <button
-                type="button"
-                onClick={() => setCurrency("USD")}
-                className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
-                  currency === "USD"
-                    ? "bg-white text-slate-900 shadow-2xs"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                $ USD
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setCurrency("BDT")}
+                  aria-pressed={currency === "BDT"}
+                  className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
+                    currency === "BDT"
+                      ? "bg-white text-slate-900 shadow-2xs"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  ৳ BDT
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrency("USD")}
+                  aria-pressed={currency === "USD"}
+                  className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
+                    currency === "USD"
+                      ? "bg-white text-slate-900 shadow-2xs"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  $ USD
+                </button>
+              </div>
+            )}
 
-            <Link
-              href="/login"
-              onClick={closeAll}
-              className="whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900 xl:px-4"
-            >
-              Sign in
-            </Link>
+            {/* Hide redundant Sign in button when already on /login */}
+            {pathname !== "/login" && (
+              <Link
+                href="/login"
+                onClick={closeAll}
+                className="whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900 xl:px-4"
+              >
+                Sign in
+              </Link>
+            )}
 
             <Link
               href="/survey-vps"
@@ -298,7 +394,7 @@ export function Navbar() {
               className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-700 xl:px-4"
             >
               <span>Deploy server</span>
-              <ArrowRight size={15} className="shrink-0" />
+              <ArrowRight size={15} className="shrink-0" aria-hidden="true" />
             </Link>
 
             {/* Tablet & Small-Laptop Menu Trigger (768px–1279px) */}
@@ -315,21 +411,25 @@ export function Navbar() {
 
           {/* 4. Mobile Top Right Controls (<768px) */}
           <div className="flex shrink-0 items-center gap-1.5 md:hidden">
-            <button
-              type="button"
-              onClick={() => setCurrency(currency === "BDT" ? "USD" : "BDT")}
-              className="whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50/90 px-2.5 py-1 text-[11px] font-bold text-slate-700 transition-transform active:scale-95"
-              aria-label={`Switch to ${currency === "BDT" ? "USD" : "BDT"}`}
-            >
-              {currency === "BDT" ? "৳ BDT" : "$ USD"}
-            </button>
-            <Link
-              href="/login"
-              onClick={closeAll}
-              className="whitespace-nowrap rounded-full border border-slate-200/90 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 transition-transform active:scale-95"
-            >
-              Sign in
-            </Link>
+            {!isAuthPage && (
+              <button
+                type="button"
+                onClick={() => setCurrency(currency === "BDT" ? "USD" : "BDT")}
+                className="whitespace-nowrap rounded-full border border-slate-200/90 bg-slate-50/90 px-2.5 py-1 text-[11px] font-bold text-slate-700 transition-transform active:scale-95"
+                aria-label={`Switch to ${currency === "BDT" ? "USD" : "BDT"}`}
+              >
+                {currency === "BDT" ? "৳ BDT" : "$ USD"}
+              </button>
+            )}
+            {pathname !== "/login" && (
+              <Link
+                href="/login"
+                onClick={closeAll}
+                className="whitespace-nowrap rounded-full border border-slate-200/90 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 transition-transform active:scale-95"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -341,7 +441,10 @@ export function Navbar() {
           onClick={() => setMobileSheetOpen(false)}
         >
           <div
-            className="fixed inset-x-3 bottom-24 z-50 max-h-[72dvh] overflow-y-auto rounded-3xl border border-white/80 bg-white/90 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.18)] backdrop-blur-2xl md:inset-x-auto md:top-20 md:right-6 md:bottom-auto md:w-[380px]"
+            role="dialog"
+            aria-modal="true"
+            aria-label="All services and tools"
+            className="fixed inset-x-3 bottom-24 z-50 max-h-[72dvh] overflow-y-auto rounded-3xl border border-white/80 bg-white/95 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.18)] backdrop-blur-2xl md:inset-x-auto md:top-20 md:right-6 md:bottom-auto md:w-[380px]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Sheet Header */}
@@ -367,11 +470,15 @@ export function Navbar() {
                 className="flex items-center justify-between rounded-2xl border border-rose-200/80 bg-rose-500/10 px-3.5 py-2.5 text-sm font-bold text-rose-700"
               >
                 <span className="flex items-center gap-2">
-                  <Flame size={16} className="text-rose-600" />
+                  <Flame
+                    size={16}
+                    className="text-rose-600"
+                    aria-hidden="true"
+                  />
                   Hot Deals &amp; Offers
                 </span>
                 <span className="rounded-full bg-rose-600 px-2 py-0.5 text-[10px] font-extrabold text-white">
-                  SAVE 20%
+                  SAVE 15%
                 </span>
               </Link>
 
@@ -389,7 +496,7 @@ export function Navbar() {
                       className="flex items-center gap-3 rounded-2xl border border-slate-200/50 bg-white/80 p-2.5 transition-transform active:scale-[0.99]"
                     >
                       <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-blue-600/10 text-blue-600">
-                        <item.icon size={16} />
+                        <item.icon size={16} aria-hidden="true" />
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-bold text-slate-900">
@@ -417,7 +524,11 @@ export function Navbar() {
                       onClick={closeAll}
                       className="flex flex-col items-center justify-center rounded-2xl border border-slate-200/50 bg-white/80 p-2.5 text-center transition-transform active:scale-95"
                     >
-                      <item.icon size={16} className="mb-1 text-blue-600" />
+                      <item.icon
+                        size={16}
+                        className="mb-1 text-blue-600"
+                        aria-hidden="true"
+                      />
                       <span className="text-[11px] leading-tight font-semibold text-slate-800">
                         {item.title
                           .replace(" Checker", "")
@@ -447,76 +558,85 @@ export function Navbar() {
         </div>
       )}
 
-      {/* ─── MOBILE FLOATING BOTTOM DOCK (<768px Only) ─── */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex flex-col items-center px-3 pb-[env(safe-area-inset-bottom)] md:hidden">
-        <Link
-          href="/survey-vps"
-          onClick={closeAll}
-          className="pointer-events-auto mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/85 px-3 py-1 text-[11px] font-bold text-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-transform active:scale-95"
-        >
-          <span className="size-1.5 animate-pulse rounded-full bg-blue-600" />
-          <span>Deploy Clean VPS</span>
-          <ArrowRight size={11} className="text-blue-600" />
-        </Link>
-
-        <nav
-          aria-label="Mobile bottom navigation"
-          className="pointer-events-auto flex w-full max-w-[350px] items-center justify-between rounded-full border border-white/80 bg-white/80 p-1.5 shadow-[0_12px_36px_rgba(15,23,42,0.14)] backdrop-blur-2xl"
-        >
-          <Link
-            href="/"
-            onClick={closeAll}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
-              isHomeActive
-                ? "bg-blue-600/12 text-blue-600"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <Home size={18} strokeWidth={isHomeActive ? 2.4 : 1.9} />
-            <span>Home</span>
-          </Link>
-
+      {/* ─── MOBILE FLOATING BOTTOM DOCK (<768px, Hidden on Auth/Checkout) ─── */}
+      {!hideMobileDock && (
+        <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex flex-col items-center px-3 pb-[env(safe-area-inset-bottom)] md:hidden">
           <Link
             href="/survey-vps"
             onClick={closeAll}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
-              isServersActive
-                ? "bg-blue-600/12 text-blue-600"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
+            className="pointer-events-auto mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/85 px-3 py-1 text-[11px] font-bold text-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-transform active:scale-95"
           >
-            <Server size={18} strokeWidth={isServersActive ? 2.4 : 1.9} />
-            <span>Servers</span>
+            <span className="size-1.5 animate-pulse rounded-full bg-blue-600" />
+            <span>Deploy Clean VPS</span>
+            <ArrowRight
+              size={11}
+              className="text-blue-600"
+              aria-hidden="true"
+            />
           </Link>
 
-          <Link
-            href="/tools/ip-checker"
-            onClick={closeAll}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
-              isToolsActive
-                ? "bg-blue-600/12 text-blue-600"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
+          <nav
+            aria-label="Mobile bottom navigation"
+            className="pointer-events-auto flex w-full max-w-[350px] items-center justify-between rounded-full border border-white/80 bg-white/85 p-1.5 shadow-[0_12px_36px_rgba(15,23,42,0.14)] backdrop-blur-2xl"
           >
-            <Wrench size={18} strokeWidth={isToolsActive ? 2.4 : 1.9} />
-            <span>Tools</span>
-          </Link>
+            <Link
+              href="/"
+              onClick={closeAll}
+              aria-current={isHomeActive ? "page" : undefined}
+              className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
+                isHomeActive
+                  ? "bg-blue-600/12 text-blue-600"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Home size={18} strokeWidth={isHomeActive ? 2.4 : 1.9} />
+              <span>Home</span>
+            </Link>
 
-          <button
-            type="button"
-            onClick={() => setMobileSheetOpen(!mobileSheetOpen)}
-            aria-expanded={mobileSheetOpen}
-            className={`relative flex flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
-              mobileSheetOpen
-                ? "bg-slate-900 text-white shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <LayoutGrid size={18} strokeWidth={mobileSheetOpen ? 2.4 : 1.9} />
-            <span>More</span>
-          </button>
-        </nav>
-      </div>
+            <Link
+              href="/survey-vps"
+              onClick={closeAll}
+              aria-current={isServersActive ? "page" : undefined}
+              className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
+                isServersActive
+                  ? "bg-blue-600/12 text-blue-600"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Server size={18} strokeWidth={isServersActive ? 2.4 : 1.9} />
+              <span>Servers</span>
+            </Link>
+
+            <Link
+              href="/tools/ip-checker"
+              onClick={closeAll}
+              aria-current={isToolsActive ? "page" : undefined}
+              className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
+                isToolsActive
+                  ? "bg-blue-600/12 text-blue-600"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Wrench size={18} strokeWidth={isToolsActive ? 2.4 : 1.9} />
+              <span>Tools</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setMobileSheetOpen(!mobileSheetOpen)}
+              aria-expanded={mobileSheetOpen}
+              className={`relative flex flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${
+                mobileSheetOpen
+                  ? "bg-slate-900 text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <LayoutGrid size={18} strokeWidth={mobileSheetOpen ? 2.4 : 1.9} />
+              <span>More</span>
+            </button>
+          </nav>
+        </div>
+      )}
     </>
   );
 }

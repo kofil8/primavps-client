@@ -1,6 +1,16 @@
 import { SYSTEM_COMPONENTS } from "@/lib/data/status";
+import { pageSeo } from "@/lib/seo";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = pageSeo({
+  title: "Live Network Status & 90-Day Uptime Report",
+  description:
+    "Live network status for primavps cloud and residential ISP nodes: component latency, 90-day uptime and maintenance history from Dallas and Dhaka.",
+  path: "/status",
+  keywords: ["primavps status", "VPS uptime", "network status Bangladesh"],
+});
 
 export default function StatusPage() {
   return (

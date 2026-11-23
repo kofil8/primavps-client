@@ -123,6 +123,9 @@ export function HeroSection() {
                 </svg>
               </span>
             </span>
+            <span className="mt-3 block font-sans text-base font-semibold text-slate-700 sm:text-lg">
+              Bangladesh&apos;s cleanest Survey VPS &amp; residential ISP RDP
+            </span>
           </h1>
 
           {/* Dynamic Subheadline */}

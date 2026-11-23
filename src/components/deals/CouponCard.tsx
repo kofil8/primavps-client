@@ -2,7 +2,7 @@
 
 import { useCurrency } from "@/lib/currency";
 import { HotDeal } from "@/lib/data/deals";
-import { ArrowRight, Check, Copy, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Copy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -10,122 +10,162 @@ interface CouponCardProps {
   deal: HotDeal;
 }
 
+const ACCENT_STYLES: Record<
+  HotDeal["accent"],
+  { topBar: string; badge: string; codeBox: string }
+> = {
+  blue: {
+    topBar: "bg-blue-600",
+    badge: "bg-blue-50 text-blue-700 border-blue-200",
+    codeBox:
+      "border-blue-200 bg-blue-50/50 text-blue-700 hover:bg-blue-50 hover:border-blue-300",
+  },
+  amber: {
+    topBar: "bg-amber-500",
+    badge: "bg-amber-50 text-amber-800 border-amber-200",
+    codeBox:
+      "border-amber-200 bg-amber-50/60 text-amber-800 hover:bg-amber-50 hover:border-amber-300",
+  },
+  emerald: {
+    topBar: "bg-emerald-600",
+    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    codeBox:
+      "border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300",
+  },
+};
+
 export function CouponCard({ deal }: CouponCardProps) {
   const { formatPrice } = useCurrency();
   const [copied, setCopied] = useState(false);
+  const styles = ACCENT_STYLES[deal.accent];
 
   const copyCoupon = async () => {
     try {
       await navigator.clipboard.writeText(deal.couponCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      const textarea = document.createElement("textarea");
+      textarea.value = deal.couponCode;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
     }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2200);
   };
 
-  const headerColors = {
-    blue: "bg-blue-600 text-white",
-    amber: "bg-amber-400 text-slate-950 font-bold",
-    cyan: "bg-cyan-500 text-slate-950 font-bold",
-    emerald: "bg-emerald-500 text-slate-950 font-bold",
-  }[deal.headerTheme];
-
-  const buttonAccentColors = {
-    blue: "hover:bg-blue-50 text-blue-600 border-blue-200",
-    amber: "hover:bg-amber-50 text-amber-700 border-amber-200",
-    cyan: "hover:bg-cyan-50 text-cyan-700 border-cyan-200",
-    emerald: "hover:bg-emerald-50 text-emerald-700 border-emerald-200",
-  }[deal.headerTheme];
-
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
-      {/* Top Banner (Reference style) */}
-      <div className={`px-5 py-4 text-center ${headerColors}`}>
-        <p className="text-sm font-extrabold uppercase tracking-wide sm:text-base">
-          {deal.title}
-        </p>
-      </div>
+    <article
+      id={`deal-${deal.id}`}
+      className={`group relative flex flex-col overflow-hidden rounded-3xl bg-white transition-all duration-200 ${
+        deal.featured
+          ? "ring-2 ring-blue-600 shadow-xl shadow-blue-600/10"
+          : "border border-slate-200/90 shadow-xs hover:border-slate-300 hover:shadow-md"
+      }`}
+    >
+      {/* Slim Top Accent Strip */}
+      <div className={`h-1.5 w-full ${styles.topBar}`} aria-hidden="true" />
 
-      {/* Card Content */}
-      <div className="flex flex-1 flex-col p-6">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
-              {deal.category}
-            </span>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="font-display text-2xl font-black text-slate-900">
-                {formatPrice(deal.discountedPriceBdt)}
-              </span>
-              <span className="text-xs text-slate-400 line-through">
-                {formatPrice(deal.originalPriceBdt)}
-              </span>
-              <span className="text-xs font-medium text-slate-500">/first mo</span>
-            </div>
-          </div>
-          <span className="rounded-full bg-rose-100 px-2.5 py-1 text-xs font-bold text-rose-700">
-            Save {deal.discountPercent}%
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        {/* Category + Badge */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            {deal.category}
+          </span>
+          <span
+            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${
+              deal.featured
+                ? "border-blue-600 bg-blue-600 text-white"
+                : styles.badge
+            }`}
+          >
+            {deal.badge || `${deal.discountPercent}% OFF`}
           </span>
         </div>
 
-        <p className="mt-3 text-xs leading-relaxed text-slate-600 sm:text-sm">
+        {/* Plan Title */}
+        <h3 className="mt-2 font-display text-lg font-extrabold text-slate-900">
+          {deal.title}
+        </h3>
+
+        {/* Price Block — Fits cleanly on 14" laptops */}
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+          <span className="font-display text-2xl font-black tracking-tight text-slate-900 xl:text-[28px]">
+            {formatPrice(deal.discountedPriceBdt)}
+          </span>
+          <span className="text-xs font-medium text-slate-400 line-through">
+            {formatPrice(deal.originalPriceBdt)}
+          </span>
+          <span className="text-[11px] font-medium text-slate-500">
+            /প্রথম মাস
+          </span>
+        </div>
+
+        <p className="mt-1 text-[11px] font-semibold text-emerald-700">
+          সাশ্রয় {formatPrice(deal.savingsBdt)} ({deal.discountPercent}% ছাড়)
+        </p>
+
+        <p className="mt-3 text-xs leading-relaxed text-slate-600">
           {deal.subtitle}
         </p>
 
-        {/* Specs Pills */}
-        <div className="mt-4 grid grid-cols-2 gap-2 border-y border-slate-100 py-3 text-xs">
+        {/* Specs 2x2 Grid */}
+        <dl className="mt-4 grid grid-cols-2 gap-2.5 border-y border-slate-100 py-3.5 text-xs">
           {deal.specs.map((spec) => (
-            <div key={spec.label} className="flex flex-col">
-              <span className="text-[11px] text-slate-400">{spec.label}</span>
-              <span className="font-semibold text-slate-700">{spec.value}</span>
+            <div key={spec.label}>
+              <dt className="text-[10.5px] font-medium text-slate-400">
+                {spec.label}
+              </dt>
+              <dd className="mt-0.5 font-semibold text-slate-800">
+                {spec.value}
+              </dd>
             </div>
           ))}
-        </div>
+        </dl>
 
-        {/* Coupon Code Section */}
+        {/* Interactive Coupon Copy + Direct Checkout CTA */}
         <div className="mt-auto pt-5">
-          <div className="flex flex-col gap-2.5">
-            <button
-              type="button"
-              onClick={copyCoupon}
-              className={`relative flex w-full items-center justify-between rounded-xl border border-dashed px-4 py-2.5 font-mono text-sm font-bold tracking-wider transition-all active:scale-[0.98] ${buttonAccentColors}`}
-            >
-              <span className="flex items-center gap-2">
-                <Sparkles size={14} />
-                {deal.couponCode}
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-                {copied ? (
-                  <>
-                    <Check size={14} className="text-emerald-600" />
-                    <span className="font-semibold text-emerald-600">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={13} />
-                    <span>Get Coupon Code</span>
-                  </>
-                )}
-              </span>
-            </button>
+          <button
+            type="button"
+            onClick={copyCoupon}
+            aria-label={`Copy coupon code ${deal.couponCode}`}
+            className={`flex w-full cursor-pointer items-center justify-between rounded-xl border border-dashed px-3.5 py-2.5 transition-all active:scale-[0.98] ${styles.codeBox}`}
+          >
+            <span className="font-mono text-sm font-extrabold tracking-wider">
+              {deal.couponCode}
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs font-bold">
+              {copied ? (
+                <>
+                  <Check size={14} className="text-emerald-600" />
+                  <span className="text-emerald-600">কপি হয়েছে</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={13} />
+                  <span>কপি করুন</span>
+                </>
+              )}
+            </span>
+          </button>
 
-            <Link
-              href={deal.targetUrl}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-slate-800"
-            >
-              Claim Deal Now
-              <ArrowRight size={14} />
-            </Link>
-          </div>
+          <Link
+            href={deal.targetUrl}
+            className={`mt-2.5 inline-flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold transition-all active:scale-[0.99] ${
+              deal.featured
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-600/20 hover:bg-blue-700"
+                : "bg-slate-900 text-white hover:bg-slate-800"
+            }`}
+          >
+            <span>অফারসহ অর্ডার করুন</span>
+            <ArrowRight size={14} aria-hidden="true" />
+          </Link>
 
-          <p className="mt-2.5 text-center text-[11px] text-slate-400">
-            Apply code at checkout. Limited slots available.
+          <p className="mt-2 text-center text-[11px] text-slate-400">
+            রিনিউ রেট: {formatPrice(deal.originalPriceBdt)}/মাস
           </p>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

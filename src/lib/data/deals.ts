@@ -1,155 +1,137 @@
+export interface DealSpec {
+  label: string;
+  value: string;
+}
+
 export interface HotDeal {
   id: string;
   category: string;
-  badge: string;
+  shortName: string;
+  badge?: string;
   title: string;
   subtitle: string;
   discountPercent: number;
   originalPriceBdt: number;
   discountedPriceBdt: number;
+  savingsBdt: number;
   couponCode: string;
-  headerTheme: 'blue' | 'amber' | 'cyan' | 'emerald';
+  accent: "blue" | "amber" | "emerald";
+  ribbonBg: string;
   targetUrl: string;
-  specs: {
-    label: string;
-    value: string;
-  }[];
+  featured?: boolean;
+  specs: DealSpec[];
+}
+
+interface RawDeal extends Omit<HotDeal, "discountedPriceBdt" | "savingsBdt"> {}
+
+function buildDeal(raw: RawDeal): HotDeal {
+  const discountedPriceBdt = Math.round(
+    raw.originalPriceBdt * (1 - raw.discountPercent / 100),
+  );
+  return {
+    ...raw,
+    discountedPriceBdt,
+    savingsBdt: raw.originalPriceBdt - discountedPriceBdt,
+  };
 }
 
 export const HOT_DEALS_LIST: HotDeal[] = [
-  {
-    id: 'vps-starter',
-    category: 'VPS Hosting',
-    badge: '35% OFF',
-    title: 'upto 35% OFF on first month for VPS Hosting',
-    subtitle: 'High performance NVMe Cloud VPS tailored for fast workloads.',
-    discountPercent: 35,
+  buildDeal({
+    id: "vps-starter",
+    category: "KVM Cloud VPS",
+    shortName: "Cloud NVMe",
+    badge: "15% OFF",
+    title: "Cloud NVMe VPS",
+    subtitle:
+      "ওয়েব অ্যাপ, বট ও ডেভেলপার প্রজেক্টের জন্য হাই-স্পিড NVMe সার্ভার।",
+    discountPercent: 15,
     originalPriceBdt: 950,
-    discountedPriceBdt: 615,
-    couponCode: 'HOTVPS35',
-    headerTheme: 'blue',
-    targetUrl: '/cloud-vps',
+    couponCode: "CLOUD15",
+    accent: "blue",
+    ribbonBg: "bg-[#3b82f6]",
+    targetUrl: "/cloud-vps?coupon=CLOUD15",
     specs: [
-      { label: 'CPU', value: '1 vCPU' },
-      { label: 'RAM', value: '2 GB DDR4' },
-      { label: 'Storage', value: '30 GB NVMe' },
-      { label: 'Network', value: '1 Gbps Port' },
+      { label: "CPU / RAM", value: "1 vCPU · 2 GB" },
+      { label: "Storage", value: "30 GB NVMe" },
+      { label: "Network", value: "1 Gbps Port" },
+      { label: "Delivery", value: "৬০–৯০ সেকেন্ড" },
     ],
-  },
-  {
-    id: 'residential-isp',
-    category: 'Residential ISP',
-    badge: '30% OFF',
-    title: 'upto 30% OFF on first month for Residential VPS',
-    subtitle: 'Clean 100% genuine US ISP IPs with AT&T and Comcast ASN.',
-    discountPercent: 30,
+  }),
+  buildDeal({
+    id: "residential-isp",
+    category: "Most Popular",
+    shortName: "Popular Pro RDP",
+    badge: "সবচেয়ে জনপ্রিয়",
+    title: "Popular Pro ISP RDP",
+    subtitle:
+      "AT&T, Comcast ও Verizon-এর খাঁটি ডেডিকেটেড US রেসিডেন্সিয়াল IP।",
+    discountPercent: 10,
     originalPriceBdt: 3799,
-    discountedPriceBdt: 2659,
-    couponCode: 'RESISP30',
-    headerTheme: 'amber',
-    targetUrl: '/survey-vps',
+    couponCode: "LAUNCH10",
+    accent: "blue",
+    ribbonBg: "bg-[#fbb034]",
+    targetUrl: "/survey-vps?plan=pro&country=us&coupon=LAUNCH10",
+    featured: true,
     specs: [
-      { label: 'CPU', value: '4 vCPU' },
-      { label: 'RAM', value: '6 GB RAM' },
-      { label: 'Storage', value: '60 GB NVMe' },
-      { label: 'ISP Trust', value: 'Virgin Residential' },
+      { label: "CPU / RAM", value: "4 vCPU · 6 GB" },
+      { label: "Storage", value: "60 GB NVMe" },
+      { label: "ISP Trust", value: "Static Home ISP" },
+      { label: "Swap Policy", value: "৭-দিন ফ্রি Swap" },
     ],
-  },
-  {
-    id: 'virgin-isp',
-    category: 'Virgin ASN Server',
-    badge: '25% OFF',
-    title: 'upto 25% OFF on first month for Virgin US IP',
-    subtitle: 'Never-recycled pure residential IP dedicated exclusively to you.',
-    discountPercent: 25,
+  }),
+  buildDeal({
+    id: "virgin-isp",
+    category: "Virgin ASN Server",
+    shortName: "VIP Fresh ASN",
+    badge: "Virgin ASN",
+    title: "VIP Fresh (Virgin ASN)",
+    subtitle: "Prolific ও হাই-ভ্যালু কাজের জন্য সম্পূর্ণ আনটাচড ফ্রেশ US IP।",
+    discountPercent: 12,
     originalPriceBdt: 4999,
-    discountedPriceBdt: 3749,
-    couponCode: 'VIRGIN25',
-    headerTheme: 'cyan',
-    targetUrl: '/survey-vps',
+    couponCode: "VIRGIN12",
+    accent: "amber",
+    ribbonBg: "bg-[#00c8db]",
+    targetUrl: "/survey-vps?plan=vip&country=us&coupon=VIRGIN12",
     specs: [
-      { label: 'CPU', value: '4 vCPU' },
-      { label: 'RAM', value: '8 GB RAM' },
-      { label: 'Storage', value: '80 GB NVMe' },
-      { label: 'IP Warranty', value: '7-Day Replacement' },
+      { label: "CPU / RAM", value: "4 vCPU · 8 GB" },
+      { label: "Storage", value: "80 GB NVMe" },
+      { label: "Network", value: "Virgin US ASN" },
+      { label: "Swap Policy", value: "৭-দিন ফ্রি Swap" },
     ],
-  },
-  {
-    id: 'reseller-pack',
-    category: 'Reseller Cluster',
-    badge: '20% OFF',
-    title: 'upto 20% OFF on first month for Reseller Bulk',
-    subtitle: 'Bulk fleet management with custom sub-accounts and wholesale rates.',
-    discountPercent: 20,
+  }),
+  buildDeal({
+    id: "reseller-pack",
+    category: "Reseller Cluster",
+    shortName: "Reseller Bulk",
+    badge: "8% OFF",
+    title: "Reseller Bulk Pack",
+    subtitle:
+      "এজেন্সি ও টিমের জন্য ১০+ ইনস্ট্যান্স, সাব-অ্যাকাউন্ট ও হোলসেল রেট।",
+    discountPercent: 8,
     originalPriceBdt: 18750,
-    discountedPriceBdt: 15000,
-    couponCode: 'RESELL20',
-    headerTheme: 'emerald',
-    targetUrl: '/resellers',
+    couponCode: "RESELL8",
+    accent: "emerald",
+    ribbonBg: "bg-[#00c06a]",
+    targetUrl: "/resellers?coupon=RESELL8",
     specs: [
-      { label: 'Nodes', value: '10+ Instances' },
-      { label: 'Control', value: 'Centralized API' },
-      { label: 'IPs', value: 'Dedicated Subnets' },
-      { label: 'Support', value: 'Priority VIP 24/7' },
+      { label: "Nodes", value: "10+ Instances" },
+      { label: "Control", value: "Centralized API" },
+      { label: "IPs", value: "Dedicated Subnets" },
+      { label: "Support", value: "প্রায়োরিটি VIP ২৪/৭" },
     ],
-  },
+  }),
 ];
 
-export interface FlashPreviewItem {
-  id: string;
-  name: string;
-  discountPercent: number;
-  originalUsd: string;
-  saleUsd: string;
-  originalBdt: number;
-  saleBdt: number;
-  bgHex: string;
-  targetUrl: string;
-}
+export const MAX_DISCOUNT_PERCENT = Math.max(
+  ...HOT_DEALS_LIST.map((deal) => deal.discountPercent),
+);
 
-export const FLASH_PREVIEW_ITEMS: FlashPreviewItem[] = [
-  {
-    id: 'vps',
-    name: 'VPS Hosting',
-    discountPercent: 35,
-    originalUsd: '$2/mo',
-    saleUsd: '$1.35',
-    originalBdt: 245,
-    saleBdt: 165,
-    bgHex: 'bg-[#3b82f6]', // vibrant solid blue
-    targetUrl: '/cloud-vps',
-  },
-  {
-    id: 'dedicated',
-    name: 'Dedication server',
-    discountPercent: 30,
-    originalUsd: '$50/mo',
-    saleUsd: '$35',
-    originalBdt: 6100,
-    saleBdt: 4270,
-    bgHex: 'bg-[#fbb034]', // vibrant solid warm yellow
-    targetUrl: '/cloud-vps',
-  },
-  {
-    id: 'colocation',
-    name: 'Colocation',
-    discountPercent: 20,
-    originalUsd: '$80/mo',
-    saleUsd: '$64',
-    originalBdt: 9760,
-    saleBdt: 7800,
-    bgHex: 'bg-[#00c8db]', // vibrant solid cyan
-    targetUrl: '/survey-vps',
-  },
-  {
-    id: 'hybrid',
-    name: 'Hybrid server',
-    discountPercent: 35,
-    originalUsd: '$40/mo',
-    saleUsd: '$26',
-    originalBdt: 4880,
-    saleBdt: 3170,
-    bgHex: 'bg-[#00c06a]', // vibrant solid green
-    targetUrl: '/resellers',
-  },
-];
+export const FLASH_PREVIEW_ITEMS = HOT_DEALS_LIST.map((deal) => ({
+  id: deal.id,
+  name: deal.shortName,
+  discountPercent: deal.discountPercent,
+  originalBdt: deal.originalPriceBdt,
+  saleBdt: deal.discountedPriceBdt,
+  bgHex: deal.ribbonBg,
+  targetUrl: deal.targetUrl,
+}));
