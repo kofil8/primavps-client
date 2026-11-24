@@ -14,6 +14,16 @@ interface CurrencyContextType {
 
 const CurrencyContext = createContext<CurrencyContextType | null>(null);
 
+// Used only if a consumer renders outside the provider (e.g. during a hot
+// reload). Falling back keeps the page usable instead of throwing a client
+// error that blanks the whole route.
+const FALLBACK_CURRENCY: CurrencyContextType = {
+  currency: 'BDT',
+  setCurrency: () => {},
+  formatPrice: (bdt: number) => `৳${bdt.toLocaleString('en-US')}`,
+  formatHourly: (bdt: number) => `~৳${(bdt / 720).toFixed(2)}/hr`,
+};
+
 const CURRENCY_STORAGE_KEY = 'primavps_currency';
 const CURRENCY_CHANGE_EVENT = 'pv-currency-changed';
 
@@ -73,9 +83,5 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCurrency() {
-  const context = useContext(CurrencyContext);
-  if (!context) {
-    throw new Error('useCurrency must be used within a CurrencyProvider');
-  }
-  return context;
+  return useContext(CurrencyContext) ?? FALLBACK_CURRENCY;
 }

@@ -56,6 +56,7 @@ function RegisterFormContent() {
 
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [captchaUnavailable, setCaptchaUnavailable] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const loginHref = searchParams.get("next")
@@ -107,7 +108,7 @@ function RegisterFormContent() {
 
     if (!validate()) return;
 
-    if (TURNSTILE_ENABLED && !turnstileToken) {
+    if (TURNSTILE_ENABLED && !turnstileToken && !captchaUnavailable) {
       setFormError("Please complete the security verification.");
       return;
     }
@@ -441,20 +442,40 @@ function RegisterFormContent() {
               resetKey={turnstileResetKey}
               onVerify={(token) => {
                 setTurnstileToken(token);
+                setCaptchaUnavailable(false);
                 if (formError) setFormError(null);
               }}
               onExpire={() => setTurnstileToken(null)}
               onError={() => {
                 setTurnstileToken(null);
-                setFormError("Security check failed to load. Please refresh.");
+                setCaptchaUnavailable(true);
+                setFormError(
+                  "The security check could not load. You can still create your account.",
+                );
               }}
             />
+            {captchaUnavailable && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCaptchaUnavailable(false);
+                  setFormError(null);
+                  resetCaptcha();
+                }}
+                className="mt-1 cursor-pointer text-xs font-semibold text-blue-700 hover:underline"
+              >
+                Retry security check
+              </button>
+            )}
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading || (TURNSTILE_ENABLED && !turnstileToken)}
+            disabled={
+              loading ||
+              (TURNSTILE_ENABLED && !turnstileToken && !captchaUnavailable)
+            }
             className="btn-primary inline-flex w-full cursor-pointer items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (

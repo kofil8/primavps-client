@@ -48,14 +48,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (isTurnstileConfigured()) {
-    if (!turnstileToken) {
-      return NextResponse.json(
-        { error: "Security verification is required." },
-        { status: 400 },
-      );
-    }
-
+  // See login route: a challenge that fails to load must not block sign-up.
+  if (isTurnstileConfigured() && turnstileToken) {
     const isHuman = await verifyTurnstile(turnstileToken, getClientIp(req.headers));
     if (!isHuman) {
       return NextResponse.json(

@@ -133,7 +133,7 @@ export function ChatWidget() {
   ).replace(/[^0-9]/g, "");
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    "হ্যালো primavps, আমি Residential ISP RDP / VPS কেনার আগে কিছু তথ্য জানতে চাচ্ছি।",
+    "হ্যালো primavps support team, আমি Residential ISP RDP / VPS কেনার আগে কিছু তথ্য জানতে চাচ্ছি।",
   )}`;
 
   useEffect(() => {

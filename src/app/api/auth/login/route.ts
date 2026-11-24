@@ -30,14 +30,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (isTurnstileConfigured()) {
-    if (!turnstileToken) {
-      return NextResponse.json(
-        { error: "Security verification is required." },
-        { status: 400 },
-      );
-    }
-
+  // The challenge script can be blocked by adblockers, firewalls or offline
+  // networks. Only verify tokens that were actually issued, so those users can
+  // still sign in; an invalid token is still rejected.
+  if (isTurnstileConfigured() && turnstileToken) {
     const isHuman = await verifyTurnstile(turnstileToken, getClientIp(req.headers));
     if (!isHuman) {
       return NextResponse.json(
