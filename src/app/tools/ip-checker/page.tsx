@@ -379,14 +379,14 @@ export default function IpCheckerPage() {
                         <span>Survey Sites Actively Block Hosting &amp; Proxy ASN Ranges</span>
                       </div>
                       <p className="text-xs text-amber-900 leading-relaxed max-w-2xl">
-                        Platforms like PureSpectrum, Swagbucks, Cint, and PayPal flag this IP because it belongs to a Data Center range. Deploy a verified AT&amp;T or Comcast Residential Windows VPS with guaranteed 0/100 fraud score.
+                        Remote enterprise systems, global ecommerce platforms, and cloud services often flag standard Data Center ranges. Deploy a verified AT&amp;T or Comcast Dedicated Residential Windows VPS with guaranteed 0/100 fraud score.
                       </p>
                     </div>
                     <Link
-                      href="/survey-vps"
+                      href="/isp-vps"
                       className="px-5 py-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs whitespace-nowrap shadow-sm transition-all flex items-center gap-2"
                     >
-                      <span>Get Clean Survey VPS</span>
+                      <span>Get Dedicated ISP VPS</span>
                       <ArrowRight size={14} />
                     </Link>
                   </div>
@@ -399,11 +399,11 @@ export default function IpCheckerPage() {
                         <span>Clean Residential ISP Fingerprint Confirmed</span>
                       </div>
                       <p className="text-xs text-emerald-900 leading-relaxed max-w-2xl">
-                        This IP passes top fraud inspection systems. Maintain your high survey completion rates and account health with our dedicated US ISP RDP instances.
+                        This IP passes top fraud inspection systems. Maintain your reliable remote workflows and account health with our dedicated US ISP RDP instances.
                       </p>
                     </div>
                     <Link
-                      href="/survey-vps"
+                      href="/isp-vps"
                       className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs whitespace-nowrap shadow-sm transition-all flex items-center gap-2"
                     >
                       <span>Explore ISP VPS Plans</span>

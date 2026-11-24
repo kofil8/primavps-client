@@ -5,6 +5,7 @@ import { useCurrency } from "@/lib/currency";
 import { HOT_DEALS_LIST } from "@/lib/data/deals";
 import { IspPlan } from "@/lib/data/plans";
 import { ArrowRight, Lock, MapPin, X } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -135,6 +136,7 @@ export function CheckoutDrawer({
   const [appliedDiscountPercent, setAppliedDiscountPercent] = useState(0);
   const [couponError, setCouponError] = useState("");
   const [redirecting, setRedirecting] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   useEffect(() => {
     const config = COUNTRY_CONFIGS[normCountry] || COUNTRY_CONFIGS.us;
@@ -430,9 +432,14 @@ export function CheckoutDrawer({
               </div>
             )}
             <div className="mt-3 flex items-baseline justify-between border-t border-slate-200 pt-3">
-              <span className="text-sm font-bold text-slate-900">
-                সর্বমোট পেমেন্ট
-              </span>
+              <div>
+                <span className="block text-sm font-bold text-slate-900">
+                  সর্বমোট পেমেন্ট
+                </span>
+                <span className="block text-[10px] text-slate-500">
+                  (সকল মূল্যের সাথে প্রযোজ্য ভ্যাট/ট্যাক্স অন্তর্ভুক্ত)
+                </span>
+              </div>
               <span className="font-display text-2xl font-black text-slate-900">
                 {formatPrice(total)}
               </span>
@@ -441,12 +448,38 @@ export function CheckoutDrawer({
         </div>
 
         {/* Sticky Footer CTA (Safe-area padded for iOS/Android) */}
-        <div className="shrink-0 space-y-2 border-t border-slate-200 bg-white px-4 py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-4">
+        <div className="shrink-0 space-y-3 border-t border-slate-200 bg-white px-4 py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-4">
+          {/* Mandatory DBID & SSLCOMMERZ Terms Agreement Checkbox */}
+          <div className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/80 p-2.5 text-[11px] text-slate-700">
+            <input
+              id="checkout-agree"
+              type="checkbox"
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className="mt-0.5 size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label htmlFor="checkout-agree" className="cursor-pointer leading-relaxed text-slate-600">
+              আমি{" "}
+              <Link href="/terms" target="_blank" className="font-semibold text-blue-600 hover:underline">
+                শর্তাবলী
+              </Link>
+              ,{" "}
+              <Link href="/privacy-policy" target="_blank" className="font-semibold text-blue-600 hover:underline">
+                গোপনীয়তা নীতি
+              </Link>{" "}
+              এবং{" "}
+              <Link href="/refund-policy" target="_blank" className="font-semibold text-blue-600 hover:underline">
+                রিফান্ড পলিসি
+              </Link>{" "}
+              পড়েছি এবং এতে সম্মতি জানাচ্ছি।
+            </label>
+          </div>
+
           <button
             type="button"
             onClick={proceedToCheckout}
-            disabled={redirecting}
-            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:opacity-60"
+            disabled={!agreedToTerms || redirecting}
+            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Lock size={15} />
             <span>
@@ -457,7 +490,7 @@ export function CheckoutDrawer({
             {!redirecting && <ArrowRight size={16} />}
           </button>
           <p className="text-center text-[11px] text-slate-500">
-            বিকাশ · নগদ · কার্ড · USDT · ৯০ সেকেন্ডে অটো-ডেলিভারি
+            বিকাশ · নগদ · রকেট · ভিসা · মাস্টারকার্ড · SSLCOMMERZ সিকিউর পেমেন্ট
           </p>
         </div>
       </div>

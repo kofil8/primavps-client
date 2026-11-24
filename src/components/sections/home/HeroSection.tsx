@@ -4,7 +4,8 @@ import { CountryFlag } from "@/components/ui/CountryFlag";
 import {
   BkashLogo,
   NagadLogo,
-  UsdtLogo,
+  RocketLogo,
+  SslcommerzLogo,
   VisaLogo,
 } from "@/components/ui/PaymentLogos";
 import { useCurrency } from "@/lib/currency";
@@ -53,10 +54,10 @@ const SUPPORTED_COUNTRIES = [
 ];
 
 const ISP_BULLETS = [
-  "IPQS Fraud Score: 0/100 গ্যারান্টিযুক্ত ক্লিন IP",
-  "৭ দিনের আনকন্ডিশনাল ফ্রি IP রিপ্লেসমেন্ট",
+  "IPQS Fraud Score: 0/100 গ্যারান্টিযুক্ত ক্লিন স্ট্যাটিক IP",
+  "৭ দিনের আনকন্ডিশনাল ফ্রি IP রিপ্লেসমেন্ট সুবিধা",
   "100% ডেডিকেটেড স্ট্যাটিক হোম ব্রডব্যান্ড (কোনো শেয়ারিং নেই)",
-  "২৪/৭ লাইভ এআই চ্যাট ও ঢাকা বনানী টেকনিক্যাল সাপোর্ট",
+  "২৪/৭ লাইভ টেকনিক্যাল সাপোর্ট ও ৯৯.৯% আপটাইম গ্যারান্টি",
 ];
 
 export function HeroSection() {
@@ -97,9 +98,9 @@ export function HeroSection() {
             <span>100% Clean Residential ISP VPS</span>
           </div>
 
-          {/* Fluid Responsive Headline */}
-          <h1 className="mt-4 font-display text-[2rem] font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:mt-5 sm:text-5xl lg:text-[3.1rem] xl:text-[3.5rem]">
-            ব্যান হওয়ার ভয় শেষ।
+          {/* Fluid Responsive Headline (H1 — High Hook + Clean 2-Line Balance) */}
+          <h1 className="mt-4 font-display text-[2rem] font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:mt-5 sm:text-5xl lg:text-[3.05rem] xl:text-[3.45rem]">
+            ক্লিন রেসিডেন্সিয়াল IP,
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent">
               এখন কাজ করুন{" "}
@@ -108,7 +109,7 @@ export function HeroSection() {
                   নিশ্চিন্তে।
                 </span>
                 <svg
-                  aria-hidden
+                  aria-hidden="true"
                   className="absolute -bottom-1.5 left-0 w-full overflow-visible sm:-bottom-2"
                   viewBox="0 0 180 10"
                   fill="none"
@@ -123,22 +124,19 @@ export function HeroSection() {
                 </svg>
               </span>
             </span>
-            <span className="mt-3 block font-sans text-base font-semibold text-slate-700 sm:text-lg">
-              Bangladesh&apos;s cleanest Survey VPS &amp; residential ISP RDP
-            </span>
           </h1>
 
-          {/* Dynamic Subheadline */}
-          <p className="mt-5 max-w-2xl text-sm leading-[1.7] text-slate-600 sm:mt-6 sm:text-base xl:text-[1.05rem]">
+          {/* Dynamic Compliance-Safe Subheadline */}
+          <p className="mt-3 max-w-2xl text-sm leading-[1.7] text-slate-600 sm:mt-3.5 sm:text-base xl:text-[1.05rem]">
             <span className="font-semibold text-slate-800">
               {selectedCountry.isp}
             </span>{" "}
-            রেসিডেন্সিয়াল IP — সার্ভে, ফ্রিল্যান্সিং ও পেপ্যাল অ্যাকাউন্টের
-            জন্য{" "}
+            স্ট্যাটিক হোম ব্রডব্যান্ড নেটওয়ার্ক — রিমোট ওয়ার্ক, QA টেস্টিং ও
+            গ্লোবাল বিজনেসের জন্য{" "}
             <strong className="font-semibold text-slate-900">
-              100% ক্লিন {selectedCountry.code} VPS
+              ১০০% ডেডিকেটেড {selectedCountry.code} সার্ভার
             </strong>
-            , পেমেন্ট করুন{" "}
+            , সহজ পেমেন্ট{" "}
             <strong className="font-semibold text-pink-600">বিকাশ</strong> বা{" "}
             <strong className="font-semibold text-orange-500">নগদে</strong>।
           </p>
@@ -219,12 +217,16 @@ export function HeroSection() {
                 node: <NagadLogo className="h-4 w-auto sm:h-4.5" />,
               },
               {
+                name: "Rocket",
+                node: <RocketLogo className="h-4 w-auto sm:h-4.5" />,
+              },
+              {
                 name: "Visa & Mastercard",
                 node: <VisaLogo className="h-4 w-auto sm:h-4.5" />,
               },
               {
-                name: "USDT",
-                node: <UsdtLogo className="h-4 w-auto sm:h-4.5" />,
+                name: "SSLCOMMERZ Secured",
+                node: <SslcommerzLogo className="h-4 w-auto sm:h-4.5" />,
               },
             ].map((item) => (
               <div

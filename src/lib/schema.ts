@@ -96,7 +96,7 @@ export function ispPlansSchema() {
         category: "Residential ISP VPS",
         offers: {
           "@type": "Offer",
-          url: `${SITE_URL}/survey-vps?plan=${plan.id}`,
+          url: `${SITE_URL}/isp-vps?plan=${plan.id}`,
           price: plan.priceBdt,
           priceCurrency: "BDT",
           availability: "https://schema.org/InStock",

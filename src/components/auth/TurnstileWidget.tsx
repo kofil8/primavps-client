@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -30,6 +30,8 @@ interface TurnstileWidgetProps {
 }
 
 const SCRIPT_ID = "cf-turnstile-script";
+const SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 const SITE_KEY =
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
   (process.env.NODE_ENV === "development" ? "1x00000000000000000000AA" : "");
@@ -37,6 +39,10 @@ const SITE_KEY =
 // When no site key is configured the widget cannot render, so auth forms must
 // not block submission waiting for a token that will never arrive.
 export const TURNSTILE_ENABLED = Boolean(SITE_KEY);
+
+// If the challenge script cannot be reached (adblocker, firewall, offline),
+// tell the form instead of leaving it waiting forever.
+const LOAD_TIMEOUT_MS = 10_000;
 
 export function TurnstileWidget({
   onVerify,
@@ -46,6 +52,7 @@ export function TurnstileWidget({
 }: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   const onVerifyRef = useRef(onVerify);
   const onExpireRef = useRef(onExpire);
@@ -59,10 +66,13 @@ export function TurnstileWidget({
     if (!SITE_KEY || !containerRef.current) return;
 
     let cancelled = false;
+    let failed = false;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
 
     const renderWidget = () => {
       if (cancelled || !containerRef.current || !window.turnstile) return;
       if (widgetIdRef.current) return;
+      clearTimeout(timeout);
 
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: SITE_KEY,
@@ -74,25 +84,38 @@ export function TurnstileWidget({
       });
     };
 
+    const handleFailure = () => {
+      if (cancelled || failed || widgetIdRef.current) return;
+      failed = true;
+      clearTimeout(timeout);
+      onErrorRef.current?.();
+    };
+
     if (window.turnstile) {
       renderWidget();
     } else {
       let script = document.getElementById(
         SCRIPT_ID,
       ) as HTMLScriptElement | null;
+
       if (!script) {
         script = document.createElement("script");
         script.id = SCRIPT_ID;
-        script.src =
-          "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+        script.src = SCRIPT_SRC;
         script.async = true;
         script.defer = true;
         document.head.appendChild(script);
       }
+
       script.addEventListener("load", renderWidget);
+      script.addEventListener("error", handleFailure);
+      timeout = setTimeout(handleFailure, LOAD_TIMEOUT_MS);
+
       return () => {
         cancelled = true;
+        clearTimeout(timeout);
         script?.removeEventListener("load", renderWidget);
+        script?.removeEventListener("error", handleFailure);
         if (widgetIdRef.current && window.turnstile) {
           window.turnstile.remove(widgetIdRef.current);
           widgetIdRef.current = null;
@@ -102,17 +125,30 @@ export function TurnstileWidget({
 
     return () => {
       cancelled = true;
+      clearTimeout(timeout);
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
         widgetIdRef.current = null;
       }
     };
-  }, []);
+  }, [attempt]);
 
-  // Reset widget after failed login attempt (Turnstile tokens are single-use)
+  // Tokens are single-use; reset after a failed attempt. If the widget never
+  // loaded, a reset retries the script instead.
   useEffect(() => {
-    if (resetKey > 0 && widgetIdRef.current && window.turnstile) {
+    if (resetKey === 0) return;
+
+    if (widgetIdRef.current && window.turnstile) {
       window.turnstile.reset(widgetIdRef.current);
+      return;
+    }
+
+    const failedScript = document.getElementById(
+      SCRIPT_ID,
+    ) as HTMLScriptElement | null;
+    if (failedScript) {
+      failedScript.remove();
+      setAttempt((prev) => prev + 1);
     }
   }, [resetKey]);
 

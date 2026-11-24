@@ -8,7 +8,7 @@ const PUBLIC_ROUTES: {
   changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
 }[] = [
   { path: "/", priority: 1, changeFrequency: "weekly" },
-  { path: "/survey-vps", priority: 0.9, changeFrequency: "weekly" },
+  { path: "/isp-vps", priority: 0.9, changeFrequency: "weekly" },
   { path: "/cloud-vps", priority: 0.8, changeFrequency: "weekly" },
   { path: "/hot-deals", priority: 0.8, changeFrequency: "weekly" },
   { path: "/blog", priority: 0.7, changeFrequency: "weekly" },
@@ -17,10 +17,11 @@ const PUBLIC_ROUTES: {
   { path: "/tools/webrtc-test", priority: 0.5, changeFrequency: "monthly" },
   { path: "/tools/looking-glass", priority: 0.5, changeFrequency: "monthly" },
   { path: "/status", priority: 0.4, changeFrequency: "daily" },
-  { path: "/contact", priority: 0.5, changeFrequency: "monthly" },
-  { path: "/legal/ip-replacement", priority: 0.4, changeFrequency: "yearly" },
-  { path: "/legal/terms", priority: 0.3, changeFrequency: "yearly" },
-  { path: "/legal/privacy", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/about", priority: 0.6, changeFrequency: "monthly" },
+  { path: "/contact", priority: 0.6, changeFrequency: "monthly" },
+  { path: "/terms", priority: 0.4, changeFrequency: "yearly" },
+  { path: "/privacy-policy", priority: 0.4, changeFrequency: "yearly" },
+  { path: "/refund-policy", priority: 0.4, changeFrequency: "yearly" },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

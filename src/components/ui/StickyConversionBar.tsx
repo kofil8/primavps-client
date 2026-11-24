@@ -49,7 +49,7 @@ export function StickyConversionBar() {
           {/* Right action group */}
           <div className="flex items-center justify-between sm:justify-end gap-3">
             <Link
-              href="/survey-vps"
+              href="/isp-vps"
               className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-blue-500/25 transition-all hover:brightness-110 active:scale-95"
             >
               <span>প্ল্যান বেছে নিন</span>

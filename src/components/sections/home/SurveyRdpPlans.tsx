@@ -57,7 +57,7 @@ const TIERS: PlanTier[] = [
   {
     id: "starter",
     name: "Starter",
-    tagline: "১–২টি সার্ভে ব্রাউজার ও ডেইলি কাজের জন্য",
+    tagline: "রিমোট ব্রাউজিং, ডেভেলপমেন্ট ও সাধারণ কাজের জন্য",
     badge: null,
     highlight: false,
     vcpu: "2 vCPU",
@@ -76,7 +76,7 @@ const TIERS: PlanTier[] = [
   {
     id: "pro",
     name: "Popular Pro",
-    tagline: "মাল্টি-প্রোফাইল সার্ভে ও স্মুথ মাল্টিটাস্কিংয়ের জন্য",
+    tagline: "মাল্টি-টাস্কিং, ই-কমার্স ও স্মুথ প্রফেশনাল ব্যবহারের জন্য",
     badge: "সবচেয়ে জনপ্রিয়",
     highlight: true,
     vcpu: "4 vCPU",
@@ -87,7 +87,7 @@ const TIERS: PlanTier[] = [
     ctaLabel: "Popular Pro নিন",
     features: [
       "Starter-এর সব সুবিধাসহ ২ গুণ বেশি প্রসেসিং পাওয়ার",
-      "একসাথে ৪–৫টি ব্রাউজার প্রোফাইলে ল্যাগ-ফ্রি পারফরম্যান্স",
+      "একসাথে একাধিক ওয়ার্কস্পেসে ল্যাগ-ফ্রি পারফরম্যান্স",
       "প্রায়োরিটি রাউটিং — ঢাকা থেকে লো-পিং কানেকশন",
       "৭ দিনের ফ্রি IP রিপ্লেসমেন্ট ও প্রায়োরিটি সাপোর্ট",
     ],
@@ -95,7 +95,7 @@ const TIERS: PlanTier[] = [
   {
     id: "vip",
     name: "VIP Fresh",
-    tagline: "হাই-ভ্যালু PayPal, Prolific ও ভারী কাজের জন্য",
+    tagline: "হাই-পারফরম্যান্স গ্লোবাল অপারেশনস ও ডেডিকেটেড কাজের জন্য",
     badge: "Virgin ASN",
     highlight: false,
     vcpu: "4 vCPU",
@@ -107,7 +107,7 @@ const TIERS: PlanTier[] = [
     features: [
       "Virgin ASN — সম্পূর্ণ আনটাচড ফ্রেশ IP রেঞ্জ",
       "8 GB RAM ও 80 GB NVMe — জিরো স্লোডাউন",
-      "স্ট্রিক্ট ফ্রড-চেক সাইটের জন্য সর্বোচ্চ ট্রাস্ট স্কোর",
+      "গ্লোবাল এন্টারপ্রাইজ প্ল্যাটফর্মের জন্য সর্বোচ্চ ট্রাস্ট স্কোর",
       "৭ দিনের ফ্রি IP রিপ্লেসমেন্ট ও ডেডিকেটেড সাপোর্ট",
     ],
   },
@@ -252,7 +252,7 @@ export function SurveyRdpPlans() {
               </div>
 
               <Link
-                href={`/survey-vps?plan=${tier.planSlug}&country=${selectedCountryCode}`}
+                href={`/isp-vps?plan=${tier.planSlug}&country=${selectedCountryCode}`}
                 className={`mt-5 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition-all active:scale-[0.99] sm:px-5 sm:text-sm ${
                   tier.highlight
                     ? "bg-blue-600 text-white shadow-md shadow-blue-600/25 hover:bg-blue-700"

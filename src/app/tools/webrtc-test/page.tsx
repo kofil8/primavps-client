@@ -153,7 +153,7 @@ export default function WebRtcTestPage() {
                     </span>
                   </div>
                   <Link
-                    href="/survey-vps"
+                    href="/isp-vps"
                     className="text-xs text-[#2563EB] hover:underline flex items-center gap-1 font-sans font-medium"
                   >
                     <span>View Zero-Leak ISP Nodes</span>
