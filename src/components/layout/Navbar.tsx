@@ -357,7 +357,7 @@ export function Navbar() {
                   className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
                     currency === "BDT"
                       ? "bg-white text-slate-900 shadow-2xs"
-                      : "text-slate-500 hover:text-slate-800"
+                      : "text-slate-700 hover:text-slate-900"
                   }`}
                 >
                   ৳ BDT
@@ -369,7 +369,7 @@ export function Navbar() {
                   className={`cursor-pointer whitespace-nowrap rounded-md px-2.5 py-1 transition-all ${
                     currency === "USD"
                       ? "bg-white text-slate-900 shadow-2xs"
-                      : "text-slate-500 hover:text-slate-800"
+                      : "text-slate-700 hover:text-slate-900"
                   }`}
                 >
                   $ USD

@@ -1,6 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { ChatWidget } from "@/components/ChatWidget";
+import { LazyChatWidget } from "@/components/LazyChatWidget";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { CurrencyProvider } from "@/lib/currency";
 import { bodyFont, displayFont, monoFont } from "@/lib/fonts";
@@ -84,7 +84,7 @@ export default function RootLayout({
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <Footer />
-          <ChatWidget />
+          <LazyChatWidget />
         </CurrencyProvider>
       </body>
     </html>
