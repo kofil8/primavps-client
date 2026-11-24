@@ -28,12 +28,12 @@ const REVIEWS: ReviewItem[] = [
     nameEn: "Tanvir Ahmed",
     initials: "TA",
     avatarUrl: "/avatar/man-1.webp",
-    role: "Survey Researcher",
+    role: "Software QA Engineer",
     location: "Chittagong",
     countryTag: "US AT&T ISP",
     countryCode: "us",
     quote:
-      "Swagbucks ও Prolific-এ অ্যাকাউন্ট সাসপেনশন শূন্যে নেমেছে! ৪ মাসেও কোনো ফ্ল্যাগ খাইনি — 0/100 IPQS স্কোরের ক্লিন আইপি সত্যিই গেম-চেঞ্জার।",
+      "US রিমোট ক্লায়েন্ট প্ল্যাটফর্মে টেস্টিং এবং সিঙ্ক করার জন্য 0/100 IPQS স্কোরের এই ডেডিকেটেড আইপি দারুণ কার্যকর। কোনো ফ্ল্যাগ বা কানেক্টিভিটি ড্রপ নেই।",
   },
   {
     id: "r-2",
@@ -54,12 +54,12 @@ const REVIEWS: ReviewItem[] = [
     nameEn: "Farhan Chowdhury",
     initials: "FC",
     avatarUrl: "/avatar/man-2.webp",
-    role: "Prolific Specialist",
+    role: "eCommerce Specialist",
     location: "Sylhet",
     countryTag: "UK BT ISP",
     countryCode: "gb",
     quote:
-      "Prolific-এর জন্য ১০০% ক্লিন UK ব্রডব্যান্ড আইপি। কোনো WebRTC বা DNS লিক নেই, উইন্ডোজ ১১ পারফরম্যান্স অনেক দ্রুত ও স্মুথ।",
+      "আন্তর্জাতিক ই-কমার্স প্ল্যাটফর্ম ম্যানেজমেন্টের জন্য ১০০% ক্লিন UK ব্রডব্যান্ড আইপি। কোনো WebRTC বা DNS লিক নেই, উইন্ডোজ ১১ পারফরম্যান্স অনেক দ্রুত ও স্মুথ।",
   },
   {
     id: "r-4",
@@ -67,7 +67,7 @@ const REVIEWS: ReviewItem[] = [
     nameEn: "Mahmudul Hasan",
     initials: "MH",
     avatarUrl: "/avatar/man-3.webp",
-    role: "Agency & PayPal Lead",
+    role: "Digital Agency Lead",
     location: "Dhaka",
     countryTag: "US Comcast ISP",
     countryCode: "us",
@@ -85,7 +85,7 @@ const REVIEWS: ReviewItem[] = [
     countryTag: "DE Telekom ISP",
     countryCode: "de",
     quote:
-      "Deutsche Telekom আইপি দিয়ে ইউরোপের ক্লায়েন্ট কমপ্লায়েন্স ও পেপ্যাল অ্যাক্সেস একদম নিরাপদ। লাইভ পিং ১৪৪ms এবং সাপোর্ট দারুণ।",
+      "Deutsche Telekom আইপি দিয়ে ইউরোপের ক্লায়েন্ট কমিউনিকেশন ও ডেটা প্রসেসিং একদম নিরাপদ। লাইভ পিং ১৪৪ms এবং সাপোর্ট দারুণ।",
   },
   {
     id: "r-6",
@@ -106,12 +106,12 @@ const REVIEWS: ReviewItem[] = [
     nameEn: "Ashraful Islam",
     initials: "AI",
     avatarUrl: "/avatar/man-6.webp",
-    role: "CloudResearch Lead",
+    role: "Ad Verification Lead",
     location: "Sylhet",
     countryTag: "US Verizon ISP",
     countryCode: "us",
     quote:
-      "Freecash ও CloudResearch-এ কাজ করার জন্য স্ট্যাটিক রেসিডেন্সিয়াল আইপি অসাধারণ। কোনো রি-ক্যাপচা বা ব্রাউজার ফিঙ্গারপ্রিন্ট এরর আসেনি।",
+      "গ্লোবাল ডিজিটাল ক্যাম্পেইন অডিট ও টেস্টের জন্য স্ট্যাটিক রেসিডেন্সিয়াল আইপি অসাধারণ। কোনো রি-ক্যাপচা বা ব্রাউজার ফিঙ্গারপ্রিন্ট এরর আসেনি।",
   },
   {
     id: "r-8",
@@ -233,11 +233,11 @@ export function CustomerReviewsCarousel() {
             id={`${baseId}-heading`}
             className="mt-2 font-display text-2xl font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:text-4xl"
           >
-            ৮৫০+ ফ্রিল্যান্সার ও সার্ভে প্রফেশনালদের অভিজ্ঞতা
+            প্রফেশনাল ও গ্লোবাল টিমের বাস্তব অভিজ্ঞতা
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
-            ইউএস, ইউকে, জার্মানি ও ফ্রান্সের ক্লিন রেসিডেন্সিয়াল IP
-            ব্যবহারকারীদের বাস্তব ফিডব্যাক।
+            ইউএস, ইউকে, জার্মানি ও ফ্রান্সের ক্লিন রেসিডেন্সিয়াল ও ক্লাউড সার্ভার
+            ব্যবহারকারীদের নির্ভরযোগ্য ফিডব্যাক।
           </p>
         </Reveal>
       </div>

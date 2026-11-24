@@ -29,7 +29,7 @@ const TRUST_CARDS: TrustCardData[] = [
   {
     id: "card-isp",
     title: "Real Home ISP",
-    desc: "AT&T, Comcast, Verizon ও ইউরোপীয় খাঁটি হোম ব্রডব্যান্ড IP। সার্ভে প্যানেলে ০% ডেটাসেন্টার ফ্ল্যাগ ঝুঁকি।",
+    desc: "AT&T, Comcast, Verizon ও ইউরোপীয় খাঁটি হোম ব্রডব্যান্ড IP। রিমোট প্ল্যাটফর্মে ডেটাসেন্টার ব্লকেজ ছাড়া নিরবচ্ছিন্ন কাজের নিশ্চয়তা।",
     linkText: "IP চেকার টুল",
     linkHref: "/tools/ip-checker",
     actionType: "link",
@@ -38,9 +38,9 @@ const TRUST_CARDS: TrustCardData[] = [
   {
     id: "card-swap",
     title: "৭-দিনের ফ্রি IP Swap",
-    desc: "আইপিতে কোনো সমস্যা হলে ৩ মিনিটে ফ্রেশ আইপি রিপ্লেসমেন্ট। কোনো প্রশ্ন বা বাড়তি চার্জ ছাড়াই।",
+    desc: "আইপিতে কোনো প্রযুক্তিগত সমস্যা হলে তাৎক্ষণিক ফ্রেশ আইপি রিপ্লেসমেন্ট। কোনো প্রশ্ন বা বাড়তি চার্জ ছাড়াই।",
     linkText: "রিপ্লেসমেন্ট পলিসি",
-    linkHref: "/legal/ip-replacement",
+    linkHref: "/refund-policy",
     actionType: "link",
     illustration: "calendar",
   },
@@ -76,11 +76,11 @@ export function WhyTrustUs() {
             কেন primavps বেছে নেবেন
           </p>
           <h2 className="mt-2 font-display text-2xl font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
-            ব্যান-মুক্ত কাজের ৪টি নিশ্চয়তা
+            অপারেশনের ৪টি নিশ্চয়তা
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
-            সাধারণ ভিপিএসের অ্যাকাউন্ট ব্যান ও স্পিড ড্রপ দূর করতে ১০০% খাঁটি
-            হোম ব্রডব্যান্ড নেটওয়ার্ক।
+            আনস্ট্যাবিলিটি দূর করতে ১০০% খাঁটি হোম ব্রডব্যান্ড ও গ্লোবাল ক্লাউড
+            নেটওয়ার্ক।
           </p>
         </Reveal>
 

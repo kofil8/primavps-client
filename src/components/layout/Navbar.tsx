@@ -25,17 +25,17 @@ import { BrandLogo } from "../ui/BrandLogo";
 
 const PRODUCT_LINKS = [
   {
+    href: "/isp-vps",
+    title: "Dedicated ISP VPS",
+    desc: "Clean 0/100 IPQS US/UK/EU static IPs",
+    icon: ShieldCheck,
+    badge: "Popular",
+  },
+  {
     href: "/cloud-vps",
     title: "Cloud VPS",
     desc: "High-speed NVMe compute · Instant deploy",
     icon: Cpu,
-  },
-  {
-    href: "/survey-vps",
-    title: "Residential ISP VPS",
-    desc: "Clean 0/100 IPQS US/UK/EU IPs",
-    icon: ShieldCheck,
-    badge: "Popular",
   },
   {
     href: "/resellers",
@@ -389,7 +389,7 @@ export function Navbar() {
             )}
 
             <Link
-              href="/survey-vps"
+              href="/isp-vps"
               onClick={closeAll}
               className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-700 xl:px-4"
             >
@@ -540,17 +540,21 @@ export function Navbar() {
               </div>
 
               {/* Bottom Quick Links */}
-              <div className="flex items-center justify-around border-t border-slate-200/60 pt-3 text-xs font-semibold text-slate-600">
+              <div className="flex flex-wrap items-center justify-around gap-y-2 border-t border-slate-200/60 pt-3 text-xs font-semibold text-slate-600">
+                <Link href="/about" onClick={closeAll}>
+                  About Us
+                </Link>
+                <span className="text-slate-300">•</span>
+                <Link href="/contact" onClick={closeAll}>
+                  Contact Us
+                </Link>
+                <span className="text-slate-300">•</span>
                 <Link href="/status" onClick={closeAll}>
-                  Network Status
+                  Network
                 </Link>
                 <span className="text-slate-300">•</span>
                 <Link href="/blog" onClick={closeAll}>
                   Guides
-                </Link>
-                <span className="text-slate-300">•</span>
-                <Link href="/contact" onClick={closeAll}>
-                  24/7 Support
                 </Link>
               </div>
             </div>
@@ -562,7 +566,7 @@ export function Navbar() {
       {!hideMobileDock && (
         <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex flex-col items-center px-3 pb-[env(safe-area-inset-bottom)] md:hidden">
           <Link
-            href="/survey-vps"
+            href="/isp-vps"
             onClick={closeAll}
             className="pointer-events-auto mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/85 px-3 py-1 text-[11px] font-bold text-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-transform active:scale-95"
           >
@@ -594,7 +598,7 @@ export function Navbar() {
             </Link>
 
             <Link
-              href="/survey-vps"
+              href="/isp-vps"
               onClick={closeAll}
               aria-current={isServersActive ? "page" : undefined}
               className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-semibold transition-all active:scale-95 ${

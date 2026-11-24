@@ -75,6 +75,38 @@ export function NagadLogo({ className = "h-5 w-auto", ...props }: LogoProps) {
   );
 }
 
+export function RocketLogo({ className = "h-5 w-auto", ...props }: LogoProps) {
+  return (
+    <svg
+      viewBox="0 0 92 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="DBBL Rocket"
+      className={className}
+      {...props}
+    >
+      <g transform="translate(2, 3)">
+        <path
+          d="M11 2L14 8L19 11L14 14L11 20L8 14L3 11L8 8L11 2Z"
+          fill="#8C3494"
+        />
+        <circle cx="11" cy="11" r="3" fill="#FAA61A" />
+      </g>
+      <text
+        x="30"
+        y="19.5"
+        fill="#8C3494"
+        fontFamily="Inter, system-ui, -apple-system, sans-serif"
+        fontSize="15"
+        fontWeight="800"
+        letterSpacing="-0.2"
+      >
+        Rocket
+      </text>
+    </svg>
+  );
+}
+
 export function VisaLogo({ className = "h-5 w-auto", ...props }: LogoProps) {
   return (
     <svg
@@ -136,6 +168,51 @@ export function VisaMastercardLogo(props: LogoProps) {
   return <VisaLogo {...props} />;
 }
 
+export function SslcommerzLogo({
+  className = "h-5 w-auto",
+  ...props
+}: LogoProps) {
+  return (
+    <svg
+      viewBox="0 0 134 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="SSLCOMMERZ Secured Payment Gateway"
+      className={className}
+      {...props}
+    >
+      {/* Clean Shield / Padlock Mark */}
+      <g transform="translate(2, 4)">
+        <rect x="2" y="8" width="14" height="10" rx="2.2" fill="#0284C7" />
+        <path
+          d="M5.5 8V5.5C5.5 3.567 7.067 2 9 2C10.933 2 12.5 3.567 12.5 5.5V8"
+          stroke="#0F172A"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <circle cx="9" cy="13" r="1.6" fill="#FFFFFF" />
+      </g>
+
+      {/* Crisp Brand Wordmark (Zero Overlap) */}
+      <text
+        x="23"
+        y="19.5"
+        fill="#0F172A"
+        fontFamily="Inter, system-ui, -apple-system, sans-serif"
+        fontSize="14.5"
+        fontWeight="900"
+        letterSpacing="-0.2"
+      >
+        SSL<tspan fill="#0284C7">COMMERZ</tspan>
+      </text>
+    </svg>
+  );
+}
+
+/**
+ * Retained for backward compatibility in internal tools only.
+ * NOT displayed on public-facing verification pages or footer.
+ */
 export function UsdtLogo({ className = "h-5 w-auto", ...props }: LogoProps) {
   return (
     <svg

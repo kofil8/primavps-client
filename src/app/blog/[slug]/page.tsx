@@ -266,7 +266,7 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
               <Link
                 className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-xs font-bold text-white transition-colors hover:bg-blue-500"
-                href="/survey-vps"
+                href="/isp-vps"
               >
                 <span>প্ল্যান দেখুন</span>
                 <ArrowRight className="shrink-0" size={14} />

@@ -646,12 +646,12 @@ function CloudVpsContent() {
               </ul>
 
               <p className="mt-4 border-t border-slate-100 pt-3 text-center text-[11px] text-slate-500">
-                সার্ভে কাজের জন্য রেডিমেড RDP খুঁজছেন?{" "}
+                হোম ব্রডব্যান্ড আইপিসহ রেডিমেড RDP খুঁজছেন?{" "}
                 <Link
-                  href="/survey-vps"
+                  href="/isp-vps"
                   className="font-bold text-blue-600 hover:underline"
                 >
-                  Survey VPS দেখুন
+                  Dedicated ISP VPS দেখুন
                 </Link>
               </p>
             </div>
