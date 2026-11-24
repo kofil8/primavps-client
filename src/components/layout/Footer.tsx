@@ -272,7 +272,7 @@ export function Footer() {
           <div className="mt-12 flex flex-col justify-between gap-6 border-t border-white/10 pt-8 lg:flex-row lg:items-center">
             {/* Left: Official Business Credentials */}
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
                 Verified Registered Business (Bangladesh)
               </p>
               <div className="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-300">
@@ -307,7 +307,7 @@ export function Footer() {
           </div>
 
           {/* ── TIER 3: Clean Legal & Copyright Bottom Bar ── */}
-          <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-slate-500 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-slate-400 sm:flex-row">
             <p className="text-center sm:text-left">
               © {new Date().getFullYear()} {COMPANY_INFO.legalNameEn} (
               {COMPANY_INFO.brandName}). All rights reserved.
@@ -316,25 +316,25 @@ export function Footer() {
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               <Link
                 href="/terms"
-                className="transition-colors hover:text-slate-300"
+                className="transition-colors hover:text-white"
               >
                 Terms
               </Link>
               <Link
                 href="/privacy-policy"
-                className="transition-colors hover:text-slate-300"
+                className="transition-colors hover:text-white"
               >
                 Privacy
               </Link>
               <Link
                 href="/refund-policy"
-                className="transition-colors hover:text-slate-300"
+                className="transition-colors hover:text-white"
               >
                 Refund Policy
               </Link>
               <Link
                 href="/terms#aup"
-                className="transition-colors hover:text-slate-300"
+                className="transition-colors hover:text-white"
               >
                 AUP
               </Link>

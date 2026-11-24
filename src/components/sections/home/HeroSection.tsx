@@ -85,13 +85,8 @@ export function HeroSection() {
 
       {/* Main hero grid — fits cleanly on 13"/14" laptops and scales up to Desktop L */}
       <div className="shell relative z-10 grid items-center gap-10 py-8 sm:py-12 md:py-14 lg:grid-cols-12 lg:gap-10 lg:py-16 xl:gap-12 xl:py-20">
-        {/* Left Column (7 cols) */}
-        <motion.div
-          className="lg:col-span-7"
-          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-        >
+        {/* Left Column (7 cols) — Immediate SSR paint for optimal LCP */}
+        <div className="lg:col-span-7">
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/90 px-3 py-1 text-[11px] font-bold text-blue-700 shadow-2xs sm:gap-2 sm:px-3.5 sm:text-xs">
             <ShieldCheck size={14} className="shrink-0 text-blue-600" />
@@ -238,15 +233,10 @@ export function HeroSection() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Right Column (5 cols): Proportionally Scaled Illustration + Floating Pills */}
-        <motion.div
-          className="relative flex items-center justify-center pt-2 pb-4 sm:py-0 lg:col-span-5 lg:-mt-4"
-          initial={reduceMotion ? false : { opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-        >
+        <div className="relative flex items-center justify-center pt-2 pb-4 sm:py-0 lg:col-span-5 lg:-mt-4">
           {/* Soft Cyan/Blue Glow Backdrop */}
           <div
             aria-hidden
@@ -268,6 +258,7 @@ export function HeroSection() {
                 width={540}
                 height={540}
                 priority
+                fetchPriority="high"
                 className="h-auto w-full select-none drop-shadow-[0_20px_35px_rgba(37,99,235,0.14)]"
               />
             </motion.div>
@@ -322,7 +313,7 @@ export function HeroSection() {
               </AnimatePresence>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
