@@ -26,7 +26,7 @@ export function organizationSchema() {
     },
     image: `${SITE_URL}/brand/icon-512.png`,
     description:
-      "Bangladesh-based provider of clean residential ISP VPS, survey RDP and NVMe cloud servers with bKash and Nagad payment.",
+      "Bangladesh-based provider of clean residential ISP VPS, static residential RDP and NVMe cloud servers with bKash and Nagad payment.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Banani C/A",
@@ -84,7 +84,7 @@ export function ispPlansSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Residential ISP Survey VPS plans",
+    name: "Residential ISP VPS plans",
     itemListElement: ISP_PLANS.map((plan, index) => ({
       "@type": "ListItem",
       position: index + 1,

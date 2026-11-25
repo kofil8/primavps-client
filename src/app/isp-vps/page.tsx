@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckoutDrawer } from "@/components/sections/isp/CheckoutDrawer";
+import { LazyCheckoutDrawer } from "@/components/sections/isp/LazyCheckoutDrawer";
 import { CountryFlag } from "@/components/ui/CountryFlag";
 import { useCurrency } from "@/lib/currency";
 import { ISP_PLANS, IspPlan } from "@/lib/data/plans";
@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { FaWindows } from "react-icons/fa";
 
 const CYCLES = [
@@ -91,7 +91,7 @@ const TRUST_POINTS = [
   {
     icon: RefreshCw,
     color: "bg-emerald-50 text-emerald-600",
-    text: "৭-দিনের মধ্যে টেকনিক্যাল সমস্যা হলে ফ্রি IP রিপ্লেসমেন্ট",
+    text: "প্রথম ৭ দিনে ফ্রি IP রিপ্লেসমেন্ট (৮ম দিন থেকে ৳৩৫০)",
   },
 ];
 
@@ -108,15 +108,32 @@ function IspVpsContent() {
       ? countryParam.toLowerCase()
       : "us";
 
+  const matchedInitialPlan = planParam
+    ? (ISP_PLANS.find(
+        (p) =>
+          p.id.toLowerCase() === planParam.toLowerCase() ||
+          p.tier.toLowerCase() === planParam.toLowerCase(),
+      ) ?? null)
+    : null;
+
   const [selectedCountry, setSelectedCountry] = useState(
     normalizedInitialCountry,
   );
   const [selectedCarrier, setSelectedCarrier] = useState("All");
-  const [isFresh, setIsFresh] = useState(planParam === "vip");
+  const [isFresh, setIsFresh] = useState(
+    planParam === "vip" || matchedInitialPlan?.tier === "vip",
+  );
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
-  const [activePlan, setActivePlan] = useState<IspPlan | null>(null);
+  const [activePlan, setActivePlan] = useState<IspPlan | null>(
+    matchedInitialPlan,
+  );
+  const [prevParams, setPrevParams] = useState({ planParam, countryParam });
 
-  useEffect(() => {
+  if (
+    prevParams.planParam !== planParam ||
+    prevParams.countryParam !== countryParam
+  ) {
+    setPrevParams({ planParam, countryParam });
     if (planParam) {
       const match = ISP_PLANS.find(
         (p) =>
@@ -128,14 +145,11 @@ function IspVpsContent() {
         if (match.tier === "vip") setIsFresh(true);
       }
     }
-  }, [planParam]);
-
-  useEffect(() => {
     if (countryParam && COUNTRY_CARRIERS[countryParam.toLowerCase()]) {
       setSelectedCountry(countryParam.toLowerCase());
       setSelectedCarrier("All");
     }
-  }, [countryParam]);
+  }
 
   const activeCountryMeta =
     COUNTRY_CARRIERS[selectedCountry] ?? COUNTRY_CARRIERS.us;
@@ -178,7 +192,8 @@ function IspVpsContent() {
             </h1>
             <p className="mt-2.5 max-w-xl text-xs leading-relaxed text-slate-300 sm:mt-3 sm:text-base">
               US, UK, Germany ও France-এর ডেডিকেটেড হোম ব্রডব্যান্ড IP সহ
-              প্রি-হার্ডেন্ড Windows 11 RDP। রিমোট ডেভেলপমেন্ট, QA টেস্টিং ও আন্তর্জাতিক বিজনেস অপারেশনের জন্য প্রস্তুত।
+              প্রি-হার্ডেন্ড Windows 11 RDP। রিমোট ডেভেলপমেন্ট, QA টেস্টিং ও
+              আন্তর্জাতিক বিজনেস অপারেশনের জন্য প্রস্তুত।
             </p>
 
             {/* Clean Inline Spec Line */}
@@ -190,14 +205,16 @@ function IspVpsContent() {
               <span className="text-slate-600">·</span>
               <span>Zero WebRTC Leak</span>
               <span className="text-slate-600">·</span>
-              <span>৯০ সেকেন্ডে ডেলিভারি</span>
+              <span>৬০–৯০ সেকেন্ডে ডেলিভারি</span>
               <span className="text-slate-600">·</span>
               <span>৭-দিন ফ্রি IP Swap</span>
             </p>
 
             {/* Professional Use Cases Pills */}
             <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-slate-800/80 pt-3">
-              <span className="text-[11px] font-semibold text-slate-400">উপযোগী ক্ষেত্রসমূহ:</span>
+              <span className="text-[11px] font-semibold text-slate-400">
+                উপযোগী ক্ষেত্রসমূহ:
+              </span>
               <span className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-medium text-slate-200">
                 🛒 ই-কমার্স ও গ্লোবাল স্টোর
               </span>
@@ -507,14 +524,24 @@ function IspVpsContent() {
             })}
           </div>
 
+          <p className="mt-5 text-center text-xs text-slate-500">
+            প্রথম ৭ দিন ফ্রি IP Swap সুবিধা (AUP সাপেক্ষে)। ৮ম দিন থেকে নতুন IP
+            প্রয়োজন হলে ড্যাশবোর্ড থেকে মাত্র{" "}
+            <strong className="font-semibold text-slate-700">৳৩৫০</strong>{" "}
+            ফি-তে ইনস্ট্যান্ট পরিবর্তন করতে পারবেন।
+          </p>
+
           {/* Compact Trust & Helpful Links */}
           <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-5 sm:mt-12 sm:rounded-3xl sm:p-8">
             <h2 className="font-display text-base font-extrabold text-slate-900 sm:text-xl">
               রিমোট ও প্রফেশনাল ক্লাউড কাজের জন্য primavps কেন নির্ভরযোগ্য?
             </h2>
             <p className="mt-2 max-w-3xl text-xs leading-relaxed text-slate-600 sm:text-sm">
-              সাধারণ ডেটাসেন্টার আইপিতে অনেক আন্তর্জাতিক প্ল্যাটফর্মে ব্লকেজ বা সিকিউরিটি ফ্ল্যাগ দেখা দেয়। primavps-এর AT&amp;T, Comcast,
-              Verizon বা BT-এর ১০০% খাঁটি ও ডেডিকেটেড স্ট্যাটিক হোম ব্রডব্যান্ড IP যেকোনো গ্লোবাল প্রফেশনাল সিস্টেমে নিরবচ্ছিন্ন এক্সেস নিশ্চিত করে।
+              সাধারণ ডেটাসেন্টার আইপিতে অনেক আন্তর্জাতিক প্ল্যাটফর্মে ব্লকেজ বা
+              সিকিউরিটি ফ্ল্যাগ দেখা দেয়। primavps-এর AT&amp;T, Comcast,
+              Verizon বা BT-এর ১০০% খাঁটি ও ডেডিকেটেড স্ট্যাটিক হোম ব্রডব্যান্ড
+              IP যেকোনো গ্লোবাল প্রফেশনাল সিস্টেমে নিরবচ্ছিন্ন এক্সেস নিশ্চিত
+              করে।
             </p>
 
             <ul className="mt-5 grid gap-3 text-xs text-slate-700 sm:grid-cols-2 sm:text-sm">
@@ -559,8 +586,8 @@ function IspVpsContent() {
         </div>
       </section>
 
-      {/* 4. Checkout Drawer */}
-      <CheckoutDrawer
+      {/* 4. Lazy-Loaded Checkout Drawer */}
+      <LazyCheckoutDrawer
         plan={activePlan}
         carrier={selectedCarrier}
         isFresh={isFresh}

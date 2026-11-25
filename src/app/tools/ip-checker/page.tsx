@@ -5,15 +5,10 @@ import Link from 'next/link';
 import { IpReport } from '@/app/api/ip-check/route';
 import {
   ShieldCheck,
-  ShieldAlert,
   Search,
   Copy,
   Check,
   ArrowRight,
-  RefreshCw,
-  ExternalLink,
-  Wifi,
-  Clock,
   AlertTriangle,
 } from 'lucide-react';
 
@@ -22,7 +17,6 @@ export default function IpCheckerPage() {
   const [report, setReport] = useState<IpReport | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [scanStep, setScanStep] = useState<'idle' | 'locating' | 'screening' | 'webrtc' | 'done'>('idle');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [webrtcDetectedIp, setWebrtcDetectedIp] = useState<string | null>(null);
   const [webrtcStatus, setWebrtcStatus] = useState<'Checking...' | 'No Leak (Secure)' | 'Leaked'>('Checking...');
@@ -54,7 +48,7 @@ export default function IpCheckerPage() {
       setTimeout(() => {
         setWebrtcStatus('No Leak (Secure)');
       }, 2500);
-    } catch (e) {
+    } catch {
       setWebrtcStatus('No Leak (Secure)');
     }
   };
@@ -62,10 +56,6 @@ export default function IpCheckerPage() {
   const fetchIpData = async (targetIp: string) => {
     setLoading(true);
     setErrorMsg(null);
-    setScanStep('locating');
-
-    setTimeout(() => setScanStep('screening'), 300);
-    setTimeout(() => setScanStep('webrtc'), 600);
 
     try {
       const res = await fetch(`/api/ip-check${targetIp ? `?ip=${encodeURIComponent(targetIp)}` : ''}`);
@@ -91,7 +81,6 @@ export default function IpCheckerPage() {
       );
       setReport(null);
     } finally {
-      setScanStep('done');
       setLoading(false);
     }
   };
@@ -262,7 +251,7 @@ export default function IpCheckerPage() {
                       }`}
                     >
                       {report.fraudScore <= 15
-                        ? 'Low Risk (Safe for Surveys)'
+                        ? 'Low Risk (Residential Clean)'
                         : report.fraudScore <= 49
                         ? 'Medium Risk (Suspicious)'
                         : 'High Risk (Datacenter Flagged)'}
@@ -376,7 +365,7 @@ export default function IpCheckerPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-amber-800 font-bold text-sm">
                         <AlertTriangle size={18} className="text-amber-600" />
-                        <span>Survey Sites Actively Block Hosting &amp; Proxy ASN Ranges</span>
+                        <span>Target Platforms Actively Block Hosting &amp; Proxy ASN Ranges</span>
                       </div>
                       <p className="text-xs text-amber-900 leading-relaxed max-w-2xl">
                         Remote enterprise systems, global ecommerce platforms, and cloud services often flag standard Data Center ranges. Deploy a verified AT&amp;T or Comcast Dedicated Residential Windows VPS with guaranteed 0/100 fraud score.

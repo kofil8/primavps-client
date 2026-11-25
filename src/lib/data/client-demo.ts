@@ -1,4 +1,138 @@
-export type ServiceStatus = "active" | "provisioning";
+export type ServiceStatus = "active" | "provisioning" | "running" | "stopped";
+
+export interface PortalService {
+  id: string;
+  name: string;
+  plan: string;
+  country: string;
+  carrier: string;
+  os: string;
+  location: string;
+  ip: string;
+  specs: {
+    vcpu: number;
+    ram: number;
+    nvme: number;
+    bandwidth: string;
+  };
+  status: "running" | "stopped" | "provisioning";
+  monthlyBdt: number;
+  monthlyUsd: number;
+  renewsOn: string;
+  ipqsScore: number;
+}
+
+export interface PortalInvoice {
+  id: string;
+  item: string;
+  date: string;
+  amountBdt: number;
+  amountUsd: number;
+  status: "paid" | "unpaid" | "overdue";
+}
+
+export interface PortalTicket {
+  id: string;
+  subject: string;
+  department: string;
+  status: "open" | "resolved" | "closed";
+  updated: string;
+}
+
+export const DEMO_SERVICES: PortalService[] = [
+  {
+    id: "us-isp-pro-01",
+    name: "us-isp-pro-01",
+    plan: "Popular Pro",
+    country: "US",
+    carrier: "AT&T Residential",
+    os: "Windows 11 Pro",
+    location: "Ashburn, VA",
+    ip: "108.204.142.88",
+    specs: { vcpu: 4, ram: 6, nvme: 60, bandwidth: "Unmetered" },
+    status: "running",
+    monthlyBdt: 3799,
+    monthlyUsd: 31,
+    renewsOn: "Dec 18, 2026",
+    ipqsScore: 0,
+  },
+  {
+    id: "uk-isp-starter-02",
+    name: "uk-isp-starter-02",
+    plan: "Starter",
+    country: "UK",
+    carrier: "BT Broadband",
+    os: "Windows 11 Pro",
+    location: "London, UK",
+    ip: "51.89.144.12",
+    specs: { vcpu: 2, ram: 4, nvme: 45, bandwidth: "Unmetered" },
+    status: "running",
+    monthlyBdt: 2999,
+    monthlyUsd: 25,
+    renewsOn: "Dec 24, 2026",
+    ipqsScore: 2,
+  },
+  {
+    id: "de-cloud-03",
+    name: "de-cloud-03",
+    plan: "Cloud NVMe",
+    country: "DE",
+    carrier: "Frankfurt KVM",
+    os: "Ubuntu 24.04 LTS",
+    location: "Frankfurt, DE",
+    ip: "80.153.24.90",
+    specs: { vcpu: 2, ram: 4, nvme: 80, bandwidth: "1 Gbps Unmetered" },
+    status: "stopped",
+    monthlyBdt: 1250,
+    monthlyUsd: 11,
+    renewsOn: "Jan 02, 2027",
+    ipqsScore: 0,
+  },
+];
+
+export const DEMO_INVOICES: PortalInvoice[] = [
+  {
+    id: "INV-2412-0918",
+    item: "Popular Pro (US AT&T) — Monthly Renewal",
+    date: "Dec 03, 2026",
+    amountBdt: 3799,
+    amountUsd: 31,
+    status: "unpaid",
+  },
+  {
+    id: "INV-2411-0842",
+    item: "Starter (UK BT) — Monthly Renewal",
+    date: "Nov 24, 2026",
+    amountBdt: 2999,
+    amountUsd: 25,
+    status: "paid",
+  },
+  {
+    id: "INV-2410-0711",
+    item: "Cloud NVMe (Frankfurt) — Initial Setup",
+    date: "Nov 02, 2026",
+    amountBdt: 1250,
+    amountUsd: 11,
+    status: "paid",
+  },
+];
+
+export const DEMO_TICKETS: PortalTicket[] = [
+  {
+    id: "4821",
+    subject: "Firewall port configuration on Windows 11 RDP",
+    department: "Technical Support",
+    status: "open",
+    updated: "2 hours ago",
+  },
+  {
+    id: "4788",
+    subject: "7-Day free IP replacement verification",
+    department: "IP Screening Desk",
+    status: "resolved",
+    updated: "3 days ago",
+  },
+];
 
 export interface DemoService {
   id: string;
@@ -7,7 +141,7 @@ export interface DemoService {
   location: string;
   ip: string;
   specs: string;
-  status: ServiceStatus;
+  status: "active" | "provisioning";
   monthlyUsd: number;
   renewsOn: string;
   bandwidth: string;

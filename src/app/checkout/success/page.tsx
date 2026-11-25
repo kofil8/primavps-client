@@ -1,0 +1,283 @@
+"use client";
+
+import { FocusedHeader } from "@/components/layout/FocusedHeader";
+import { downloadRdpFile } from "@/lib/utils/rdp-file";
+import {
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  Copy,
+  Download,
+  Eye,
+  EyeOff,
+  Loader2,
+  Server,
+  ShieldCheck,
+} from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+
+function CheckoutSuccessContent() {
+  const searchParams = useSearchParams();
+  const orderRef = searchParams.get("order") || "PV-482910";
+  const planName = searchParams.get("plan") || "Popular Pro ISP VPS (US)";
+  const carrier = searchParams.get("carrier") || "AT&T";
+
+  // Simulates live polling progression (Step 1 -> 2 -> 3)
+  const [stage, setStage] = useState<1 | 2 | 3>(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  useEffect(() => {
+    const t1 = window.setTimeout(() => setStage(2), 1100);
+    const t2 = window.setTimeout(() => setStage(3), 2400);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, []);
+
+  const demoCreds = {
+    ipAddress: "108.204.142.88",
+    rdpPort: 3389,
+    username: "Administrator",
+    password: "Pv#94kLm!2026xR",
+    isp: `${carrier} Static Residential (IPQS 0/100)`,
+  };
+
+  const copyValue = async (key: string, val: string) => {
+    await navigator.clipboard.writeText(val);
+    setCopiedField(key);
+    window.setTimeout(() => setCopiedField(null), 1600);
+  };
+
+  const steps = [
+    {
+      id: 1,
+      title: "পেমেন্ট ভেরিফাইড হয়েছে",
+      desc: `অর্ডার #${orderRef} এর পেমেন্ট সফলভাবে গৃহীত হয়েছে।`,
+    },
+    {
+      id: 2,
+      title: "ক্লিন রেসিডেন্সিয়াল IP অ্যাসাইন হচ্ছে",
+      desc: `${demoCreds.isp} প্রি-স্ক্রিনিং সম্পন্ন।`,
+    },
+    {
+      id: 3,
+      title: "সার্ভার ও RDP লগইন প্রস্তুত",
+      desc: "ইমেইলেও ক্রেডেনশিয়াল পাঠিয়ে দেওয়া হয়েছে।",
+    },
+  ];
+
+  return (
+    <>
+      <FocusedHeader
+        step={3}
+        showSteps
+        backHref="/dashboard"
+        backLabel="ড্যাশবোর্ডে যান"
+      />
+
+      <main className="shell py-10 sm:py-14">
+        <div className="mx-auto max-w-2xl space-y-6">
+          {/* Status Header Card */}
+          <div className="rounded-3xl border border-slate-200/90 bg-white p-6 text-center shadow-sm sm:p-8">
+            <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-emerald-50 text-emerald-600">
+              <CheckCircle2 size={30} />
+            </div>
+
+            <p className="mt-4 font-mono text-xs font-bold uppercase tracking-wider text-blue-600">
+              Order #{orderRef}
+            </p>
+            <h1 className="mt-1 font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
+              {stage < 3
+                ? "আপনার সার্ভার প্রস্তুত হচ্ছে…"
+                : "আপনার সার্ভার সম্পূর্ণ প্রস্তুত!"}
+            </h1>
+            <p className="mt-1.5 text-xs text-slate-600 sm:text-sm">
+              {planName}
+            </p>
+
+            {/* 3-Step Provisioning Tracker */}
+            <ol className="mt-7 space-y-3 text-left">
+              {steps.map((s) => {
+                const done = stage >= s.id;
+                const active = stage === s.id && stage < 3;
+                return (
+                  <li
+                    key={s.id}
+                    className={`flex items-start gap-3.5 rounded-2xl border p-3.5 transition-all ${
+                      done
+                        ? "border-emerald-200/80 bg-emerald-50/40"
+                        : "border-slate-200/80 bg-slate-50/50 opacity-65"
+                    }`}
+                  >
+                    <span
+                      className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-full text-xs font-bold ${
+                        done
+                          ? "bg-emerald-600 text-white"
+                          : "bg-slate-200 text-slate-600"
+                      }`}
+                    >
+                      {active ? (
+                        <Loader2 size={13} className="animate-spin" />
+                      ) : done ? (
+                        <Check size={13} />
+                      ) : (
+                        s.id
+                      )}
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 sm:text-sm">
+                        {s.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-600">{s.desc}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+
+          {/* Credentials Box (Reveals as soon as Stage 3 completes) */}
+          {stage === 3 && (
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="grid size-9 place-items-center rounded-xl bg-blue-50 text-blue-600">
+                    <Server size={18} />
+                  </span>
+                  <div>
+                    <h2 className="font-display text-base font-extrabold text-slate-900">
+                      RDP কানেকশন ক্রেডেনশিয়াল
+                    </h2>
+                    <p className="text-xs text-emerald-700">
+                      {demoCreds.isp}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadRdpFile({
+                      ipAddress: demoCreds.ipAddress,
+                      rdpPort: demoCreds.rdpPort,
+                      username: demoCreds.username,
+                      serverLabel: `primavps-${orderRef}`,
+                    })
+                  }
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white transition-colors hover:bg-slate-800"
+                >
+                  <Download size={14} />
+                  <span>.RDP ফাইল ডাউনলোড</span>
+                </button>
+              </div>
+
+              <dl className="mt-4 divide-y divide-slate-100 text-xs sm:text-sm">
+                {[
+                  {
+                    key: "ip",
+                    label: "IP Address",
+                    value: demoCreds.ipAddress,
+                    copyVal: demoCreds.ipAddress,
+                  },
+                  {
+                    key: "user",
+                    label: "Username",
+                    value: demoCreds.username,
+                    copyVal: demoCreds.username,
+                  },
+                ].map((row) => (
+                  <div
+                    key={row.key}
+                    className="flex items-center justify-between py-3"
+                  >
+                    <dt className="font-medium text-slate-500">{row.label}</dt>
+                    <dd className="flex items-center gap-2 font-mono font-bold text-slate-900">
+                      <span>{row.value}</span>
+                      <button
+                        type="button"
+                        onClick={() => copyValue(row.key, row.copyVal)}
+                        className="cursor-pointer rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                        aria-label={`Copy ${row.label}`}
+                      >
+                        {copiedField === row.key ? (
+                          <Check size={13} className="text-emerald-600" />
+                        ) : (
+                          <Copy size={13} />
+                        )}
+                      </button>
+                    </dd>
+                  </div>
+                ))}
+
+                {/* Password Row */}
+                <div className="flex items-center justify-between py-3">
+                  <dt className="font-medium text-slate-500">Password</dt>
+                  <dd className="flex items-center gap-2 font-mono font-bold text-slate-900">
+                    <span>
+                      {showPassword ? demoCreds.password : "••••••••••••••••"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="cursor-pointer rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      aria-label={
+                        showPassword ? "Hide password" : "Reveal password"
+                      }
+                    >
+                      {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => copyValue("pass", demoCreds.password)}
+                      className="cursor-pointer rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      aria-label="Copy password"
+                    >
+                      {copiedField === "pass" ? (
+                        <Check size={13} className="text-emerald-600" />
+                      ) : (
+                        <Copy size={13} />
+                      )}
+                    </button>
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+                <Link
+                  href="/dashboard/services"
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700"
+                >
+                  <span>ক্লায়েন্ট ড্যাশবোর্ডে যান</span>
+                  <ArrowRight size={15} />
+                </Link>
+              </div>
+
+              <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-slate-500">
+                <ShieldCheck size={13} className="text-emerald-600" />
+                প্রথম ৭ দিন ফ্রি IP Swap সুবিধা সক্রিয় রয়েছে।
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
+    </>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center text-sm text-slate-500">
+          অর্ডার স্ট্যাটাস লোড হচ্ছে…
+        </div>
+      }
+    >
+      <CheckoutSuccessContent />
+    </Suspense>
+  );
+}

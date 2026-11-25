@@ -24,10 +24,10 @@ import { useEffect, useRef, useState } from "react";
 import { BrandLogo } from "../ui/BrandLogo";
 
 const PRODUCT_LINKS = [
-  {
+{
     href: "/isp-vps",
-    title: "Dedicated ISP VPS",
-    desc: "Clean 0/100 IPQS US/UK/EU static IPs",
+    title: "Residential ISP VPS",
+    desc: "Clean 0/100 IPQS US/UK/EU IPs",
     icon: ShieldCheck,
     badge: "Popular",
   },
@@ -72,9 +72,48 @@ const HIDE_DOCK_ROUTES = ["/login", "/register", "/checkout"];
 export function Navbar() {
   const pathname = usePathname();
   const { currency, setCurrency } = useCurrency();
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [menuState, setMenuState] = useState<{
+    pathname: string;
+    openMenu: string | null;
+    mobileSheetOpen: boolean;
+  }>({ pathname, openMenu: null, mobileSheetOpen: false });
   const navRef = useRef<HTMLDivElement>(null);
+
+  const openMenu = menuState.pathname === pathname ? menuState.openMenu : null;
+  const mobileSheetOpen =
+    menuState.pathname === pathname ? menuState.mobileSheetOpen : false;
+
+  const setOpenMenu = (
+    next: string | null | ((prev: string | null) => string | null),
+  ) => {
+    setMenuState((prev) => {
+      const currentOpen = prev.pathname === pathname ? prev.openMenu : null;
+      const currentSheet =
+        prev.pathname === pathname ? prev.mobileSheetOpen : false;
+      const resolved = typeof next === "function" ? next(currentOpen) : next;
+      return {
+        pathname,
+        openMenu: resolved,
+        mobileSheetOpen: currentSheet,
+      };
+    });
+  };
+
+  const setMobileSheetOpen = (
+    next: boolean | ((prev: boolean) => boolean),
+  ) => {
+    setMenuState((prev) => {
+      const currentOpen = prev.pathname === pathname ? prev.openMenu : null;
+      const currentSheet =
+        prev.pathname === pathname ? prev.mobileSheetOpen : false;
+      const resolved = typeof next === "function" ? next(currentSheet) : next;
+      return {
+        pathname,
+        openMenu: currentOpen,
+        mobileSheetOpen: resolved,
+      };
+    });
+  };
 
   const isAuthPage = AUTH_ROUTES.some(
     (route) => pathname === route || pathname?.startsWith(`${route}/`),
@@ -87,13 +126,16 @@ export function Navbar() {
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        setOpenMenu(null);
+        setMenuState((prev) => ({ ...prev, openMenu: null }));
       }
     }
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setOpenMenu(null);
-        setMobileSheetOpen(false);
+        setMenuState((prev) => ({
+          ...prev,
+          openMenu: null,
+          mobileSheetOpen: false,
+        }));
       }
     }
     document.addEventListener("mousedown", onPointerDown);
@@ -103,12 +145,6 @@ export function Navbar() {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, []);
-
-  // Auto-close menus on route change
-  useEffect(() => {
-    setOpenMenu(null);
-    setMobileSheetOpen(false);
-  }, [pathname]);
 
   // Lock background scroll when mobile glass sheet is open
   useEffect(() => {
@@ -133,8 +169,8 @@ export function Navbar() {
     }`;
 
   const isHomeActive = pathname === "/" && !mobileSheetOpen;
-  const isServersActive =
-    (pathname?.startsWith("/survey-vps") ||
+const isServersActive =
+    (pathname?.startsWith("/isp-vps") ||
       pathname?.startsWith("/cloud-vps") ||
       pathname?.startsWith("/resellers")) &&
     !mobileSheetOpen;
@@ -164,7 +200,7 @@ export function Navbar() {
           </Link>
 
           {/* 2. Desktop Center Navigation Links (xl+: 1280px+) */}
-          <nav className="hidden items-center gap-1 xl:flex" aria-label="Main">
+          <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary navigation">
             {/* Servers Dropdown */}
             <div className="relative">
               <button

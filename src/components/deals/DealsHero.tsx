@@ -5,34 +5,34 @@ import { FLASH_PREVIEW_ITEMS, MAX_DISCOUNT_PERCENT } from "@/lib/data/deals";
 import { ArrowDown, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+
+const emptySubscribe = () => () => {};
+
+function getTimeRemaining() {
+  const cycleMs = 5 * 24 * 60 * 60 * 1000;
+  const remainingMs = cycleMs - (Date.now() % cycleMs);
+  return {
+    days: Math.floor(remainingMs / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((remainingMs / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((remainingMs / (1000 * 60)) % 60),
+    seconds: Math.floor((remainingMs / 1000) % 60),
+  };
+}
 
 export function DealsHero() {
   const { formatPrice } = useCurrency();
-  const [mounted, setMounted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({
-    days: 4,
-    hours: 12,
-    minutes: 38,
-    seconds: 45,
-  });
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+  const [timeLeft, setTimeLeft] = useState(getTimeRemaining);
 
   useEffect(() => {
-    setMounted(true);
-
-    const cycleMs = 5 * 24 * 60 * 60 * 1000;
-    const updateCountdown = () => {
-      const remainingMs = cycleMs - (Date.now() % cycleMs);
-      setTimeLeft({
-        days: Math.floor(remainingMs / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((remainingMs / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((remainingMs / (1000 * 60)) % 60),
-        seconds: Math.floor((remainingMs / 1000) % 60),
-      });
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
+    const interval = setInterval(() => {
+      setTimeLeft(getTimeRemaining());
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -71,7 +71,7 @@ export function DealsHero() {
             </h1>
 
             <p className="mt-4 max-w-xl text-base text-purple-100/90 sm:text-lg">
-              Unlock supreme cloud performance and virgin residential survey IPs
+              Unlock supreme cloud performance and virgin residential ISP IPs
               at discounted first-month rates. Instant provisioning with zero
               setup fees.
             </p>

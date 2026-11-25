@@ -54,12 +54,11 @@ const SUPPORTED_COUNTRIES = [
 ];
 
 const ISP_BULLETS = [
-  "IPQS Fraud Score: 0/100 গ্যারান্টিযুক্ত ক্লিন স্ট্যাটিক IP",
-  "৭ দিনের আনকন্ডিশনাল ফ্রি IP রিপ্লেসমেন্ট সুবিধা",
+  "প্রি-স্ক্রিনড ক্লিন ISP IP VPS (IPQS 0–5 লো-রিস্ক স্কোর)",
+  "প্রথম ৭ দিনে ফ্রি IP রিপ্লেসমেন্ট (৮ম দিন থেকে ৳৩৫০)",
   "100% ডেডিকেটেড স্ট্যাটিক হোম ব্রডব্যান্ড (কোনো শেয়ারিং নেই)",
-  "২৪/৭ লাইভ টেকনিক্যাল সাপোর্ট ও ৯৯.৯% আপটাইম গ্যারান্টি",
+  "২৪/৭ লাইভ চ্যাট ও ঢাকা বনানী টেকনিক্যাল সাপোর্ট",
 ];
-
 export function HeroSection() {
   const { formatPrice } = useCurrency();
   const reduceMotion = useReducedMotion();

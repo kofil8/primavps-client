@@ -128,11 +128,11 @@ export function GlobalNetworkMap() {
               Global Tier-1 Network
             </p>
 
-            <h2 className="mt-2 font-display text-2xl font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
-              ঢাকা থেকে ল্যাগ-ফ্রি
-              <br />
-              <span className="text-blue-600">গ্লোবাল ISP নেটওয়ার্ক</span>
-            </h2>
+<h2 className="mt-2.5 font-display text-2xl font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:text-4xl">
+  ঢাকা থেকে ল্যাগ-ফ্রি{" "}
+  <br />
+  <span className="text-blue-600">গ্লোবাল ISP নেটওয়ার্ক</span>
+</h2>
 
             <p className="mt-3.5 text-sm leading-relaxed text-slate-600 sm:mt-4 sm:text-base">
               আমেরিকা ও ইউরোপের শীর্ষ টিয়ার-১ ডাটা সেন্টারের সাথে আমাদের{" "}
@@ -191,7 +191,7 @@ export function GlobalNetworkMap() {
                   src="/world-map.webp"
                   alt="primavps Global Tier-1 Network — USA, Europe & Dhaka BDIX Hub"
                   fill
-                  sizes="(min-width: 1024px) 58vw, 100vw"
+                  sizes="(min-width: 1024px) 100vw, 55vw"
                   priority
                   className="select-none object-contain"
                 />

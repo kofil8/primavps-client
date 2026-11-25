@@ -169,84 +169,48 @@ export function VisaMastercardLogo(props: LogoProps) {
 }
 
 export function SslcommerzLogo({
-  className = "h-5 w-auto",
+  className = "h-6 w-auto",
   ...props
 }: LogoProps) {
   return (
     <svg
-      viewBox="0 0 134 28"
+      viewBox="0 0 156 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
       aria-label="SSLCOMMERZ Secured Payment Gateway"
       className={className}
       {...props}
     >
-      {/* Clean Shield / Padlock Mark */}
+      {/* Official Brand Emblem: Layered Security / Payment Mark */}
       <g transform="translate(2, 4)">
-        <rect x="2" y="8" width="14" height="10" rx="2.2" fill="#0284C7" />
+        <rect x="0" y="3" width="18" height="18" rx="4" fill="#295CAB" />
         <path
-          d="M5.5 8V5.5C5.5 3.567 7.067 2 9 2C10.933 2 12.5 3.567 12.5 5.5V8"
-          stroke="#0F172A"
-          strokeWidth="2"
+          d="M12.5 9.2C12.5 7.9 11.1 7 9.1 7C7.2 7 5.8 7.8 5.8 9.1C5.8 10.4 7.1 11 9.1 11.4C11.2 11.8 12.7 12.5 12.7 14.1C12.7 15.6 11.2 16.6 9 16.6C6.9 16.6 5.4 15.6 5.3 14.1"
+          stroke="#FFFFFF"
+          strokeWidth="2.1"
           strokeLinecap="round"
         />
-        <circle cx="9" cy="13" r="1.6" fill="#FFFFFF" />
+        {/* Accent Security Dot */}
+        <circle cx="15.5" cy="6.5" r="2.5" fill="#003E78" stroke="#FFFFFF" strokeWidth="1.2" />
       </g>
 
-      {/* Crisp Brand Wordmark (Zero Overlap) */}
+      {/* SSLCOMMERZ Wordmark */}
       <text
-        x="23"
-        y="19.5"
-        fill="#0F172A"
-        fontFamily="Inter, system-ui, -apple-system, sans-serif"
-        fontSize="14.5"
-        fontWeight="900"
-        letterSpacing="-0.2"
+        x="26"
+        y="21.5"
+        fill="#003E78"
+        fontFamily="Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+        fontSize="15"
+        fontWeight="800"
+        letterSpacing="-0.3"
       >
-        SSL<tspan fill="#0284C7">COMMERZ</tspan>
+        SSL
+        <tspan fill="#295CAB" fontWeight="700">
+          COMMERZ
+        </tspan>
       </text>
     </svg>
   );
 }
 
-/**
- * Retained for backward compatibility in internal tools only.
- * NOT displayed on public-facing verification pages or footer.
- */
-export function UsdtLogo({ className = "h-5 w-auto", ...props }: LogoProps) {
-  return (
-    <svg
-      viewBox="0 0 88 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="USDT Tether"
-      className={className}
-      {...props}
-    >
-      <circle cx="14" cy="14" r="11" fill="#26A17B" />
-      <path
-        d="M9.5 9.2H18.5V11.3H15.2V13.1C17.6 13.25 19.4 13.75 19.4 14.35C19.4 14.95 17.6 15.45 15.2 15.6V19.6H12.8V15.6C10.4 15.45 8.6 14.95 8.6 14.35C8.6 13.75 10.4 13.25 12.8 13.1V11.3H9.5V9.2Z"
-        fill="#FFFFFF"
-      />
-      <ellipse
-        cx="14"
-        cy="14.35"
-        rx="5.2"
-        ry="1.2"
-        stroke="#26A17B"
-        strokeWidth="0.9"
-      />
-      <text
-        x="31"
-        y="19.5"
-        fill="#0F766E"
-        fontFamily="Inter, system-ui, -apple-system, sans-serif"
-        fontSize="15.5"
-        fontWeight="800"
-        letterSpacing="0.2"
-      >
-        USDT
-      </text>
-    </svg>
-  );
-}

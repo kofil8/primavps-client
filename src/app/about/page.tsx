@@ -5,7 +5,6 @@ import {
   Building2,
   CheckCircle2,
   Cpu,
-  Globe2,
   Headphones,
   Mail,
   MapPin,

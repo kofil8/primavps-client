@@ -6,7 +6,7 @@ import { ChevronDown, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export function SurveyFaq() {
+export function IspFaq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
@@ -32,7 +32,7 @@ export function SurveyFaq() {
             <button
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent("open-chat"))}
-              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-md shadow-blue-600/20 transition-all hover:bg-blue-700 active:scale-[0.98]"
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-sm transition-colors hover:bg-blue-700 active:scale-[0.98]"
             >
               <MessageCircle size={15} />
               <span>লাইভ চ্যাটে প্রশ্ন করুন</span>
@@ -48,7 +48,7 @@ export function SurveyFaq() {
 
         {/* Right: Smooth Accordion */}
         <Reveal
-          className="divide-y divide-slate-200/80 border border-slate-200 bg-white p-6 shadow-xs rounded-2xl p-4 sm:rounded-3xl sm:p-6 lg:p-8"
+          className="divide-y divide-slate-200/80 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:rounded-3xl sm:p-6 lg:p-8"
           delay={0.08}
         >
           {FAQS.map((faq, index) => {
@@ -59,7 +59,7 @@ export function SurveyFaq() {
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   aria-expanded={isOpen}
-                  className="flex w-full cursor-pointer items-center justify-between gap-4 text-left text-sm font-bold text-slate-900 transition-colors hover:text-blue-600 sm:w-auto"
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 text-left text-sm font-bold text-slate-900 transition-colors hover:text-blue-600"
                 >
                   <span className="flex items-start gap-3">
                     <span

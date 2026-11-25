@@ -18,7 +18,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'How to Choose the Right VPS for Your Workload',
     summary: 'A practical framework for sizing compute, memory, storage, and residential IP requirements before buying.',
     metaDescription:
-      'A practical framework for sizing vCPU, RAM, NVMe and residential IP needs before you buy a VPS, with rules of thumb for survey and RDP workloads.',
+      'A practical framework for sizing vCPU, RAM, NVMe and residential IP needs before you buy a VPS, with rules of thumb for ISP and RDP workloads.',
     category: 'Guides',
     readTime: '8 min read',
     date: 'Nov 16, 2026',
@@ -30,8 +30,8 @@ The right VPS starts with the workload, not the plan name. Separate compute, mem
 > **Rule of thumb:** Size the bottleneck first, then keep the rest predictable.
 
 ### 1. Compute and Memory Allocation
-For browser automation, multi-tab survey portals, or background jobs, RAM is often your first bottleneck. A single Chromium instance running anti-detect profiles requires between 400MB to 800MB of resident RAM.
-- **Entry Level (2 vCPU / 4 GB RAM):** Ideal for single-user survey accounts, light web browsing, and remote desktop access.
+For browser automation, multi-tab market research portals, or background jobs, RAM is often your first bottleneck. A single Chromium instance running anti-detect profiles requires between 400MB to 800MB of resident RAM.
+- **Entry Level (2 vCPU / 4 GB RAM):** Ideal for single-user ISP accounts, light web browsing, and remote desktop access.
 - **Production Level (4 vCPU / 6–8 GB RAM):** Required for parallel workloads, containerized workers, and multi-profile setups.
 
 \`\`\`bash
@@ -42,7 +42,7 @@ NVMe = data + cache + 20% headroom
 \`\`\`
 
 ### 2. Network and IP Architecture
-Datacenter IPs are suitable for API hosting and microservices, but are instantly flagged by survey routers (Cint, PureSpectrum) and payment processors.
+Datacenter IPs are suitable for API hosting and microservices, but are instantly flagged by consumer verification routers and payment processors.
 If your workflow touches high-reputation consumer platforms, always bind your server to a native static residential ISP subnet (AS7018 AT&T or AS7922 Comcast).`,
   },
   {
@@ -153,7 +153,7 @@ Our NVMe RAID-1 storage fabric delivers over 150,000 random 4K IOPS with sub-mil
 
 When evaluating an IP address before running critical accounts, focus on three primary metrics:
 
-1. **Fraud Score (0-100):** Must remain under 15 for survey routers and bank verification.
+1. **Fraud Score (0-100):** Must remain under 15 for residential portals and bank verification.
 2. **Usage Type:** Must read "ISP" or "Residential", never "Hosting" or "Business".
 3. **Recent Abuse Reports:** Must show 0 reports in the last 90 days.`,
   },

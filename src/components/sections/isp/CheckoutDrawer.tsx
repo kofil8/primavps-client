@@ -100,13 +100,53 @@ const CYCLES = [
   { id: "annual", label: "১২ মাস", months: 12, discount: 0.15 },
 ] as const;
 
-function findCouponDiscount(code: string): number {
-  const normalized = code.trim().toUpperCase();
-  if (!normalized) return 0;
+type ProductScope = "isp" | "cloud";
+
+const COUPON_SCOPE_FALLBACK: Record<string, (ProductScope | "reseller")[]> = {
+  LAUNCH10: ["isp"],
+  PRO12: ["isp"],
+  VIRGIN15: ["isp"],
+  CLOUD15: ["cloud"],
+};
+
+function validateCouponForScope(
+  rawCode: string,
+  scope: ProductScope,
+): { valid: boolean; discountPercent: number; error: string } {
+  const code = rawCode.trim().toUpperCase();
+  if (!code) return { valid: false, discountPercent: 0, error: "" };
+
   const match = HOT_DEALS_LIST.find(
-    (d) => d.couponCode.toUpperCase() === normalized,
+    (d) => d.couponCode.toUpperCase() === code,
   );
-  return match ? match.discountPercent : 0;
+  if (!match) {
+    return {
+      valid: false,
+      discountPercent: 0,
+      error: "কুপন কোডটি সঠিক নয় বা মেয়াদ শেষ হয়েছে।",
+    };
+  }
+
+  const allowedScopes =
+    (match as { applicableTo?: (ProductScope | "reseller")[] }).applicableTo ??
+    COUPON_SCOPE_FALLBACK[code] ?? ["isp", "cloud"];
+
+  if (!allowedScopes.includes(scope)) {
+    const productName = allowedScopes.includes("cloud")
+      ? "Cloud NVMe VPS"
+      : "Residential ISP VPS";
+    return {
+      valid: false,
+      discountPercent: 0,
+      error: `${code} শুধুমাত্র ${productName} প্ল্যানের জন্য প্রযোজ্য।`,
+    };
+  }
+
+  return {
+    valid: true,
+    discountPercent: match.discountPercent,
+    error: "",
+  };
 }
 
 export function CheckoutDrawer({
@@ -124,46 +164,33 @@ export function CheckoutDrawer({
   const normCountry = (initialCountry || "us").toLowerCase();
   const activeCountryConfig =
     COUNTRY_CONFIGS[normCountry] || COUNTRY_CONFIGS.us;
+  const isCloud = Boolean(plan && "isCloud" in plan && plan.isCloud);
+  const productScope: ProductScope = isCloud ? "cloud" : "isp";
+
+  const initialLocation =
+    plan && "regionName" in plan && plan.regionName
+      ? plan.regionName
+      : activeCountryConfig.defaultCity;
+
+  const initialCouponNormalized = initialCoupon.trim().toUpperCase();
+  const initialCouponValidation = initialCouponNormalized
+    ? validateCouponForScope(initialCouponNormalized, productScope)
+    : { valid: false, discountPercent: 0, error: "" };
 
   const [selectedCarrier, setSelectedCarrier] = useState(
     carrier && carrier !== "All" ? carrier : activeCountryConfig.carriers[0],
   );
-  const [location, setLocation] = useState(activeCountryConfig.defaultCity);
+  const [location, setLocation] = useState(initialLocation);
   const [billingCycle, setBillingCycle] =
     useState<(typeof CYCLES)[number]["id"]>(initialBillingCycle);
 
-  const [coupon, setCoupon] = useState(initialCoupon);
-  const [appliedDiscountPercent, setAppliedDiscountPercent] = useState(0);
-  const [couponError, setCouponError] = useState("");
+  const [coupon, setCoupon] = useState(initialCouponNormalized);
+  const [appliedDiscountPercent, setAppliedDiscountPercent] = useState(
+    initialCouponValidation.discountPercent,
+  );
+  const [couponError, setCouponError] = useState(initialCouponValidation.error);
   const [redirecting, setRedirecting] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-
-  useEffect(() => {
-    const config = COUNTRY_CONFIGS[normCountry] || COUNTRY_CONFIGS.us;
-    setSelectedCarrier(
-      carrier && carrier !== "All" ? carrier : config.carriers[0],
-    );
-    setLocation(
-      plan && "regionName" in plan && plan.regionName
-        ? plan.regionName
-        : config.defaultCity,
-    );
-    setBillingCycle(initialBillingCycle);
-
-    if (initialCoupon) {
-      const pct = findCouponDiscount(initialCoupon);
-      setCoupon(initialCoupon.toUpperCase());
-      setAppliedDiscountPercent(pct);
-      setCouponError("");
-    }
-  }, [
-    plan,
-    initialCountry,
-    carrier,
-    normCountry,
-    initialBillingCycle,
-    initialCoupon,
-  ]);
 
   useEffect(() => {
     if (!plan) return;
@@ -183,7 +210,6 @@ export function CheckoutDrawer({
 
   if (!plan) return null;
 
-  const isCloud = "isCloud" in plan && plan.isCloud;
   const basePrice =
     !isCloud && isFresh && "priceFreshBdt" in plan && plan.priceFreshBdt
       ? plan.priceFreshBdt
@@ -201,26 +227,33 @@ export function CheckoutDrawer({
 
   const applyCoupon = (event: React.FormEvent) => {
     event.preventDefault();
-    const pct = findCouponDiscount(coupon);
-    if (pct > 0) {
-      setAppliedDiscountPercent(pct);
-      setCouponError("");
-    } else {
-      setAppliedDiscountPercent(0);
-      setCouponError("কুপন কোডটি সঠিক নয়।");
-    }
+    const result = validateCouponForScope(coupon, productScope);
+    setAppliedDiscountPercent(result.discountPercent);
+    setCouponError(result.error);
   };
 
   const proceedToCheckout = () => {
     setRedirecting(true);
     const params = new URLSearchParams({
+      type: productScope,
       plan: plan.id || plan.name.toLowerCase().replace(/\s+/g, "-"),
       country: normCountry,
-      carrier: selectedCarrier,
+      carrier: isCloud ? "Datacenter" : selectedCarrier,
       location: isCloud ? location : "auto",
       cycle: billingCycle,
-      fresh: isFresh ? "1" : "0",
+      fresh: !isCloud && isFresh ? "1" : "0",
     });
+
+    if (isCloud) {
+      params.set("vcpu", String(plan.specs.vcpu));
+      params.set("ram", String(plan.specs.ram));
+      params.set("nvme", String(plan.specs.nvme));
+      params.set("price", String(plan.priceBdt));
+      if ("osName" in plan && plan.osName) {
+        params.set("os", plan.osName);
+      }
+    }
+
     if (appliedDiscountPercent > 0 && coupon.trim()) {
       params.set("coupon", coupon.trim().toUpperCase());
     }
@@ -286,7 +319,7 @@ export function CheckoutDrawer({
             </p>
             <p className="mt-1 text-xs text-slate-500">
               {isCloud
-                ? `${plan.osName || "Cloud VPS"} · ${location}`
+                ? `${("osName" in plan && plan.osName) || "Cloud VPS"} · ${location}`
                 : `${isFresh ? "Virgin" : "Clean"} ${selectedCarrier} IP · ${activeCountryConfig.ipGeoLabel}`}
             </p>
           </div>
@@ -388,8 +421,9 @@ export function CheckoutDrawer({
                 onChange={(e) => {
                   setCoupon(e.target.value);
                   if (appliedDiscountPercent > 0) setAppliedDiscountPercent(0);
+                  if (couponError) setCouponError("");
                 }}
-                placeholder="LAUNCH10"
+                placeholder={isCloud ? "CLOUD15" : "LAUNCH10"}
                 className="field flex-1 font-mono text-xs uppercase"
               />
               <button
@@ -458,17 +492,32 @@ export function CheckoutDrawer({
               onChange={(e) => setAgreedToTerms(e.target.checked)}
               className="mt-0.5 size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
             />
-            <label htmlFor="checkout-agree" className="cursor-pointer leading-relaxed text-slate-600">
+            <label
+              htmlFor="checkout-agree"
+              className="cursor-pointer leading-relaxed text-slate-600"
+            >
               আমি{" "}
-              <Link href="/terms" target="_blank" className="font-semibold text-blue-600 hover:underline">
+              <Link
+                href="/terms"
+                target="_blank"
+                className="font-semibold text-blue-600 hover:underline"
+              >
                 শর্তাবলী
               </Link>
               ,{" "}
-              <Link href="/privacy-policy" target="_blank" className="font-semibold text-blue-600 hover:underline">
+              <Link
+                href="/privacy-policy"
+                target="_blank"
+                className="font-semibold text-blue-600 hover:underline"
+              >
                 গোপনীয়তা নীতি
               </Link>{" "}
               এবং{" "}
-              <Link href="/refund-policy" target="_blank" className="font-semibold text-blue-600 hover:underline">
+              <Link
+                href="/refund-policy"
+                target="_blank"
+                className="font-semibold text-blue-600 hover:underline"
+              >
                 রিফান্ড পলিসি
               </Link>{" "}
               পড়েছি এবং এতে সম্মতি জানাচ্ছি।

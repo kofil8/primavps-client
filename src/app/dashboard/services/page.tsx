@@ -1,117 +1,133 @@
-import { StatusPill } from "@/components/dashboard/StatusPill";
-import { demoAccount, usd } from "@/lib/data/client-demo";
-import { Cpu, Gauge, Globe2, HardDrive, LifeBuoy, Network } from "lucide-react";
-import type { Metadata } from "next";
-import Link from "next/link";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Your Services",
-  description: "Servers, residential ISP VPS instances and renewals.",
-  robots: { index: false, follow: false },
-};
+import { StatusPill } from "@/components/dashboard/StatusPill";
+import { CountryFlag } from "@/components/ui/CountryFlag";
+import { useCurrency } from "@/lib/currency";
+import { getStoredServices } from "@/lib/services/portal-store";
+import { ArrowRight, Plus, Server } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function DashboardServicesPage() {
+  const { formatPrice } = useCurrency();
+  const [services] = useState(getStoredServices);
+  const [filter, setFilter] = useState<"all" | "running" | "stopped">("all");
+
+  const filtered = services.filter((s) =>
+    filter === "all" ? true : s.status === filter,
+  );
+
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-6">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
-          <h2 className="font-display text-lg font-bold text-slate-900">
-            Your services
-          </h2>
-          <p className="text-sm text-slate-600">
-            {demoAccount.services.length} services ·{" "}
-            {usd(
-              demoAccount.services.reduce(
-                (total, service) => total + service.monthlyUsd,
-                0,
-              ),
-            )}{" "}
-            per month
+          <h1 className="font-display text-xl font-extrabold text-slate-900 sm:text-2xl">
+            আমার সার্ভারসমূহ
+          </h1>
+          <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+            যেকোনো সার্ভারে ক্লিক করে RDP পাসওয়ার্ড, পাওয়ার কন্ট্রোল ও IP
+            Swap পরিচালনা করুন।
           </p>
         </div>
-        <Link
-          href="/isp-vps"
-          className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-        >
-          Add a service
-        </Link>
-      </div>
 
-      <div className="grid gap-4">
-        {demoAccount.services.map((service) => (
-          <section
-            key={service.id}
-            className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm"
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-xl bg-slate-200/70 p-1 text-xs font-bold">
+            {(["all", "running", "stopped"] as const).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setFilter(tab)}
+                className={`cursor-pointer rounded-lg px-3 py-1.5 capitalize transition-colors ${
+                  filter === tab
+                    ? "bg-white text-slate-900 shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <Link
+            href="/isp-vps"
+            className="hidden items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-blue-700 sm:inline-flex"
           >
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-mono text-sm font-bold text-slate-900">
-                    {service.name}
-                  </h3>
-                  <StatusPill
-                    tone={service.status === "active" ? "green" : "amber"}
-                  >
-                    {service.status === "active" ? "Active" : "Provisioning"}
-                  </StatusPill>
-                </div>
-                <p className="mt-1 text-sm text-slate-600">
-                  {service.plan} · {service.location}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-lg font-bold text-slate-900">
-                  {usd(service.monthlyUsd)}
-                  <span className="text-xs font-normal text-slate-500"> /mo</span>
-                </p>
-                <p className="text-xs text-slate-500">
-                  Renews {service.renewsOn}
-                </p>
-              </div>
-            </div>
-
-            <dl className="mt-4 grid gap-3 border-t border-slate-100 pt-4 text-sm sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Cpu size={15} className="text-slate-400" aria-hidden="true" />
-                <dt className="sr-only">Specs</dt>
-                <dd className="text-slate-700">{service.specs}</dd>
-              </div>
-              <div className="flex items-center gap-2">
-                <Globe2 size={15} className="text-slate-400" aria-hidden="true" />
-                <dt className="sr-only">Primary IP</dt>
-                <dd className="font-mono text-slate-700">{service.ip}</dd>
-              </div>
-              <div className="flex items-center gap-2">
-                <Network size={15} className="text-slate-400" aria-hidden="true" />
-                <dt className="sr-only">Bandwidth</dt>
-                <dd className="text-slate-700">{service.bandwidth}</dd>
-              </div>
-              <div className="flex items-center gap-2">
-                <Gauge size={15} className="text-slate-400" aria-hidden="true" />
-                <dt className="sr-only">IP reputation</dt>
-                <dd className="text-slate-700">IPQS score 0/100 · clean</dd>
-              </div>
-            </dl>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-              >
-                <LifeBuoy size={13} aria-hidden="true" />
-                Request changes
-              </Link>
-              <Link
-                href="/tools/ip-checker"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-              >
-                <HardDrive size={13} aria-hidden="true" />
-                Check IP reputation
-              </Link>
-            </div>
-          </section>
-        ))}
+            <Plus size={14} />
+            <span>নতুন VPS</span>
+          </Link>
+        </div>
       </div>
+
+      {filtered.length === 0 ? (
+        <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center">
+          <Server size={28} className="mx-auto text-slate-400" />
+          <p className="mt-3 text-sm font-bold text-slate-900">
+            এই ক্যাটাগরিতে কোনো সার্ভার নেই
+          </p>
+          <Link
+            href="/isp-vps"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white"
+          >
+            <span>নতুন সার্ভার অর্ডার করুন</span>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {filtered.map((srv) => (
+            <Link
+              key={srv.id}
+              href={`/dashboard/services/${srv.id}`}
+              className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs transition-all hover:border-blue-300 hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <CountryFlag code={srv.country.toLowerCase()} size={24} />
+                    <div>
+                      <h2 className="font-display text-base font-extrabold text-slate-900 group-hover:text-blue-600">
+                        {srv.name}
+                      </h2>
+                      <p className="font-mono text-xs text-slate-500">
+                        {srv.ip} · {srv.carrier}
+                      </p>
+                    </div>
+                  </div>
+                  <StatusPill status={srv.status} />
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-semibold text-slate-600">
+                  <span className="rounded-lg bg-slate-50 px-2.5 py-1">
+                    {srv.specs.vcpu} vCPU
+                  </span>
+                  <span className="rounded-lg bg-slate-50 px-2.5 py-1">
+                    {srv.specs.ram} GB RAM
+                  </span>
+                  <span className="rounded-lg bg-slate-50 px-2.5 py-1">
+                    {srv.specs.nvme} GB NVMe
+                  </span>
+                  <span className="rounded-lg bg-slate-50 px-2.5 py-1">
+                    {srv.os}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3.5 text-xs">
+                <span className="text-slate-500">
+                  রিনিউ: <strong className="text-slate-800">{srv.renewsOn}</strong>{" "}
+                  ({formatPrice(srv.monthlyBdt)})
+                </span>
+                <span className="inline-flex items-center gap-1 font-bold text-blue-600">
+                  <span>ম্যানেজ করুন</span>
+                  <ArrowRight
+                    size={13}
+                    className="transition-transform group-hover:translate-x-0.5"
+                  />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

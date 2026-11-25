@@ -113,7 +113,7 @@ const TIERS: PlanTier[] = [
   },
 ];
 
-export function SurveyRdpPlans() {
+export function IspPlansSection() {
   const { formatPrice } = useCurrency();
   const [selectedCountryCode, setSelectedCountryCode] = useState("us");
 
@@ -188,7 +188,7 @@ export function SurveyRdpPlans() {
               key={tier.id}
               className={`relative flex flex-col rounded-2xl p-5 transition-all duration-200 sm:rounded-3xl sm:p-6 xl:p-7 ${
                 tier.highlight
-                  ? "bg-white shadow-xl shadow-blue-600/10 ring-2 ring-blue-600"
+                  ? "bg-white shadow-lg shadow-blue-600/8 ring-2 ring-blue-600"
                   : "border border-slate-200 bg-white shadow-xs hover:border-slate-300 hover:shadow-md"
               } ${
                 idx === 2
@@ -218,7 +218,7 @@ export function SurveyRdpPlans() {
               </p>
 
               <div className="mt-4 flex items-baseline gap-1 sm:mt-5">
-                <span className="font-display text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                <span className="font-display text-3xl font-black tracking-tight tabular-nums text-slate-900 sm:text-4xl">
                   {formatPrice(tier.monthlyPrice)}
                 </span>
                 <span className="text-xs font-medium text-slate-400 sm:text-sm">
@@ -241,7 +241,7 @@ export function SurveyRdpPlans() {
                   { label: "NVMe SSD", value: tier.storage },
                 ].map(({ label, value }) => (
                   <div key={label} className="px-1.5 sm:px-2">
-                    <p className="text-xs font-extrabold text-slate-900 sm:text-sm">
+                    <p className="text-xs font-extrabold tabular-nums text-slate-900 sm:text-sm">
                       {value}
                     </p>
                     <p className="mt-0.5 text-[9.5px] font-medium text-slate-500 sm:text-[10px]">
@@ -255,7 +255,7 @@ export function SurveyRdpPlans() {
                 href={`/isp-vps?plan=${tier.planSlug}&country=${selectedCountryCode}`}
                 className={`mt-5 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition-all active:scale-[0.99] sm:px-5 sm:text-sm ${
                   tier.highlight
-                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/25 hover:bg-blue-700"
+                    ? "bg-blue-600 text-white shadow-sm hover:bg-blue-700"
                     : "border border-slate-300 bg-white text-slate-900 hover:border-blue-600 hover:bg-blue-50/40 hover:text-blue-700"
                 }`}
               >
@@ -291,7 +291,7 @@ export function SurveyRdpPlans() {
           className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-xs text-slate-500 sm:mt-9 sm:gap-x-5"
           delay={0.14}
         >
-          <span>পেমেন্ট: বিকাশ · নগদ · কার্ড · USDT</span>
+          <span>পেমেন্ট: বিকাশ · নগদ · কার্ড · sslcommerz</span>
           <span className="hidden h-3 w-px bg-slate-300 sm:inline-block" />
           <span>ডেভেলপার / KVM ক্লাউড দরকার?</span>
           <Link

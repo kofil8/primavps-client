@@ -20,6 +20,12 @@ const ACCENT_STYLES: Record<
     codeBox:
       "border-blue-200 bg-blue-50/50 text-blue-700 hover:bg-blue-50 hover:border-blue-300",
   },
+  indigo: {
+    topBar: "bg-indigo-600",
+    badge: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    codeBox:
+      "border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300",
+  },
   amber: {
     topBar: "bg-amber-500",
     badge: "bg-amber-50 text-amber-800 border-amber-200",

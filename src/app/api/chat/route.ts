@@ -18,9 +18,9 @@ Language behavior:
 - Keep responses SHORT and conversational — 2 to 4 sentences max. Use bullet points only when listing 3+ items.
 
 About primavps.com:
-- We provide Cloud VPS, Residential ISP VPS (AT&T, Comcast, Verizon), and Survey VPS.
+- We provide Cloud VPS and Residential ISP VPS (AT&T, Comcast, Verizon).
 - Server locations: USA (Dallas, New York, Los Angeles), UK, Singapore.
-- Payment methods: bKash, Nagad, Rocket, VISA/Mastercard, Crypto (USDT).
+- Payment methods: bKash, Nagad, Rocket, VISA/Mastercard, Crypto (sslcommerz).
 - Plans start from ৳499/month for Cloud VPS.
 - Residential VPS plans start from ৳1,499/month.
 - Deployment is automated and usually takes under 90 seconds.
