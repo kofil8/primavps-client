@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { Play, RefreshCw, Terminal, Globe, ArrowRight } from 'lucide-react';
+import { Play, RefreshCw, Terminal } from 'lucide-react';
 
 export default function LookingGlassPage() {
   const [target, setTarget] = useState('8.8.8.8');

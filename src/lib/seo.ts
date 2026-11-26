@@ -6,22 +6,22 @@ export const SITE_LOCALE = "en_US";
 export const TWITTER_HANDLE = "@primavps";
 
 export const DEFAULT_TITLE =
-  "Survey VPS Bangladesh | Residential ISP Hosting — primavps";
+  "Residential ISP VPS Bangladesh | Static Clean IP Hosting — primavps";
 
 export const DEFAULT_DESCRIPTION =
   "Buy clean residential ISP VPS in Bangladesh from ৳2,999/mo. AT&T, Comcast and Verizon IPs, Windows 11 RDP, bKash payment and 90-second deployment.";
 
 export const DEFAULT_KEYWORDS = [
-  "survey VPS Bangladesh",
+  "ISP VPS Bangladesh",
   "residential ISP VPS",
-  "buy VPS for survey",
+  "buy residential ISP VPS",
   "residential RDP Bangladesh",
   "AT&T residential IP VPS",
   "Comcast VPS",
   "Windows RDP bKash",
   "cloud VPS Bangladesh",
   "clean IP VPS",
-  "survey RDP",
+  "static residential RDP",
 ];
 
 type PageSeoInput = {

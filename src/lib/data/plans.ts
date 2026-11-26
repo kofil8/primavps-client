@@ -21,7 +21,7 @@ export const ISP_PLANS: IspPlan[] = [
   {
     id: 'starter',
     tier: 'starter',
-    name: 'Starter Survey VPS',
+    name: 'Starter ISP VPS',
     tagline: 'Entry plan for focused workloads and single accounts.',
     priceBdt: 2999,
     priceFreshBdt: 3499,
@@ -38,7 +38,7 @@ export const ISP_PLANS: IspPlan[] = [
   {
     id: 'pro',
     tier: 'pro',
-    name: 'Pro Survey VPS',
+    name: 'Pro ISP VPS',
     tagline: 'Balanced compute and high-trust residential routing.',
     priceBdt: 3799,
     priceFreshBdt: 4299,

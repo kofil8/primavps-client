@@ -1,3 +1,5 @@
+export type DealProductScope = "isp" | "cloud" | "reseller";
+
 export interface DealSpec {
   label: string;
   value: string;
@@ -5,24 +7,25 @@ export interface DealSpec {
 
 export interface HotDeal {
   id: string;
-  category: string;
-  shortName: string;
-  badge?: string;
   title: string;
+  shortName: string;
+  category: string;
+  badge?: string;
   subtitle: string;
-  discountPercent: number;
   originalPriceBdt: number;
+  discountPercent: number;
   discountedPriceBdt: number;
   savingsBdt: number;
   couponCode: string;
-  accent: "blue" | "amber" | "emerald";
-  ribbonBg: string;
+  applicableTo?: DealProductScope[];
+  accent: "blue" | "indigo" | "amber" | "emerald";
+  ribbonBg?: string;
   targetUrl: string;
-  featured?: boolean;
   specs: DealSpec[];
+  featured?: boolean;
 }
 
-interface RawDeal extends Omit<HotDeal, "discountedPriceBdt" | "savingsBdt"> {}
+type RawDeal = Omit<HotDeal, "discountedPriceBdt" | "savingsBdt">;
 
 function buildDeal(raw: RawDeal): HotDeal {
   const discountedPriceBdt = Math.round(

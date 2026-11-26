@@ -30,18 +30,18 @@ Marketing and self-service storefront for **primavps** — a Bangladeshi hosting
 
 ## Tech stack
 
-| Layer | Choice | Version |
-| --- | --- | --- |
-| Framework | Next.js App Router (Turbopack) | 16.4.6 |
-| UI runtime | React / React DOM | 19.3.0 |
-| Language | TypeScript (strict, `noEmit`) | 5.x |
-| Styling | Tailwind CSS v4 via `@tailwindcss/turbopack` | 4.3.3 |
-| Component base | shadcn config (`base-nova`) + Base UI | `@base-ui/react` 1.9 |
-| Animation | Framer Motion | 14 |
-| Icons | Lucide React, React Icons (social) | 1.73 / 5.7 |
-| AI chat | Groq SDK (OpenAI OSS models) | 1.6 |
-| Forms / validation | React Hook Form + Zod | installed, **not currently used** |
-| Package manager | pnpm (declared) | 11.17.0 |
+| Layer              | Choice                                       | Version                           |
+| ------------------ | -------------------------------------------- | --------------------------------- |
+| Framework          | Next.js App Router (Turbopack)               | 16.4.6                            |
+| UI runtime         | React / React DOM                            | 19.3.0                            |
+| Language           | TypeScript (strict, `noEmit`)                | 5.x                               |
+| Styling            | Tailwind CSS v4 via `@tailwindcss/turbopack` | 4.3.3                             |
+| Component base     | shadcn config (`base-nova`) + Base UI        | `@base-ui/react` 1.9              |
+| Animation          | Framer Motion                                | 14                                |
+| Icons              | Lucide React, React Icons (social)           | 1.73 / 5.7                        |
+| AI chat            | Groq SDK (OpenAI OSS models)                 | 1.6                               |
+| Forms / validation | React Hook Form + Zod                        | installed, **not currently used** |
+| Package manager    | pnpm (declared)                              | 11.17.0                           |
 
 The project uses the `@/*` path alias to `src/*` and the Next.js App Router. Note the repository-specific rule in [`AGENTS.md`](./AGENTS.md): this Next.js version may differ from older conventions, so consult `node_modules/next/dist/docs/` before changing framework-level code.
 
@@ -69,8 +69,8 @@ Open <http://localhost:3000>. The IP checker and chat widget work in dev; the ch
 
 ## Environment variables
 
-| Variable | Required | Used by | Notes |
-| --- | --- | --- | --- |
+| Variable       | Required      | Used by                     | Notes                                                   |
+| -------------- | ------------- | --------------------------- | ------------------------------------------------------- |
 | `GROQ_API_KEY` | For chat only | `src/app/api/chat/route.ts` | Server-side Groq key. Never expose with `NEXT_PUBLIC_`. |
 
 `.env*` files are git-ignored. There is no database, auth provider, payment gateway, or email service configured — the rest of the site runs without secrets.
@@ -79,12 +79,12 @@ Open <http://localhost:3000>. The IP checker and chat widget work in dev; the ch
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the Turbopack dev server on port 3000 |
-| `pnpm build` | Production build |
-| `pnpm start` | Serve the production build |
-| `pnpm lint` | Run ESLint (`eslint-config-next`) |
+| Command      | Description                                 |
+| ------------ | ------------------------------------------- |
+| `pnpm dev`   | Start the Turbopack dev server on port 3000 |
+| `pnpm build` | Production build                            |
+| `pnpm start` | Serve the production build                  |
+| `pnpm lint`  | Run ESLint (`eslint-config-next`)           |
 
 No test runner or test files are configured.
 
@@ -94,33 +94,33 @@ No test runner or test files are configured.
 
 ### Pages
 
-| Route | Rendering | Purpose |
-| --- | --- | --- |
-| `/` | Server page composing client sections | Landing page: hero + live IP proof, trust strip, survey plans, global network, trust cards, reviews, FAQ, cookie notice |
-| `/cloud-vps` | Client | Interactive cloud configurator (region, OS, vCPU/RAM/NVMe sliders, optional residential IP) with live price and checkout drawer |
-| `/survey-vps` | Client | Three residential ISP tiers, carrier filter, clean-vs-virgin IP toggle, monthly/quarterly/annual billing, checkout drawer |
-| `/resellers` | Client | Volume tiers (10–24 / 25–49 / 50+ servers) and a simulated quote-request form |
-| `/hot-deals` | Server | Flash-sale hero, copyable coupon cards, feature section, diagnostics promo, support banner, FAQ |
-| `/deals` | Server | Permanent redirect to `/hot-deals` |
-| `/status` | Server | Static 90-day component uptime/latency table |
-| `/blog` | Client | Searchable, category-filterable guide index with featured post |
-| `/blog/[slug]` | Server, statically generated via `generateStaticParams` | Guide article with a hand-rolled Markdown-ish renderer, promo sidebar, related posts |
-| `/tools/ip-checker` | Client | Calls `/api/ip-check`, shows fraud gauge, usage type, proxy/VPN/Tor flags, WebRTC check, timezone mismatch |
-| `/tools/webrtc-test` | Client | Browser STUN probe for WebRTC IP leaks |
-| `/tools/looking-glass` | Client | **Simulated** ping/traceroute/MTR terminal output |
-| `/contact` | Client | Support channels and a simulated ticket form (fake `PV-xxxx` ID) |
-| `/login`, `/register` | Client | UI-only forms that redirect to `/cloud-vps` |
-| `/legal/terms` | Server | Terms of service |
-| `/legal/privacy` | Server | Privacy policy |
-| `/legal/ip-replacement` | Server | 7-day residential IP replacement guarantee |
-| `not-found.tsx` | Server | Styled 404 |
+| Route                   | Rendering                                               | Purpose                                                                                                                         |
+| ----------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                     | Server page composing client sections                   | Landing page: hero + live IP proof, trust strip, survey plans, global network, trust cards, reviews, FAQ, cookie notice         |
+| `/cloud-vps`            | Client                                                  | Interactive cloud configurator (region, OS, vCPU/RAM/NVMe sliders, optional residential IP) with live price and checkout drawer |
+| `/survey-vps`           | Client                                                  | Three residential ISP tiers, carrier filter, clean-vs-virgin IP toggle, monthly/quarterly/annual billing, checkout drawer       |
+| `/resellers`            | Client                                                  | Volume tiers (10–24 / 25–49 / 50+ servers) and a simulated quote-request form                                                   |
+| `/hot-deals`            | Server                                                  | Flash-sale hero, copyable coupon cards, feature section, diagnostics promo, support banner, FAQ                                 |
+| `/deals`                | Server                                                  | Permanent redirect to `/hot-deals`                                                                                              |
+| `/status`               | Server                                                  | Static 90-day component uptime/latency table                                                                                    |
+| `/blog`                 | Client                                                  | Searchable, category-filterable guide index with featured post                                                                  |
+| `/blog/[slug]`          | Server, statically generated via `generateStaticParams` | Guide article with a hand-rolled Markdown-ish renderer, promo sidebar, related posts                                            |
+| `/tools/ip-checker`     | Client                                                  | Calls `/api/ip-check`, shows fraud gauge, usage type, proxy/VPN/Tor flags, WebRTC check, timezone mismatch                      |
+| `/tools/webrtc-test`    | Client                                                  | Browser STUN probe for WebRTC IP leaks                                                                                          |
+| `/tools/looking-glass`  | Client                                                  | **Simulated** ping/traceroute/MTR terminal output                                                                               |
+| `/contact`              | Client                                                  | Support channels and a simulated ticket form (fake `PV-xxxx` ID)                                                                |
+| `/login`, `/register`   | Client                                                  | UI-only forms that redirect to `/cloud-vps`                                                                                     |
+| `/legal/terms`          | Server                                                  | Terms of service                                                                                                                |
+| `/legal/privacy`        | Server                                                  | Privacy policy                                                                                                                  |
+| `/legal/ip-replacement` | Server                                                  | 7-day residential IP replacement guarantee                                                                                      |
+| `not-found.tsx`         | Server                                                  | Styled 404                                                                                                                      |
 
 ### API routes
 
-| Route | Method | Purpose |
-| --- | --- | --- |
-| `/api/chat` | `POST` | Streams the Groq-powered support assistant as SSE |
-| `/api/ip-check` | `GET` | IP geolocation, ASN/ISP, and a heuristic hosting/proxy assessment |
+| Route           | Method | Purpose                                                           |
+| --------------- | ------ | ----------------------------------------------------------------- |
+| `/api/chat`     | `POST` | Streams the Groq-powered support assistant as SSE                 |
+| `/api/ip-check` | `GET`  | IP geolocation, ASN/ISP, and a heuristic hosting/proxy assessment |
 
 ---
 
@@ -279,10 +279,10 @@ Looks up an IP with [ip-api.com](http://ip-api.com) (free, no key) and maps the 
 
 **Errors**
 
-| Status | Meaning |
-| --- | --- |
-| `400` | IP is invalid or unresolvable (`ip-api` returned `fail`) |
-| `502` | Upstream lookup failed or timed out (error details are included) |
+| Status | Meaning                                                          |
+| ------ | ---------------------------------------------------------------- |
+| `400`  | IP is invalid or unresolvable (`ip-api` returned `fail`)         |
+| `502`  | Upstream lookup failed or timed out (error details are included) |
 
 Classification is heuristic: organization/ISP/ASN strings are matched against a short list of hosting providers and the words "hosting"/"datacenter". Hosting IPs get `fraudScore: 85`; everything else gets `0`. This is **not** a real fraud database such as IPQS or MaxMind.
 
@@ -313,13 +313,13 @@ data: [DONE]
 
 `src/app/globals.css` defines Tailwind v4 `@theme` tokens:
 
-| Token group | Values |
-| --- | --- |
-| Brand | `--color-brand: #2563eb`, `--color-brand-dark: #1d4ed8`, ink `#0b1220` / `#131c2e` |
+| Token group       | Values                                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| Brand             | `--color-brand: #2563eb`, `--color-brand-dark: #1d4ed8`, ink `#0b1220` / `#131c2e`                         |
 | Shadcn-compatible | background, foreground, card, popover, primary, secondary, muted, accent, destructive, border, input, ring |
-| Radii | `sm 0.5rem` → `xl 1.25rem` |
-| Fonts | `--font-sans` Inter, `--font-display` Plus Jakarta Sans, `--font-mono` JetBrains Mono |
-| Breakpoints | Tailwind defaults; container is `.shell` at `max-w-7xl` |
+| Radii             | `sm 0.5rem` → `xl 1.25rem`                                                                                 |
+| Fonts             | `--font-sans` Inter, `--font-display` Plus Jakarta Sans, `--font-mono` JetBrains Mono                      |
+| Breakpoints       | Tailwind defaults; container is `.shell` at `max-w-7xl`                                                    |
 
 ### Utilities
 
@@ -348,7 +348,7 @@ Keyframes/utilities: `pulse-dot`, `slow-zoom`, `drift`, `shimmer` (`text-shimmer
 ## Images and static assets
 
 - `next.config.ts` allows remote images from `images.unsplash.com` only.
-- Local assets in `public/`: payment marks (`bkash.png`, `nagad.png`, `visa-mastercard.png`, `usdt.png`), datacenter photos, `promotion.webp`, world maps, and default Next.js SVGs.
+- Local assets in `public/`: payment marks (`bkash.png`, `nagad.png`, `visa-mastercard.png`, `sslcommerz.png`), datacenter photos, `promotion.webp`, world maps, and default Next.js SVGs.
 - Some files are duplicated with and without spaces: `Hot deals bg.webp` is used via `/Hot%20deals%20bg.webp` (with `hot-deals-bg.webp` unused); `world-map.webp` is used while `world map.webp` is unused. Prefer hyphenated names — spaces are fragile across CDNs and case-sensitive filesystems.
 
 ---
@@ -409,15 +409,15 @@ The app is a standard Next.js Node deployment.
 
 ## Troubleshooting
 
-| Symptom | Likely cause / fix |
-| --- | --- |
-| Chat replies with "API key is invalid or missing" | `GROQ_API_KEY` is unset or wrong in `.env.local`; restart `pnpm dev` after editing |
-| Chat replies with "server ektu busy" | Groq rate limit (`429`); wait and retry or raise your quota |
-| IP checker shows `103.114.98.42` / "Demo Sample Host" | You are on localhost or a private IP; expected fallback |
-| IP checker returns `502` | ip-api.com unreachable/blocked, or the deployment egress is restricted |
-| Prices show `৳` when USD expected | Currency is stored per browser in `localStorage`; toggle it in the navbar |
-| Unsplash images fail | Only `images.unsplash.com` is allow-listed in `next.config.ts`; add new hosts explicitly |
-| Styling looks partially unstyled | Tailwind v4 scans only `src/**/*.{ts,tsx,mdx}` via `@source`; keep new UI inside `src` |
+| Symptom                                               | Likely cause / fix                                                                       |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Chat replies with "API key is invalid or missing"     | `GROQ_API_KEY` is unset or wrong in `.env.local`; restart `pnpm dev` after editing       |
+| Chat replies with "server ektu busy"                  | Groq rate limit (`429`); wait and retry or raise your quota                              |
+| IP checker shows `103.114.98.42` / "Demo Sample Host" | You are on localhost or a private IP; expected fallback                                  |
+| IP checker returns `502`                              | ip-api.com unreachable/blocked, or the deployment egress is restricted                   |
+| Prices show `৳` when USD expected                     | Currency is stored per browser in `localStorage`; toggle it in the navbar                |
+| Unsplash images fail                                  | Only `images.unsplash.com` is allow-listed in `next.config.ts`; add new hosts explicitly |
+| Styling looks partially unstyled                      | Tailwind v4 scans only `src/**/*.{ts,tsx,mdx}` via `@source`; keep new UI inside `src`   |
 
 ---
 

@@ -20,6 +20,7 @@ import {
 import { FaXTwitter } from "react-icons/fa6";
 import { BrandLogo } from "../ui/BrandLogo";
 
+
 const FOOTER_COLUMNS = [
   {
     title: "Servers & Plans",
@@ -105,7 +106,14 @@ const PAYMENT_BADGES = [
   },
 ];
 
-const HIDDEN_CTA_ROUTES = ["/login", "/register", "/checkout", "/dashboard"];
+const HIDDEN_CTA_ROUTES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/checkout",
+  "/dashboard",
+];;
 
 export function Footer() {
   const pathname = usePathname();

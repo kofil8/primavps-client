@@ -58,9 +58,11 @@ export function TurnstileWidget({
   const onExpireRef = useRef(onExpire);
   const onErrorRef = useRef(onError);
 
-  onVerifyRef.current = onVerify;
-  onExpireRef.current = onExpire;
-  onErrorRef.current = onError;
+  useEffect(() => {
+    onVerifyRef.current = onVerify;
+    onExpireRef.current = onExpire;
+    onErrorRef.current = onError;
+  });
 
   useEffect(() => {
     if (!SITE_KEY || !containerRef.current) return;
@@ -148,7 +150,7 @@ export function TurnstileWidget({
     ) as HTMLScriptElement | null;
     if (failedScript) {
       failedScript.remove();
-      setAttempt((prev) => prev + 1);
+      queueMicrotask(() => setAttempt((prev) => prev + 1));
     }
   }, [resetKey]);
 

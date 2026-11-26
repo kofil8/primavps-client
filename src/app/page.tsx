@@ -3,8 +3,8 @@ import { CustomerReviewsCarousel } from "@/components/sections/home/CustomerRevi
 import { GlobalNetworkMap } from "@/components/sections/home/GlobalNetworkMap";
 import { HeroSection } from "@/components/sections/home/HeroSection";
 import { HowItWorks } from "@/components/sections/home/HowItWorks";
-import { SurveyFaq } from "@/components/sections/home/SurveyFaq";
-import { SurveyRdpPlans } from "@/components/sections/home/SurveyRdpPlans";
+import { IspFaq } from "@/components/sections/home/IspFaq";
+import { IspPlansSection } from "@/components/sections/home/IspPlansSection";
 import { WhyTrustUs } from "@/components/sections/home/WhyTrustUs";
 import { CookieConsentNotice } from "@/components/ui/CookieConsentNotice";
 import { HOME_FAQS } from "@/lib/data/faqs";
@@ -21,8 +21,8 @@ export default function HomePage() {
       {/* 2. How it works */}
       <HowItWorks />
 
-      {/* 3. Survey RDP Plans — 3 clean tiers with in-card country selector dropdown */}
-      <SurveyRdpPlans />
+      {/* 3. Residential ISP RDP Plans — 3 clean tiers with in-card country selector dropdown */}
+      <IspPlansSection />
 
       {/* 4. Global Network Map — Dallas, Ashburn, Amsterdam & Dhaka Desk */}
       <GlobalNetworkMap />
@@ -33,8 +33,8 @@ export default function HomePage() {
       {/* 6. Customer Reviews Carousel — auto-scrolling verified proof across US, UK, DE, FR */}
       <CustomerReviewsCarousel />
 
-      {/* 7. FAQ — 4 survey & residential RDP objection-handling questions */}
-      <SurveyFaq />
+      {/* 7. FAQ — 4 residential ISP & RDP objection-handling questions */}
+      <IspFaq />
 
       {/* 8. Cookie consent notice — auto-hides after ~3s or on dismiss */}
       <CookieConsentNotice />

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, ShieldAlert, Play, CheckCircle2, RefreshCw, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Play, CheckCircle2, RefreshCw, ArrowRight } from 'lucide-react';
 
 export default function WebRtcTestPage() {
   const [testing, setTesting] = useState(false);
@@ -52,7 +52,7 @@ export default function WebRtcTestPage() {
         setTesting(false);
         setTested(true);
       }, 2000);
-    } catch (err) {
+    } catch {
       setTesting(false);
       setTested(true);
     }

@@ -1,101 +1,100 @@
+"use client";
+
+import { NewTicketModal } from "@/components/dashboard/NewTicketModal";
 import { StatusPill } from "@/components/dashboard/StatusPill";
-import { demoAccount } from "@/lib/data/client-demo";
-import { BookOpen, Mail, MessageCircle, Ticket } from "lucide-react";
-import type { Metadata } from "next";
+import {
+  getStoredTickets,
+  saveStoredTickets,
+} from "@/lib/services/portal-store";
+import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Support",
-  description: "Tickets, live chat and infrastructure support.",
-  robots: { index: false, follow: false },
-};
-
-const CHANNELS = [
-  {
-    title: "Open a ticket",
-    detail: "Technical support, billing or IP replacement",
-    href: "/contact",
-    icon: Ticket,
-  },
-  {
-    title: "Email support",
-    detail: "support@primavps.com · replies in ~11 min",
-    href: "mailto:support@primavps.com",
-    icon: Mail,
-  },
-  {
-    title: "Infrastructure guides",
-    detail: "Setup, security and IP reputation playbooks",
-    href: "/blog",
-    icon: BookOpen,
-  },
-] as const;
+import { useState } from "react";
 
 export default function DashboardSupportPage() {
+  const [tickets, setTickets] = useState(getStoredTickets);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleCreateTicket = (data: {
+    subject: string;
+    serviceName: string;
+    priority: string;
+    message: string;
+  }) => {
+    const newItem = {
+      id: `TKT-${Math.floor(1000 + Math.random() * 9000)}`,
+      subject: data.subject,
+      department: data.serviceName,
+      status: "open" as const,
+      updated: "Just now",
+    };
+    setTickets((prev) => {
+      const next = [newItem, ...prev];
+      saveStoredTickets(next);
+      return next;
+    });
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 sm:grid-cols-3">
-        {CHANNELS.map((channel) => (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="font-display text-xl font-extrabold text-slate-900 sm:text-2xl">
+            সাপোর্ট টিকিট
+          </h1>
+          <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+            বনানী টেকনিক্যাল ডেস্ক থেকে গড়ে ৩–১০ মিনিটে উত্তর পাবেন।
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setModalOpen(true)}
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-blue-700"
+        >
+          <Plus size={15} />
+          <span>নতুন টিকিট খুলুন</span>
+        </button>
+      </div>
+
+      <div className="space-y-3">
+        {tickets.map((tkt) => (
           <Link
-            key={channel.title}
-            href={channel.href}
-            className="group rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm transition-colors hover:border-blue-300"
+            key={tkt.id}
+            href={`/dashboard/support/${tkt.id}`}
+            className="group flex flex-col justify-between gap-3 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all hover:border-blue-300 hover:shadow-sm sm:flex-row sm:items-center sm:p-5"
           >
-            <channel.icon
-              size={18}
-              className="text-blue-600"
-              aria-hidden="true"
-            />
-            <p className="mt-2 text-sm font-semibold text-slate-900">
-              {channel.title}
-            </p>
-            <p className="mt-0.5 text-xs leading-5 text-slate-500">
-              {channel.detail}
-            </p>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-xs font-bold text-blue-600">
+                  #{tkt.id}
+                </span>
+                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs font-medium text-slate-500">
+                  {tkt.department}
+                </span>
+              </div>
+              <h2 className="mt-1 text-sm font-bold text-slate-900 group-hover:text-blue-600 sm:text-base">
+                {tkt.subject}
+              </h2>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 sm:justify-end">
+              <span className="text-xs text-slate-400">{tkt.updated}</span>
+              <StatusPill status={tkt.status} />
+              <ArrowRight
+                size={15}
+                className="text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-600"
+              />
+            </div>
           </Link>
         ))}
       </div>
 
-      <section className="rounded-2xl border border-slate-200/90 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-          <div>
-            <h2 className="font-semibold text-slate-900">Your tickets</h2>
-            <p className="text-xs text-slate-500">
-              24/7 coverage · median first reply 11 minutes
-            </p>
-          </div>
-          <MessageCircle
-            size={16}
-            className="text-slate-400"
-            aria-hidden="true"
-          />
-        </div>
-
-        <ul className="divide-y divide-slate-100">
-          {demoAccount.tickets.map((ticket) => (
-            <li
-              key={ticket.id}
-              className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5"
-            >
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-xs font-semibold text-slate-500">
-                    {ticket.id}
-                  </span>
-                  <StatusPill tone={ticket.status === "open" ? "blue" : "slate"}>
-                    {ticket.status === "open" ? "Open" : "Resolved"}
-                  </StatusPill>
-                </div>
-                <p className="mt-0.5 text-sm font-medium text-slate-900">
-                  {ticket.subject}
-                </p>
-                <p className="text-xs text-slate-500">{ticket.department}</p>
-              </div>
-              <p className="text-xs text-slate-400">Updated {ticket.updated}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <NewTicketModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onCreate={handleCreateTicket}
+      />
     </div>
   );
 }

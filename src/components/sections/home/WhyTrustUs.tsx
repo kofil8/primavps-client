@@ -125,7 +125,7 @@ export function WhyTrustUs() {
                           <Laptop size={13} />
                         </div>
                         <span className="mt-1 whitespace-nowrap text-[9px] font-bold text-slate-800">
-                          Surveys
+                          Remote Ops
                         </span>
                       </div>
                     </div>

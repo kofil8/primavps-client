@@ -9,11 +9,11 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = pageSeo({
   title: `VPS Hot Deals & Promo Codes — Save up to ${MAX_DISCOUNT_PERCENT}%`,
-  description: `Verified promo codes for residential survey VPS and NVMe cloud servers. Save up to ${MAX_DISCOUNT_PERCENT}% on your first month — pay with bKash, Nagad, card, or USDT.`,
+  description: `Verified promo codes for residential ISP VPS and NVMe cloud servers. Save up to ${MAX_DISCOUNT_PERCENT}% on your first month — pay with bKash, Nagad, card, or sslcommerz.`,
   path: "/hot-deals",
   keywords: [
     "VPS promo code Bangladesh",
-    "survey VPS discount",
+    "ISP VPS discount",
     "bKash VPS offer",
     "residential VPS coupon",
   ],
@@ -30,7 +30,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "বিকাশ ও নগদে কি কুপন কোড কাজ করবে?",
-    a: "অবশ্যই। বিকাশ, নগদ, রকেট, কার্ড ও USDT—সব পেমেন্ট মেথডেই কুপন কোড ব্যবহার করা যাবে।",
+    a: "অবশ্যই। বিকাশ, নগদ, রকেট, কার্ড ও sslcommerz—সব পেমেন্ট মেথডেই কুপন কোড ব্যবহার করা যাবে।",
   },
   {
     q: "অফারে কেনা সার্ভারেও কি ৭-দিনের IP Swap থাকবে?",

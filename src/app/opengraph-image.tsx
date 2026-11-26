@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "primavps — survey VPS and clean residential ISP IPs in Bangladesh";
+  "primavps — residential ISP VPS and clean static IPs in Bangladesh";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -57,7 +57,7 @@ export default function OpengraphImage() {
               fontWeight: 600,
             }}
           >
-            Survey VPS · Bangladesh
+            Residential ISP VPS · Bangladesh
           </div>
           <div
             style={{
@@ -68,7 +68,7 @@ export default function OpengraphImage() {
               maxWidth: 900,
             }}
           >
-            Clean residential ISP IPs for survey work
+            Clean residential ISP IPs for remote work
           </div>
           <div style={{ fontSize: 28, color: "#cbd5e1", maxWidth: 880 }}>
             AT&amp;T · Comcast · Verizon · BT — Windows 11 RDP from BDT 2,999/mo,

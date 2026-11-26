@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Check, ShieldCheck, Tag, X, Zap } from "lucide-react";
+import { ArrowRight, ShieldCheck, Tag, X, Zap } from "lucide-react";
 import Link from "next/link";
 
 export function StickyConversionBar() {

@@ -7,12 +7,12 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = pageSeo({
-  title: "VPS, Residential IP & Survey Guides — primavps",
+  title: "VPS, Residential IP & ISP Guides — primavps",
   description:
-    "বাংলাদেশি ফ্রিল্যান্সার ও ডেভেলপারদের জন্য রেসিডেন্সিয়াল ISP IP, WebRTC লিক প্রোটেকশন, সার্ভে VPS সেটআপ এবং ক্লাউড সার্ভার গাইড।",
+    "বাংলাদেশি ফ্রিল্যান্সার ও ডেভেলপারদের জন্য রেসিডেন্সিয়াল ISP IP, WebRTC লিক প্রোটেকশন, ISP VPS সেটআপ এবং ক্লাউড সার্ভার গাইড।",
   path: "/blog",
   keywords: [
-    "survey VPS guide Bangladesh",
+    "ISP VPS guide Bangladesh",
     "residential IP tutorial",
     "WebRTC leak fix RDP",
     "VPS setup guide Bangla",
@@ -27,7 +27,7 @@ export default async function BlogIndexPage() {
     "@type": "CollectionPage",
     name: "primavps Guides & Tutorials",
     description:
-      "Practical guides on residential ISP IPs, survey VPS setup, WebRTC leak prevention, and cloud servers.",
+      "Practical guides on residential ISP IPs, ISP VPS setup, WebRTC leak prevention, and cloud servers.",
     url: "https://primavps.com/blog",
     mainEntity: {
       "@type": "ItemList",
