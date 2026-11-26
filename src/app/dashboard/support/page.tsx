@@ -9,6 +9,7 @@ import {
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function DashboardSupportPage() {
   const [tickets, setTickets] = useState(getStoredTickets);
@@ -32,6 +33,7 @@ export default function DashboardSupportPage() {
       saveStoredTickets(next);
       return next;
     });
+    toast.success(`সাপোর্ট টিকিট #${newItem.id} তৈরি হয়েছে।`);
   };
 
   return (

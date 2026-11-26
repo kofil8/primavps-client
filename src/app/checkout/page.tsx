@@ -10,7 +10,6 @@ import {
 import { useCurrency } from "@/lib/currency";
 import { HOT_DEALS_LIST } from "@/lib/data/deals";
 import { ISP_PLANS } from "@/lib/data/plans";
-import { addProvisionedOrder } from "@/lib/services/portal-store";
 import {
   ArrowRight,
   Lock,
@@ -21,6 +20,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { toast } from "sonner";
 
 const CYCLES = {
   monthly: { label: "১ মাস (Monthly)", months: 1, discount: 0 },
@@ -29,29 +29,42 @@ const CYCLES = {
 } as const;
 
 type CycleKey = keyof typeof CYCLES;
-type GatewayId = "bkash" | "nagad" | "sslcommerz";
+type GatewayId = "UDDOKTAPAY" | "BKASH" | "NAGAD" | "SSLCOMMERZ";
 
 const GATEWAYS: {
   id: GatewayId;
   name: string;
   subtitle: string;
   badge?: string;
+  available: boolean;
 }[] = [
   {
-    id: "bkash",
-    name: "bKash Merchant",
-    subtitle: "ইনস্ট্যান্ট বিকাশ পেমেন্ট (কোনো অতিরিক্ত ফি নেই)",
+    id: "UDDOKTAPAY",
+    name: "UddoktaPay (bKash, Nagad, Rocket, Upay)",
+    subtitle: "যেকোনো মোবাইল ব্যাংকিং দিয়ে ইনস্ট্যান্ট অটোমেটেড পেমেন্ট",
     badge: "সবচেয়ে জনপ্রিয়",
+    available: true,
   },
   {
-    id: "nagad",
-    name: "Nagad Merchant",
-    subtitle: "নগদ অ্যাপ বা USSD দিয়ে দ্রুত পেমেন্ট",
+    id: "BKASH",
+    name: "bKash Direct Merchant",
+    subtitle: "সরাসরি বিকাশ টোকেনাইজড চেকআউট",
+    badge: "শীঘ্রই আসছে",
+    available: false,
   },
   {
-    id: "sslcommerz",
-    name: "SSLCommerz (Card / Rocket / Bank)",
-    subtitle: "Visa, Mastercard, Amex, Rocket ও ইন্টারনেট ব্যাংকিং",
+    id: "NAGAD",
+    name: "Nagad Direct Merchant",
+    subtitle: "নগদ অ্যাপ বা USSD দিয়ে দ্রুত পেমেন্ট",
+    badge: "শীঘ্রই আসছে",
+    available: false,
+  },
+  {
+    id: "SSLCOMMERZ",
+    name: "SSLCommerz (Card / Bank)",
+    subtitle: "Visa, Mastercard, Amex ও ইন্টারনেট ব্যাংকিং",
+    badge: "শীঘ্রই আসছে",
+    available: false,
   },
 ];
 
@@ -87,10 +100,6 @@ function evaluateCoupon(codeRaw: string, orderType: "isp" | "cloud") {
   };
 }
 
-function createOrderRef(): string {
-  return `PV-${Math.floor(100000 + Math.random() * 900000)}`;
-}
-
 function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -105,8 +114,8 @@ function CheckoutContent() {
   const rawCycle = (searchParams.get("cycle") || "monthly") as CycleKey;
   const cycleKey: CycleKey = rawCycle in CYCLES ? rawCycle : "monthly";
   const initialCoupon = (searchParams.get("coupon") || "").toUpperCase();
+  const existingInvoiceId = searchParams.get("invoiceId");
 
-  // Resolve ISP or Cloud product details
   const matchedIsp =
     ISP_PLANS.find(
       (p) => p.id.toLowerCase() === planParam || p.tier === planParam,
@@ -137,7 +146,7 @@ function CheckoutContent() {
 
   const initialCouponState = evaluateCoupon(initialCoupon, orderType);
 
-  const [gateway, setGateway] = useState<GatewayId>("bkash");
+  const [gateway, setGateway] = useState<GatewayId>("UDDOKTAPAY");
   const [couponInput, setCouponInput] = useState(initialCoupon);
   const [appliedCoupon, setAppliedCoupon] = useState(
     initialCouponState.appliedCoupon,
@@ -168,34 +177,93 @@ function CheckoutContent() {
     if (!agreed || submitting) return;
     setSubmitting(true);
 
-    // UI-first simulated gateway handoff (will call POST /api/v1/orders + /payments/init)
-    await new Promise((r) => setTimeout(r, 900));
+    const apiBase =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
-    const orderRef = createOrderRef();
-    addProvisionedOrder({
-      orderRef,
-      orderType,
-      planName: productTitle,
-      country,
-      carrier: orderType === "cloud" ? "KVM NVMe" : carrier,
-      os: orderType === "cloud" ? cloudOs : "Windows 11 Pro",
-      location,
-      vcpu: orderType === "cloud" ? cloudVcpu : matchedIsp.specs.vcpu,
-      ram: orderType === "cloud" ? cloudRam : matchedIsp.specs.ram,
-      nvme: orderType === "cloud" ? cloudNvme : matchedIsp.specs.nvme,
-      totalBdt,
-    });
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
-    const params = new URLSearchParams({
-      order: orderRef,
-      type: orderType,
-      plan: productTitle,
-      country,
-      carrier,
-      gateway,
-      total: String(totalBdt),
-    });
-    router.push(`/checkout/success?${params.toString()}`);
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    try {
+      let invoiceId = existingInvoiceId;
+
+      if (!invoiceId) {
+        const orderRes = await fetch(`${apiBase}/orders`, {
+          method: "POST",
+          headers,
+          credentials: "include",
+          body: JSON.stringify({
+            productType: orderType === "cloud" ? "CLOUD_VPS" : "ISP_VPS",
+            planSlug: orderType === "isp" ? matchedIsp.id : undefined,
+            country: country.toUpperCase(),
+            carrier: orderType === "isp" ? carrier : undefined,
+            isFreshIp: isFresh,
+            osName: orderType === "cloud" ? cloudOs : "Windows 11 Pro",
+            regionName: location,
+            cycle: cycleKey.toUpperCase(),
+            couponCode: appliedCoupon || undefined,
+            customSpecs:
+              orderType === "cloud"
+                ? { vcpu: cloudVcpu, ram: cloudRam, nvme: cloudNvme }
+                : undefined,
+          }),
+        });
+
+        if (orderRes.status === 401) {
+          toast.error("অর্ডার করতে অনুগ্রহ করে আগে লগইন করুন।");
+          router.push(
+            `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`,
+          );
+          return;
+        }
+
+        const orderJson = await orderRes.json();
+        if (!orderRes.ok) {
+          throw new Error(orderJson?.message || "অর্ডার তৈরি করতে সমস্যা হয়েছে।");
+        }
+
+        invoiceId =
+          orderJson?.data?.invoice?.id ||
+          orderJson?.data?.invoiceId ||
+          orderJson?.invoice?.id ||
+          orderJson?.invoiceId;
+      }
+
+      if (!invoiceId) {
+        throw new Error("ইনভয়েস আইডি পাওয়া যায়নি।");
+      }
+
+      const payRes = await fetch(`${apiBase}/payments/initiate`, {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({
+          invoiceId,
+          gateway,
+        }),
+      });
+
+      const payJson = await payRes.json();
+      if (!payRes.ok) {
+        throw new Error(payJson?.message || "পেমেন্ট গেটওয়ে চালু করা যায়নি।");
+      }
+
+      const paymentUrl = payJson?.data?.paymentUrl || payJson?.paymentUrl;
+      if (!paymentUrl) {
+        throw new Error("গেটওয়ে থেকে পেমেন্ট লিংক পাওয়া যায়নি।");
+      }
+
+      window.location.href = paymentUrl;
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "পেমেন্ট প্রক্রিয়ায় ত্রুটি হয়েছে।";
+      toast.error(message);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -203,15 +271,17 @@ function CheckoutContent() {
       <FocusedHeader
         step={2}
         showSteps
-        backHref={orderType === "cloud" ? "/cloud-vps" : "/isp-vps"}
+        backHref={
+          searchParams.get("from") === "dashboard"
+            ? "/dashboard/isp-vps"
+            : "/isp-vps"
+        }
         backLabel="কনফিগারেশন পরিবর্তন করুন"
       />
 
       <main className="shell py-8 sm:py-12">
         <div className="mx-auto grid max-w-5xl items-start gap-6 lg:grid-cols-[1.45fr_1fr] lg:gap-8">
-          {/* Left: Order Review & Payment Gateway */}
           <div className="space-y-5">
-            {/* Order Card */}
             <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs sm:p-6">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
                 <h1 className="font-display text-lg font-extrabold text-slate-900 sm:text-xl">
@@ -252,7 +322,6 @@ function CheckoutContent() {
                 </p>
               </div>
 
-              {/* Coupon Box */}
               <div className="mt-5">
                 <label
                   htmlFor="checkout-coupon"
@@ -289,7 +358,6 @@ function CheckoutContent() {
               </div>
             </section>
 
-            {/* Payment Method Selector */}
             <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs sm:p-6">
               <h2 className="font-display text-base font-extrabold text-slate-900 sm:text-lg">
                 পেমেন্ট মেথড নির্বাচন করুন
@@ -301,16 +369,19 @@ function CheckoutContent() {
 
               <div className="mt-4 space-y-2.5">
                 {GATEWAYS.map((item) => {
-                  const active = gateway === item.id;
+                  const active = gateway === item.id && item.available;
                   return (
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => setGateway(item.id)}
-                      className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border p-3.5 text-left transition-all ${
-                        active
-                          ? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/15"
-                          : "border-slate-200 bg-white hover:border-slate-300"
+                      disabled={!item.available}
+                      onClick={() => item.available && setGateway(item.id)}
+                      className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3.5 text-left transition-all ${
+                        !item.available
+                          ? "cursor-not-allowed border-slate-200/70 bg-slate-50/70 opacity-60"
+                          : active
+                            ? "cursor-pointer border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/15"
+                            : "cursor-pointer border-slate-200 bg-white hover:border-slate-300"
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -318,7 +389,7 @@ function CheckoutContent() {
                           className={`grid size-4.5 shrink-0 place-items-center rounded-full border ${
                             active
                               ? "border-blue-600 bg-blue-600"
-                              : "border-slate-300"
+                              : "border-slate-300 bg-slate-100"
                           }`}
                         >
                           {active && (
@@ -331,7 +402,13 @@ function CheckoutContent() {
                               {item.name}
                             </span>
                             {item.badge && (
-                              <span className="rounded-full bg-pink-50 px-2 py-0.5 text-[10px] font-bold text-pink-700">
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                  item.available
+                                    ? "bg-pink-50 text-pink-700"
+                                    : "bg-slate-200/80 text-slate-600"
+                                }`}
+                              >
                                 {item.badge}
                               </span>
                             )}
@@ -342,15 +419,21 @@ function CheckoutContent() {
                         </div>
                       </div>
 
-                      <div className="shrink-0">
-                        {item.id === "bkash" && (
-                          <BkashLogo className="h-5 w-auto" />
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        {item.id === "UDDOKTAPAY" && (
+                          <div className="flex items-center gap-1.5 rounded-lg bg-white px-2 py-1 shadow-2xs ring-1 ring-slate-200/80">
+                            <BkashLogo className="h-4 w-auto" />
+                            <NagadLogo className="h-4 w-auto" />
+                          </div>
                         )}
-                        {item.id === "nagad" && (
-                          <NagadLogo className="h-5 w-auto" />
+                        {item.id === "BKASH" && (
+                          <BkashLogo className="h-5 w-auto grayscale" />
                         )}
-                        {item.id === "sslcommerz" && (
-                          <VisaLogo className="h-4.5 w-auto" />
+                        {item.id === "NAGAD" && (
+                          <NagadLogo className="h-5 w-auto grayscale" />
+                        )}
+                        {item.id === "SSLCOMMERZ" && (
+                          <VisaLogo className="h-4.5 w-auto grayscale" />
                         )}
                       </div>
                     </button>
@@ -360,7 +443,6 @@ function CheckoutContent() {
             </section>
           </div>
 
-          {/* Right: Sticky Total & Pay CTA */}
           <aside className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:sticky lg:top-22">
             <h2 className="font-display text-base font-extrabold text-slate-900">
               পেমেন্ট বিবরণী
@@ -368,9 +450,7 @@ function CheckoutContent() {
 
             <dl className="mt-4 space-y-2.5 border-y border-slate-100 py-4 text-xs sm:text-sm">
               <div className="flex justify-between text-slate-600">
-                <span>
-                  সাবটোটাল ({cycle.months} মাস)
-                </span>
+                <span>সাবটোটাল ({cycle.months} মাস)</span>
                 <span className="font-mono font-semibold text-slate-900">
                   {formatPrice(subtotal)}
                 </span>
@@ -459,7 +539,7 @@ function CheckoutContent() {
               <Lock size={15} />
               <span>
                 {submitting
-                  ? "পেমেন্ট গেটওয়েতে যাচ্ছে…"
+                  ? "UddoktaPay গেটওয়েতে যাচ্ছে…"
                   : `${formatPrice(totalBdt)} পেমেন্ট করুন`}
               </span>
               {!submitting && <ArrowRight size={15} />}
@@ -468,16 +548,6 @@ function CheckoutContent() {
             <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-slate-500">
               <ShieldCheck size={14} className="text-emerald-600" />
               <span>পেমেন্টের সাথে সাথে ইনভয়েস ও RDP অ্যাক্টিভেশন</span>
-            </div>
-
-            {/* Demo Failure Preview Link */}
-            <div className="mt-3 text-center">
-              <Link
-                href="/checkout/failed?reason=cancelled"
-                className="text-[11px] text-slate-400 hover:text-slate-600 hover:underline"
-              >
-                (UI টেস্ট: পেমেন্ট ফেইলড পেজ দেখুন)
-              </Link>
             </div>
           </aside>
         </div>

@@ -11,6 +11,7 @@ import {
   ArrowRight,
   AlertTriangle,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function IpCheckerPage() {
   const [inputIp, setInputIp] = useState('');
@@ -101,10 +102,15 @@ export default function IpCheckerPage() {
     fetchIpData(inputIp.trim());
   };
 
-  const handleCopy = (text: string, key: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
+  const handleCopy = async (text: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      toast.success('Copied to clipboard');
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch {
+      toast.error('Could not copy — please copy manually.');
+    }
   };
 
   const isDatacenter = report?.usageType === 'Data Center / Hosting' || (report?.fraudScore ?? 0) >= 40;

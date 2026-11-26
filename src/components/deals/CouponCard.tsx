@@ -5,6 +5,7 @@ import { HotDeal } from "@/lib/data/deals";
 import { ArrowRight, Check, Copy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface CouponCardProps {
   deal: HotDeal;
@@ -57,6 +58,7 @@ export function CouponCard({ deal }: CouponCardProps) {
       document.body.removeChild(textarea);
     }
     setCopied(true);
+    toast.success(`কুপন ${deal.couponCode} (${deal.discountPercent}% OFF) কপি হয়েছে!`);
     window.setTimeout(() => setCopied(false), 2200);
   };
 

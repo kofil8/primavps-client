@@ -37,7 +37,7 @@ function CheckoutFailedContent() {
           </h1>
           <p className="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
             আপনার অ্যাকাউন্ট থেকে কোনো টাকা কাটা হয়নি। নিচের বাটনে ক্লিক করে
-            আবার বিকাশ, নগদ বা কার্ডে পেমেন্ট করতে পারেন।
+            আবার পেমেন্ট চেষ্টা করতে পারেন।
           </p>
 
           <div className="mt-6 space-y-2.5">

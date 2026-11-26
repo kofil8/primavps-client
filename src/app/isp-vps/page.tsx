@@ -2,9 +2,11 @@
 
 import { LazyCheckoutDrawer } from "@/components/sections/isp/LazyCheckoutDrawer";
 import { CountryFlag } from "@/components/ui/CountryFlag";
+import { useSessionUser } from "@/lib/auth/client-session";
 import { useCurrency } from "@/lib/currency";
 import { ISP_PLANS, IspPlan } from "@/lib/data/plans";
 import {
+  AlertTriangle,
   ArrowRight,
   Cpu,
   CreditCard,
@@ -97,6 +99,8 @@ const TRUST_POINTS = [
 
 function IspVpsContent() {
   const { formatPrice } = useCurrency();
+  const sessionUser = useSessionUser();
+  const isReseller = sessionUser?.role === "RESELLER";
   const searchParams = useSearchParams();
 
   const planParam = searchParams.get("plan");
@@ -349,6 +353,33 @@ function IspVpsContent() {
       {/* 3. Plans Grid */}
       <section className="py-10 sm:py-14 lg:py-16">
         <div className="shell">
+          {isReseller && (
+            <div className="mb-6 flex flex-col justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 sm:flex-row sm:items-center sm:p-5">
+              <div className="flex items-start gap-3">
+                <AlertTriangle
+                  size={18}
+                  className="mt-0.5 shrink-0 text-amber-600"
+                />
+                <div className="text-xs leading-relaxed text-amber-950 sm:text-sm">
+                  <p className="font-bold">
+                    রিটেইল প্ল্যান শুধুমাত্র ক্লায়েন্ট (Client) অ্যাকাউন্টের জন্য
+                  </p>
+                  <p className="mt-0.5 text-xs text-amber-800">
+                    আপনি রিসেলার হিসেবে লগইন আছেন। হোলসেল ডিসকাউন্ট ও প্রিপেইড
+                    ওয়ালেট দিয়ে ডিপ্লয় করতে রিসেলার পোর্টাল ব্যবহার করুন।
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/reseller-portal/deploy"
+                className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-indigo-700"
+              >
+                <span>রিসেলার পোর্টালে যান</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          )}
+
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="flex items-center gap-2">

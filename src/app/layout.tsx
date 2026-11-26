@@ -2,6 +2,8 @@ import { Footer } from "@/components/layout/Footer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LazyChatWidget } from "@/components/LazyChatWidget";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SessionUserProvider } from "@/lib/auth/client-session";
+import { getDisplayName, getSession } from "@/lib/auth/current-session";
 import { CurrencyProvider } from "@/lib/currency";
 import { bodyFont, displayFont, monoFont } from "@/lib/fonts";
 import { siteGraphSchema } from "@/lib/schema";
@@ -14,6 +16,7 @@ import {
   TWITTER_HANDLE,
 } from "@/lib/seo";
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -63,11 +66,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+  const user = session
+    ? {
+        name: getDisplayName(session),
+        email: session.email,
+        role: session.role,
+      }
+    : null;
+
   return (
     <html
       lang="en"
@@ -80,12 +92,20 @@ export default function RootLayout({
         className="flex min-h-screen flex-col bg-white text-slate-900 antialiased"
       >
         <JsonLd data={siteGraphSchema()} />
-        <CurrencyProvider>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <LazyChatWidget />
-        </CurrencyProvider>
+        <SessionUserProvider user={user}>
+          <CurrencyProvider>
+            <SiteHeader user={user} />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <LazyChatWidget />
+            <Toaster
+              position="top-right"
+              richColors
+              closeButton
+              toastOptions={{ className: "font-sans text-xs sm:text-sm" }}
+            />
+          </CurrencyProvider>
+        </SessionUserProvider>
       </body>
     </html>
   );

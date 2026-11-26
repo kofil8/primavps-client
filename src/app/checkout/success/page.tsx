@@ -3,6 +3,7 @@
 import { FocusedHeader } from "@/components/layout/FocusedHeader";
 import { downloadRdpFile } from "@/lib/utils/rdp-file";
 import {
+  AlertCircle,
   ArrowRight,
   Check,
   CheckCircle2,
@@ -11,62 +12,162 @@ import {
   Eye,
   EyeOff,
   Loader2,
+  RotateCcw,
   Server,
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
-  const orderRef = searchParams.get("order") || "PV-482910";
-  const planName = searchParams.get("plan") || "Popular Pro ISP VPS (US)";
-  const carrier = searchParams.get("carrier") || "AT&T";
+  const uddoktaInvoiceId = searchParams.get("invoice_id");
 
-  // Simulates live polling progression (Step 1 -> 2 -> 3)
   const [stage, setStage] = useState<1 | 2 | 3>(1);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  const [orderInfo, setOrderInfo] = useState<{
+    invoiceId: string;
+    orderId: string;
+  } | null>(null);
+
   const [showPassword, setShowPassword] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const verifiedOnce = useRef(false);
 
   useEffect(() => {
-    const t1 = window.setTimeout(() => setStage(2), 1100);
-    const t2 = window.setTimeout(() => setStage(3), 2400);
-    return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-    };
-  }, []);
+    if (!uddoktaInvoiceId) {
+      setVerifyError("পেমেন্ট ইনভয়েস আইডি পাওয়া যায়নি।");
+      return;
+    }
 
-  const demoCreds = {
-    ipAddress: "108.204.142.88",
+    if (verifiedOnce.current) return;
+    verifiedOnce.current = true;
+
+    const verifyTransaction = async () => {
+      const apiBase =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+
+      try {
+        const res = await fetch(`${apiBase}/payments/verify/uddoktapay`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ invoice_id: uddoktaInvoiceId }),
+        });
+
+        const json = await res.json();
+        const result = json?.data || json;
+
+        if (
+          !res.ok ||
+          (result?.status !== "COMPLETED" && result?.status !== "ALREADY_PAID")
+        ) {
+          throw new Error(json?.message || "পেমেন্ট ভেরিফিকেশন সম্পন্ন হয়নি।");
+        }
+
+        setOrderInfo({
+          invoiceId: result.invoiceId,
+          orderId: result.orderId,
+        });
+
+        setStage(2);
+        window.setTimeout(() => setStage(3), 1500);
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "পেমেন্ট যাচাই করতে সমস্যা হয়েছে।";
+        setVerifyError(message);
+      }
+    };
+
+    verifyTransaction();
+  }, [uddoktaInvoiceId]);
+
+  const displayRef = orderInfo?.orderId
+    ? orderInfo.orderId.slice(0, 8).toUpperCase()
+    : uddoktaInvoiceId?.slice(0, 8).toUpperCase() || "PROCESSING";
+
+  const serverCreds = {
+    ipAddress: "Pending IP Assignment",
     rdpPort: 3389,
     username: "Administrator",
-    password: "Pv#94kLm!2026xR",
-    isp: `${carrier} Static Residential (IPQS 0/100)`,
+    password: "Check Dashboard / Email",
+    isp: "Static Residential ISP (IPQS Clean)",
   };
 
   const copyValue = async (key: string, val: string) => {
-    await navigator.clipboard.writeText(val);
-    setCopiedField(key);
-    window.setTimeout(() => setCopiedField(null), 1600);
+    try {
+      await navigator.clipboard.writeText(val);
+      setCopiedField(key);
+      toast.success("ক্লিপবোর্ডে কপি হয়েছে");
+      window.setTimeout(() => setCopiedField(null), 1600);
+    } catch {
+      toast.error("ক্লিপবোর্ডে কপি করা যায়নি — ম্যানুয়ালি কপি করুন।");
+    }
   };
+
+  const handleDownloadRdp = () => {
+    downloadRdpFile({
+      ipAddress: serverCreds.ipAddress,
+      rdpPort: serverCreds.rdpPort,
+      username: serverCreds.username,
+      serverLabel: `primavps-${displayRef}`,
+    });
+    toast.success("RDP ফাইল ডাউনলোড শুরু হয়েছে।");
+  };
+
+  if (verifyError) {
+    return (
+      <>
+        <FocusedHeader
+          step={2}
+          showSteps
+          backHref="/checkout"
+          backLabel="চেকআউটে ফিরে যান"
+        />
+        <main className="shell flex min-h-[calc(100vh-3.75rem)] items-center justify-center py-12">
+          <div className="w-full max-w-md rounded-3xl border border-red-200/80 bg-white p-6 text-center shadow-sm sm:p-8">
+            <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-red-50 text-red-600">
+              <AlertCircle size={30} />
+            </div>
+            <h1 className="mt-4 font-display text-xl font-extrabold text-slate-900">
+              পেমেন্ট ভেরিফিকেশন ব্যর্থ হয়েছে
+            </h1>
+            <p className="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+              {verifyError}
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/dashboard/billing"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700"
+              >
+                <RotateCcw size={15} />
+                <span>বিলিং ড্যাশবোর্ড চেক করুন</span>
+              </Link>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   const steps = [
     {
       id: 1,
-      title: "পেমেন্ট ভেরিফাইড হয়েছে",
-      desc: `অর্ডার #${orderRef} এর পেমেন্ট সফলভাবে গৃহীত হয়েছে।`,
+      title: "UddoktaPay পেমেন্ট ভেরিফাই হচ্ছে",
+      desc: `ইনভয়েস #${uddoktaInvoiceId} যাচাই করা হচ্ছে।`,
     },
     {
       id: 2,
-      title: "ক্লিন রেসিডেন্সিয়াল IP অ্যাসাইন হচ্ছে",
-      desc: `${demoCreds.isp} প্রি-স্ক্রিনিং সম্পন্ন।`,
+      title: "অর্ডার কনফার্ম ও প্রভিশনিং কিউতে যুক্ত",
+      desc: "পেমেন্ট সফলভাবে গৃহীত হয়েছে এবং সার্ভার সেটআপ শুরু হয়েছে।",
     },
     {
       id: 3,
-      title: "সার্ভার ও RDP লগইন প্রস্তুত",
-      desc: "ইমেইলেও ক্রেডেনশিয়াল পাঠিয়ে দেওয়া হয়েছে।",
+      title: "ক্লায়েন্ট ড্যাশবোর্ডে সার্ভার প্রস্তুত",
+      desc: "৬০–৯০ সেকেন্ডের মধ্যে আপনার ড্যাশবোর্ড ও ইমেইলে RDP তথ্য পৌঁছে যাবে।",
     },
   ];
 
@@ -81,25 +182,24 @@ function CheckoutSuccessContent() {
 
       <main className="shell py-10 sm:py-14">
         <div className="mx-auto max-w-2xl space-y-6">
-          {/* Status Header Card */}
           <div className="rounded-3xl border border-slate-200/90 bg-white p-6 text-center shadow-sm sm:p-8">
             <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-emerald-50 text-emerald-600">
-              <CheckCircle2 size={30} />
+              {stage < 3 ? (
+                <Loader2 size={30} className="animate-spin text-blue-600" />
+              ) : (
+                <CheckCircle2 size={30} />
+              )}
             </div>
 
             <p className="mt-4 font-mono text-xs font-bold uppercase tracking-wider text-blue-600">
-              Order #{orderRef}
+              Ref #{displayRef}
             </p>
             <h1 className="mt-1 font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
               {stage < 3
-                ? "আপনার সার্ভার প্রস্তুত হচ্ছে…"
-                : "আপনার সার্ভার সম্পূর্ণ প্রস্তুত!"}
+                ? "পেমেন্ট যাচাই ও সার্ভার প্রস্তুত হচ্ছে…"
+                : "পেমেন্ট সফল ও অর্ডার কনফার্ম হয়েছে!"}
             </h1>
-            <p className="mt-1.5 text-xs text-slate-600 sm:text-sm">
-              {planName}
-            </p>
 
-            {/* 3-Step Provisioning Tracker */}
             <ol className="mt-7 space-y-3 text-left">
               {steps.map((s) => {
                 const done = stage >= s.id;
@@ -140,7 +240,6 @@ function CheckoutSuccessContent() {
             </ol>
           </div>
 
-          {/* Credentials Box (Reveals as soon as Stage 3 completes) */}
           {stage === 3 && (
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
@@ -150,24 +249,17 @@ function CheckoutSuccessContent() {
                   </span>
                   <div>
                     <h2 className="font-display text-base font-extrabold text-slate-900">
-                      RDP কানেকশন ক্রেডেনশিয়াল
+                      সার্ভার প্রভিশনিং স্ট্যাটাস
                     </h2>
                     <p className="text-xs text-emerald-700">
-                      {demoCreds.isp}
+                      {serverCreds.isp}
                     </p>
                   </div>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    downloadRdpFile({
-                      ipAddress: demoCreds.ipAddress,
-                      rdpPort: demoCreds.rdpPort,
-                      username: demoCreds.username,
-                      serverLabel: `primavps-${orderRef}`,
-                    })
-                  }
+                  onClick={handleDownloadRdp}
                   className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white transition-colors hover:bg-slate-800"
                 >
                   <Download size={14} />
@@ -180,14 +272,14 @@ function CheckoutSuccessContent() {
                   {
                     key: "ip",
                     label: "IP Address",
-                    value: demoCreds.ipAddress,
-                    copyVal: demoCreds.ipAddress,
+                    value: serverCreds.ipAddress,
+                    copyVal: serverCreds.ipAddress,
                   },
                   {
                     key: "user",
                     label: "Username",
-                    value: demoCreds.username,
-                    copyVal: demoCreds.username,
+                    value: serverCreds.username,
+                    copyVal: serverCreds.username,
                   },
                 ].map((row) => (
                   <div
@@ -201,7 +293,6 @@ function CheckoutSuccessContent() {
                         type="button"
                         onClick={() => copyValue(row.key, row.copyVal)}
                         className="cursor-pointer rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                        aria-label={`Copy ${row.label}`}
                       >
                         {copiedField === row.key ? (
                           <Check size={13} className="text-emerald-600" />
@@ -213,34 +304,18 @@ function CheckoutSuccessContent() {
                   </div>
                 ))}
 
-                {/* Password Row */}
                 <div className="flex items-center justify-between py-3">
                   <dt className="font-medium text-slate-500">Password</dt>
                   <dd className="flex items-center gap-2 font-mono font-bold text-slate-900">
                     <span>
-                      {showPassword ? demoCreds.password : "••••••••••••••••"}
+                      {showPassword ? serverCreds.password : "••••••••••••••••"}
                     </span>
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
                       className="cursor-pointer rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                      aria-label={
-                        showPassword ? "Hide password" : "Reveal password"
-                      }
                     >
                       {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => copyValue("pass", demoCreds.password)}
-                      className="cursor-pointer rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                      aria-label="Copy password"
-                    >
-                      {copiedField === "pass" ? (
-                        <Check size={13} className="text-emerald-600" />
-                      ) : (
-                        <Copy size={13} />
-                      )}
                     </button>
                   </dd>
                 </div>

@@ -115,7 +115,7 @@ export const HOT_DEALS_LIST: HotDeal[] = [
     couponCode: "RESELL8",
     accent: "emerald",
     ribbonBg: "bg-[#00c06a]",
-    targetUrl: "/resellers?coupon=RESELL8",
+    targetUrl: "/reseller?coupon=RESELL8",
     specs: [
       { label: "Nodes", value: "10+ Instances" },
       { label: "Control", value: "Centralized API" },

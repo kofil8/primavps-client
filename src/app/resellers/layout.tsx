@@ -13,7 +13,7 @@ export const metadata: Metadata = pageSeo({
   ],
 });
 
-export default function ResellersLayout({
+export default function ResellerLayout({
   children,
 }: {
   children: React.ReactNode;

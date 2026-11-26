@@ -65,7 +65,7 @@ export default function DashboardServicesPage() {
             এই ক্যাটাগরিতে কোনো সার্ভার নেই
           </p>
           <Link
-            href="/isp-vps"
+            href="/dashboard/isp-vps"
             className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white"
           >
             <span>নতুন সার্ভার অর্ডার করুন</span>

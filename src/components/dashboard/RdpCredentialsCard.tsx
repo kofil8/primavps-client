@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface RdpCredentialsCardProps {
   serverName: string;
@@ -33,9 +34,24 @@ export function RdpCredentialsCard({
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const copyText = async (key: string, value: string) => {
-    await navigator.clipboard.writeText(value);
-    setCopiedKey(key);
-    window.setTimeout(() => setCopiedKey(null), 1600);
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedKey(key);
+      toast.success("ক্লিপবোর্ডে কপি হয়েছে");
+      window.setTimeout(() => setCopiedKey(null), 1600);
+    } catch {
+      toast.error("ক্লিপবোর্ডে কপি করা যায়নি — ম্যানুয়ালি কপি করুন।");
+    }
+  };
+
+  const handleDownloadRdp = () => {
+    downloadRdpFile({
+      ipAddress,
+      rdpPort,
+      username,
+      serverLabel: serverName,
+    });
+    toast.success("RDP ফাইল ডাউনলোড শুরু হয়েছে।");
   };
 
   const rows = [
@@ -61,14 +77,7 @@ export function RdpCredentialsCard({
 
         <button
           type="button"
-          onClick={() =>
-            downloadRdpFile({
-              ipAddress,
-              rdpPort,
-              username,
-              serverLabel: serverName,
-            })
-          }
+          onClick={handleDownloadRdp}
           className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white transition-colors hover:bg-slate-800"
         >
           <Download size={14} />

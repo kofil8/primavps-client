@@ -1,13 +1,15 @@
 "use client";
 
 import { CountryFlag } from "@/components/ui/CountryFlag";
+import { useSessionUser } from "@/lib/auth/client-session";
 import { useCurrency } from "@/lib/currency";
 import { HOT_DEALS_LIST } from "@/lib/data/deals";
 import { IspPlan } from "@/lib/data/plans";
-import { ArrowRight, Lock, MapPin, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, Lock, MapPin, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export interface CheckoutPlan {
   id?: string;
@@ -160,6 +162,9 @@ export function CheckoutDrawer({
 }: CheckoutDrawerProps) {
   const router = useRouter();
   const { formatPrice } = useCurrency();
+  const sessionUser = useSessionUser();
+  const isLoggedIn = Boolean(sessionUser);
+  const isReseller = sessionUser?.role === "RESELLER";
 
   const normCountry = (initialCountry || "us").toLowerCase();
   const activeCountryConfig =
@@ -230,6 +235,9 @@ export function CheckoutDrawer({
     const result = validateCouponForScope(coupon, productScope);
     setAppliedDiscountPercent(result.discountPercent);
     setCouponError(result.error);
+    if (result.valid) {
+      toast.success(`কুপন প্রয়োগ হয়েছে — ${result.discountPercent}% ছাড়`);
+    }
   };
 
   const proceedToCheckout = () => {
@@ -483,64 +491,97 @@ export function CheckoutDrawer({
 
         {/* Sticky Footer CTA (Safe-area padded for iOS/Android) */}
         <div className="shrink-0 space-y-3 border-t border-slate-200 bg-white px-4 py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-4">
-          {/* Mandatory DBID & SSLCOMMERZ Terms Agreement Checkbox */}
-          <div className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/80 p-2.5 text-[11px] text-slate-700">
-            <input
-              id="checkout-agree"
-              type="checkbox"
-              checked={agreedToTerms}
-              onChange={(e) => setAgreedToTerms(e.target.checked)}
-              className="mt-0.5 size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-            />
-            <label
-              htmlFor="checkout-agree"
-              className="cursor-pointer leading-relaxed text-slate-600"
-            >
-              আমি{" "}
+          {isReseller ? (
+            <div className="space-y-3 rounded-xl border border-amber-200 bg-amber-50/80 p-3.5">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle
+                  size={16}
+                  className="mt-0.5 shrink-0 text-amber-600"
+                />
+                <div className="text-xs leading-relaxed text-amber-950">
+                  <p className="font-bold">
+                    রিটেইল চেকআউট শুধুমাত্র ক্লায়েন্ট অ্যাকাউন্টের জন্য
+                  </p>
+                  <p className="mt-0.5 text-amber-800">
+                    আপনি রিসেলার হিসেবে লগইন আছেন। হোলসেল ডিসকাউন্ট ও প্রিপেইড
+                    ওয়ালেট দিয়ে ডিপ্লয় করতে রিসেলার পোর্টাল ব্যবহার করুন।
+                  </p>
+                </div>
+              </div>
               <Link
-                href="/terms"
-                target="_blank"
-                className="font-semibold text-blue-600 hover:underline"
+                href="/reseller-portal/deploy"
+                onClick={onClose}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-indigo-700 sm:text-sm"
               >
-                শর্তাবলী
+                <span>রিসেলার পোর্টালে ডিপ্লয় করুন</span>
+                <ArrowRight size={15} />
               </Link>
-              ,{" "}
-              <Link
-                href="/privacy-policy"
-                target="_blank"
-                className="font-semibold text-blue-600 hover:underline"
-              >
-                গোপনীয়তা নীতি
-              </Link>{" "}
-              এবং{" "}
-              <Link
-                href="/refund-policy"
-                target="_blank"
-                className="font-semibold text-blue-600 hover:underline"
-              >
-                রিফান্ড পলিসি
-              </Link>{" "}
-              পড়েছি এবং এতে সম্মতি জানাচ্ছি।
-            </label>
-          </div>
+            </div>
+          ) : (
+            <>
+              {/* Mandatory DBID & SSLCOMMERZ Terms Agreement Checkbox */}
+              <div className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/80 p-2.5 text-[11px] text-slate-700">
+                <input
+                  id="checkout-agree"
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="mt-0.5 size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                />
+                <label
+                  htmlFor="checkout-agree"
+                  className="cursor-pointer leading-relaxed text-slate-600"
+                >
+                  আমি{" "}
+                  <Link
+                    href="/terms"
+                    target="_blank"
+                    className="font-semibold text-blue-600 hover:underline"
+                  >
+                    শর্তাবলী
+                  </Link>
+                  ,{" "}
+                  <Link
+                    href="/privacy-policy"
+                    target="_blank"
+                    className="font-semibold text-blue-600 hover:underline"
+                  >
+                    গোপনীয়তা নীতি
+                  </Link>{" "}
+                  এবং{" "}
+                  <Link
+                    href="/refund-policy"
+                    target="_blank"
+                    className="font-semibold text-blue-600 hover:underline"
+                  >
+                    রিফান্ড পলিসি
+                  </Link>{" "}
+                  পড়েছি এবং এতে সম্মতি জানাচ্ছি।
+                </label>
+              </div>
 
-          <button
-            type="button"
-            onClick={proceedToCheckout}
-            disabled={!agreedToTerms || redirecting}
-            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Lock size={15} />
-            <span>
-              {redirecting
-                ? "চেকআউটে যাওয়া হচ্ছে…"
-                : "লগইন ও পেমেন্টে এগিয়ে যান"}
-            </span>
-            {!redirecting && <ArrowRight size={16} />}
-          </button>
-          <p className="text-center text-[11px] text-slate-500">
-            বিকাশ · নগদ · রকেট · ভিসা · মাস্টারকার্ড · SSLCOMMERZ সিকিউর পেমেন্ট
-          </p>
+              <button
+                type="button"
+                onClick={proceedToCheckout}
+                disabled={!agreedToTerms || redirecting}
+                className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Lock size={15} />
+                <span>
+                  {redirecting
+                    ? "চেকআউটে যাওয়া হচ্ছে…"
+                    : isLoggedIn
+                      ? "পেমেন্টে এগিয়ে যান"
+                      : "লগইন ও পেমেন্টে এগিয়ে যান"}
+                </span>
+                {!redirecting && <ArrowRight size={16} />}
+              </button>
+              <p className="text-center text-[11px] text-slate-500">
+                বিকাশ · নগদ · রকেট · ভিসা · মাস্টারকার্ড · SSLCOMMERZ সিকিউর
+                পেমেন্ট
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

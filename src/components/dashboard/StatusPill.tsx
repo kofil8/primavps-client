@@ -5,6 +5,7 @@ export type PillStatus =
   | "running"
   | "provisioning"
   | "stopped"
+  | "suspended"
   | "paid"
   | "unpaid"
   | "due"
@@ -26,6 +27,7 @@ const STATUS_MAP: Record<PillStatus, { tone: Tone; label: string }> = {
   running: { tone: "green", label: "Running" },
   provisioning: { tone: "amber", label: "Provisioning" },
   stopped: { tone: "slate", label: "Stopped" },
+  suspended: { tone: "red", label: "Suspended" },
   paid: { tone: "green", label: "Paid" },
   unpaid: { tone: "amber", label: "Unpaid" },
   due: { tone: "amber", label: "Due" },

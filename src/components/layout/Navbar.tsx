@@ -1,5 +1,6 @@
 "use client";
 
+import type { NavbarUser } from "@/lib/auth/session";
 import { useCurrency } from "@/lib/currency";
 import {
   Activity,
@@ -22,12 +23,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BrandLogo } from "../ui/BrandLogo";
+import { UserMenu } from "./UserMenu";
 
 const PRODUCT_LINKS = [
-{
+  {
     href: "/isp-vps",
     title: "Residential ISP VPS",
-    desc: "Clean 0/100 IPQS US/UK/EU IPs",
+    desc: "Pre-screened static US/UK/EU home IPs",
     icon: ShieldCheck,
     badge: "Popular",
   },
@@ -69,7 +71,7 @@ const TOOL_LINKS = [
 const AUTH_ROUTES = ["/login", "/register"];
 const HIDE_DOCK_ROUTES = ["/login", "/register", "/checkout"];
 
-export function Navbar() {
+export function Navbar({ user }: { user?: NavbarUser | null }) {
   const pathname = usePathname();
   const { currency, setCurrency } = useCurrency();
   const [menuState, setMenuState] = useState<{
@@ -78,6 +80,19 @@ export function Navbar() {
     mobileSheetOpen: boolean;
   }>({ pathname, openMenu: null, mobileSheetOpen: false });
   const navRef = useRef<HTMLDivElement>(null);
+
+  const isReseller = user?.role === "RESELLER";
+  const isAdmin = user?.role === "ADMIN";
+  const portalHref = isAdmin
+    ? "/admin"
+    : isReseller
+      ? "/reseller-portal"
+      : "/dashboard";
+  const portalLabel = isAdmin
+    ? "Admin Panel"
+    : isReseller
+      ? "Reseller Portal"
+      : "Dashboard";
 
   const openMenu = menuState.pathname === pathname ? menuState.openMenu : null;
   const mobileSheetOpen =
@@ -169,7 +184,7 @@ export function Navbar() {
     }`;
 
   const isHomeActive = pathname === "/" && !mobileSheetOpen;
-const isServersActive =
+  const isServersActive =
     (pathname?.startsWith("/isp-vps") ||
       pathname?.startsWith("/cloud-vps") ||
       pathname?.startsWith("/resellers")) &&
@@ -199,8 +214,11 @@ const isServersActive =
             <BrandLogo theme="light" size="md" />
           </Link>
 
-          {/* 2. Desktop Center Navigation Links (xl+: 1280px+) */}
-          <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary navigation">
+          {/* 2. Desktop Center Navigation Links (lg+: 1024px+) */}
+          <nav
+            className="hidden items-center gap-0.5 lg:flex xl:gap-1"
+            aria-label="Primary navigation"
+          >
             {/* Servers Dropdown */}
             <div className="relative">
               <button
@@ -413,33 +431,60 @@ const isServersActive =
               </div>
             )}
 
-            {/* Hide redundant Sign in button when already on /login */}
-            {pathname !== "/login" && (
-              <Link
-                href="/login"
-                onClick={closeAll}
-                className="whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900 xl:px-4"
-              >
-                Sign in
-              </Link>
+            {user ? (
+              <>
+                <Link
+                  href={portalHref}
+                  onClick={closeAll}
+                  className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-semibold text-white shadow-xs transition-all xl:px-4 ${
+                    isReseller
+                      ? "bg-indigo-600 hover:bg-indigo-700"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  }`}
+                >
+                  <span>{portalLabel}</span>
+                  <ArrowRight
+                    size={15}
+                    className="shrink-0"
+                    aria-hidden="true"
+                  />
+                </Link>
+                <UserMenu user={user} />
+              </>
+            ) : (
+              <>
+                {pathname !== "/login" && (
+                  <Link
+                    href="/login"
+                    onClick={closeAll}
+                    className="whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900 xl:px-4"
+                  >
+                    Sign in
+                  </Link>
+                )}
+
+                <Link
+                  href="/isp-vps"
+                  onClick={closeAll}
+                  className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-700 xl:px-4"
+                >
+                  <span>Deploy server</span>
+                  <ArrowRight
+                    size={15}
+                    className="shrink-0"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </>
             )}
 
-            <Link
-              href="/isp-vps"
-              onClick={closeAll}
-              className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-700 xl:px-4"
-            >
-              <span>Deploy server</span>
-              <ArrowRight size={15} className="shrink-0" aria-hidden="true" />
-            </Link>
-
-            {/* Tablet & Small-Laptop Menu Trigger (768px–1279px) */}
+            {/* Tablet Menu Trigger (768px–1023px only; aligned with lg:flex nav) */}
             <button
               type="button"
               onClick={() => setMobileSheetOpen((prev) => !prev)}
               aria-expanded={mobileSheetOpen}
               aria-label="Toggle navigation menu"
-              className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 xl:hidden"
+              className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 lg:hidden"
             >
               {mobileSheetOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -457,23 +502,28 @@ const isServersActive =
                 {currency === "BDT" ? "৳ BDT" : "$ USD"}
               </button>
             )}
-            {pathname !== "/login" && (
-              <Link
-                href="/login"
-                onClick={closeAll}
-                className="whitespace-nowrap rounded-full border border-slate-200/90 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 transition-transform active:scale-95"
-              >
-                Sign in
-              </Link>
+
+            {user ? (
+              <UserMenu user={user} />
+            ) : (
+              pathname !== "/login" && (
+                <Link
+                  href="/login"
+                  onClick={closeAll}
+                  className="whitespace-nowrap rounded-full border border-slate-200/90 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 transition-transform active:scale-95"
+                >
+                  Sign in
+                </Link>
+              )
             )}
           </div>
         </div>
       </header>
 
-      {/* ─── GLASS MENU SHEET (Mobile, Tablet & Small Laptop < xl) ─── */}
+      {/* ─── GLASS MENU SHEET (Mobile & Tablet < lg) ─── */}
       {mobileSheetOpen && (
         <div
-          className="animate-fade-up fixed inset-0 z-40 bg-slate-900/25 backdrop-blur-xs xl:hidden"
+          className="animate-fade-up fixed inset-0 z-40 bg-slate-900/25 backdrop-blur-xs lg:hidden"
           onClick={() => setMobileSheetOpen(false)}
         >
           <div
@@ -602,15 +652,19 @@ const isServersActive =
       {!hideMobileDock && (
         <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex flex-col items-center px-3 pb-[env(safe-area-inset-bottom)] md:hidden">
           <Link
-            href="/isp-vps"
+            href={user ? portalHref : "/isp-vps"}
             onClick={closeAll}
             className="pointer-events-auto mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/85 px-3 py-1 text-[11px] font-bold text-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-transform active:scale-95"
           >
-            <span className="size-1.5 animate-pulse rounded-full bg-blue-600" />
-            <span>Deploy Clean VPS</span>
+            <span
+              className={`size-1.5 animate-pulse rounded-full ${
+                isReseller ? "bg-indigo-600" : "bg-blue-600"
+              }`}
+            />
+            <span>{user ? `Go to ${portalLabel}` : "Deploy Clean VPS"}</span>
             <ArrowRight
               size={11}
-              className="text-blue-600"
+              className={isReseller ? "text-indigo-600" : "text-blue-600"}
               aria-hidden="true"
             />
           </Link>

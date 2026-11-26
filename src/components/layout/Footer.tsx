@@ -19,6 +19,7 @@ import {
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { BrandLogo } from "../ui/BrandLogo";
+import { isFocusedOrPortalRoute } from "@/lib/config/routes";
 
 
 const FOOTER_COLUMNS = [
@@ -106,25 +107,15 @@ const PAYMENT_BADGES = [
   },
 ];
 
-const HIDDEN_CTA_ROUTES = [
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-  "/checkout",
-  "/dashboard",
-];;
 
 export function Footer() {
   const pathname = usePathname();
-  const hidePreFooter = HIDDEN_CTA_ROUTES.some(
-    (route) => pathname === route || pathname?.startsWith(`${route}/`),
-  );
+// Auth, Checkout এবং Dashboard-এ কোনো মার্কেটিং ফুটার দেখাবে না
+  if (isFocusedOrPortalRoute(pathname)) return null;
 
   return (
     <>
       {/* ─── Pre-Footer CTA Strip (Hidden on Auth/Checkout) ─── */}
-      {!hidePreFooter && (
         <section className="bg-white py-10 sm:py-14">
           <div className="shell">
             <div className="flex flex-col justify-between gap-5 rounded-2xl border border-blue-100 bg-gradient-to-r from-[#eff5ff] via-[#f4f8ff] to-[#eaf2ff] px-6 py-6 sm:px-8 lg:flex-row lg:items-center">
@@ -163,7 +154,6 @@ export function Footer() {
             </div>
           </div>
         </section>
-      )}
 
       {/* ─── Enterprise 3-Tier Dark Footer ─── */}
       <footer className="border-t border-white/10 bg-[#060913] text-slate-400">

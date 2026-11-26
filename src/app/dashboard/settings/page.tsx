@@ -7,6 +7,7 @@ import {
 import { CheckCircle2, Lock, LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function DashboardSettingsPage() {
   const router = useRouter();
@@ -23,22 +24,32 @@ export default function DashboardSettingsPage() {
     e.preventDefault();
     saveStoredProfile({ ...initialProfile, name, phone });
     setSavedProfile(true);
+    toast.success("প্রোফাইল তথ্য সংরক্ষণ করা হয়েছে।");
     window.setTimeout(() => setSavedProfile(false), 2500);
   };
 
   const handleSavePassword = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPass.length < 8) return;
+    if (newPass.length < 8) {
+      toast.error("নতুন পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
+      return;
+    }
     setCurrentPass("");
     setNewPass("");
     setSavedPass(true);
+    toast.success("পাসওয়ার্ড সফলভাবে আপডেট হয়েছে।");
     window.setTimeout(() => setSavedPass(false), 2500);
   };
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      toast.success("সাইন আউট সম্পন্ন হয়েছে।");
+      router.push("/login");
+      router.refresh();
+    } catch {
+      toast.error("সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+    }
   };
 
   return (

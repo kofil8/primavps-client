@@ -1,4 +1,4 @@
-import { attachSessionCookie } from "@/lib/auth/session";
+import { attachSessionCookie, type UserRole } from "@/lib/auth/session";
 import {
   getClientIp,
   isTurnstileConfigured,
@@ -9,16 +9,16 @@ import { NextRequest, NextResponse } from "next/server";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
-  const { firstName, lastName, email, phone, password, turnstileToken } = (await req
-    .json()
-    .catch(() => ({}))) as {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    password?: string;
-    turnstileToken?: string;
-  };
+  const { firstName, lastName, email, phone, password, role, turnstileToken } =
+    (await req.json().catch(() => ({}))) as {
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      phone?: string;
+      password?: string;
+      role?: string;
+      turnstileToken?: string;
+    };
 
   if (!firstName?.trim() || !lastName?.trim()) {
     return NextResponse.json(
@@ -48,9 +48,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // See login route: a challenge that fails to load must not block sign-up.
   if (isTurnstileConfigured() && turnstileToken) {
-    const isHuman = await verifyTurnstile(turnstileToken, getClientIp(req.headers));
+    const isHuman = await verifyTurnstile(
+      turnstileToken,
+      getClientIp(req.headers),
+    );
     if (!isHuman) {
       return NextResponse.json(
         { error: "Bot verification failed. Please try again." },
@@ -59,14 +61,25 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Demo session: accounts are not persisted yet, so registration just signs
-  // the new customer in with the email they registered.
-  const response = NextResponse.json({ ok: true });
+  const normalizedEmail = email.trim().toLowerCase();
+  const fullName = `${firstName.trim()} ${lastName.trim()}`;
+  const resolvedRole: UserRole = role === "RESELLER" ? "RESELLER" : "USER";
+
+  const response = NextResponse.json({
+    ok: true,
+    user: {
+      email: normalizedEmail,
+      name: fullName,
+      role: resolvedRole,
+    },
+  });
+
   attachSessionCookie(
     response,
-    email.trim().toLowerCase(),
+    normalizedEmail,
     true,
-    `${firstName.trim()} ${lastName.trim()}`,
+    fullName,
+    resolvedRole,
   );
 
   return response;

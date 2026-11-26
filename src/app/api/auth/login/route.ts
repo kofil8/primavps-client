@@ -1,4 +1,4 @@
-import { attachSessionCookie } from "@/lib/auth/session";
+import { attachSessionCookie, type UserRole } from "@/lib/auth/session";
 import {
   getClientIp,
   isTurnstileConfigured,
@@ -7,14 +7,15 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { email, password, rememberMe, turnstileToken } = (await req
-    .json()
-    .catch(() => ({}))) as {
-    email?: string;
-    password?: string;
-    rememberMe?: boolean;
-    turnstileToken?: string;
-  };
+  const { email, password, rememberMe, role, portalMode, turnstileToken } =
+    (await req.json().catch(() => ({}))) as {
+      email?: string;
+      password?: string;
+      rememberMe?: boolean;
+      role?: string;
+      portalMode?: string;
+      turnstileToken?: string;
+    };
 
   if (!email || !email.includes("@")) {
     return NextResponse.json(
@@ -30,11 +31,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // The challenge script can be blocked by adblockers, firewalls or offline
-  // networks. Only verify tokens that were actually issued, so those users can
-  // still sign in; an invalid token is still rejected.
   if (isTurnstileConfigured() && turnstileToken) {
-    const isHuman = await verifyTurnstile(turnstileToken, getClientIp(req.headers));
+    const isHuman = await verifyTurnstile(
+      turnstileToken,
+      getClientIp(req.headers),
+    );
     if (!isHuman) {
       return NextResponse.json(
         { error: "Bot verification failed. Please try again." },
@@ -43,10 +44,35 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Demo session: no user records are stored yet, so any valid form submission
-  // gets a signed cookie identifying the email it was submitted with.
-  const response = NextResponse.json({ ok: true });
-  attachSessionCookie(response, email.trim().toLowerCase(), Boolean(rememberMe));
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // Resolve role for demo session (will come from NestJS API once connected)
+  let resolvedRole: UserRole = "USER";
+  if (portalMode === "admin" || role === "ADMIN") {
+    resolvedRole = "ADMIN";
+  } else if (
+    portalMode === "reseller" ||
+    role === "RESELLER" ||
+    normalizedEmail.includes("reseller")
+  ) {
+    resolvedRole = "RESELLER";
+  }
+
+  const response = NextResponse.json({
+    ok: true,
+    user: {
+      email: normalizedEmail,
+      role: resolvedRole,
+    },
+  });
+
+  attachSessionCookie(
+    response,
+    normalizedEmail,
+    Boolean(rememberMe),
+    undefined,
+    resolvedRole,
+  );
 
   return response;
 }

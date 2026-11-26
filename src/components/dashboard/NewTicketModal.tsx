@@ -3,6 +3,7 @@
 import { DEMO_SERVICES } from "@/lib/data/client-demo";
 import { LifeBuoy, Send, X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface NewTicketModalProps {
   open: boolean;
@@ -31,7 +32,10 @@ export function NewTicketModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject.trim() || !message.trim()) return;
+    if (!subject.trim() || !message.trim()) {
+      toast.error("টিকিট খুলতে বিষয় ও বিস্তারিত বিবরণ পূরণ করুন।");
+      return;
+    }
     onCreate({
       subject: subject.trim(),
       serviceName,

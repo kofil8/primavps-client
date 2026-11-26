@@ -13,6 +13,7 @@ import { CloudSummaryCard } from "@/components/sections/cloud/CloudSummaryCard";
 import type { CheckoutPlan } from "@/components/sections/isp/CheckoutDrawer";
 import { LazyCheckoutDrawer } from "@/components/sections/isp/LazyCheckoutDrawer";
 import { CountryFlag } from "@/components/ui/CountryFlag";
+import { useSessionUser } from "@/lib/auth/client-session";
 import { useCurrency } from "@/lib/currency";
 import {
   CLOUD_OS_LIST,
@@ -23,13 +24,16 @@ import {
   CloudRegion,
   calculateCloudPrice,
 } from "@/lib/data/plans";
-import { ArrowRight, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { AlertTriangle, ArrowRight, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { SiAmd } from "react-icons/si";
 
 function CloudVpsContent() {
   const { formatPrice } = useCurrency();
+  const sessionUser = useSessionUser();
+  const isReseller = sessionUser?.role === "RESELLER";
   const searchParams = useSearchParams();
   const couponParam = searchParams.get("coupon") || "";
 
@@ -130,6 +134,34 @@ function CloudVpsContent() {
 
       {/* 2. Vultr / DigitalOcean-Style Cloud Configurator */}
       <section className="py-8 sm:py-12">
+        {isReseller && (
+          <div className="shell mb-6">
+            <div className="flex flex-col justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 sm:flex-row sm:items-center sm:p-5">
+              <div className="flex items-start gap-3">
+                <AlertTriangle
+                  size={18}
+                  className="mt-0.5 shrink-0 text-amber-600"
+                />
+                <div className="text-xs leading-relaxed text-amber-950 sm:text-sm">
+                  <p className="font-bold">
+                    রিটেইল প্ল্যান শুধুমাত্র ক্লায়েন্ট (Client) অ্যাকাউন্টের জন্য
+                  </p>
+                  <p className="mt-0.5 text-xs text-amber-800">
+                    আপনি রিসেলার হিসেবে লগইন আছেন। হোলসেল ডিসকাউন্ট ও প্রিপেইড
+                    ওয়ালেট দিয়ে ডিপ্লয় করতে রিসেলার পোর্টাল ব্যবহার করুন।
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/reseller-portal/deploy"
+                className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-indigo-700"
+              >
+                <span>রিসেলার পোর্টালে যান</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        )}
         <div className="shell grid items-start gap-6 lg:grid-cols-[1.6fr_1fr] xl:gap-8">
           {/* Left Column: 4 Numbered Cloud Steps */}
           <div className="space-y-5">

@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ServiceDetailPage() {
   const params = useParams<{ id: string }>();
@@ -40,12 +41,6 @@ export default function ServiceDetailPage() {
   const [ipAddress, setIpAddress] = useState(baseService.ip);
   const [freeSwapUsed, setFreeSwapUsed] = useState(false);
   const [swapModalOpen, setSwapModalOpen] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
-
-  const showToast = (msg: string) => {
-    setToastMsg(msg);
-    window.setTimeout(() => setToastMsg(""), 3500);
-  };
 
   const handlePowerAction = async (action: "start" | "stop" | "reboot") => {
     setPowerBusy(action);
@@ -57,7 +52,7 @@ export default function ServiceDetailPage() {
       status: nextStatus,
     }));
     setPowerBusy(null);
-    showToast(
+    toast.success(
       action === "reboot"
         ? "সার্ভার সফলভাবে রিবুট হয়েছে।"
         : action === "stop"
@@ -75,9 +70,9 @@ export default function ServiceDetailPage() {
         ...srv,
         ip: nextIp,
       }));
-      showToast("ফ্রি IP Swap সম্পন্ন! নতুন ক্লিন IP অ্যাসাইন করা হয়েছে।");
+      toast.success("ফ্রি IP Swap সম্পন্ন! নতুন ক্লিন IP অ্যাসাইন করা হয়েছে।");
     } else {
-      showToast("৳৩৫০ IP Swap ইনভয়েস তৈরি হয়েছে — Invoices থেকে পেমেন্ট করুন।");
+      toast.info("৳৩৫০ IP Swap ইনভয়েস তৈরি হয়েছে — Invoices থেকে পেমেন্ট করুন।");
     }
   };
 
@@ -92,12 +87,6 @@ export default function ServiceDetailPage() {
           <ArrowLeft size={14} />
           <span>সব সার্ভারে ফিরে যান</span>
         </Link>
-
-        {toastMsg && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-800">
-            {toastMsg}
-          </div>
-        )}
       </div>
 
       {/* Server Header Card */}
